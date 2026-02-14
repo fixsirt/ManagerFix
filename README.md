@@ -387,83 +387,184 @@ plugins/ManagerFix/
 
 ## Команды и права
 
-### Основные
+### Основные (ManagerFix)
 
-| Команда | Описание | Право |
-|---------|----------|--------|
-| /managerfix [reload\|menu] | Перезагрузка конфига или открытие главного меню | managerfix.reload, managerfix.menu |
-| /managerfix reload | Перезагрузка плагина и модулей | managerfix.reload |
-| /managerfix menu | Главное меню | managerfix.menu |
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /managerfix | Главное меню или перезагрузка (подкоманды) | managerfix.menu, managerfix.reload |
+| /managerfix menu | Открыть главное меню модулей | managerfix.menu, managerfix.admin |
+| /managerfix reload | Перезагрузить конфиг и модули | managerfix.reload |
 
 ### Варпы
 
-| Команда | Право |
-|---------|--------|
-| /warps | managerfix.warps.use |
-| /warp <имя> | managerfix.warps.use или managerfix.warps.warp.<имя> |
-| /setwarp <имя> | managerfix.warps.create |
-| /delwarp <имя> | managerfix.warps.delete |
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /warps | Открыть GUI варпов | managerfix.warps.use |
+| /warps create <имя> | Создать варп (GUI/команда) | managerfix.warps.create |
+| /warps delete <имя> | Удалить варп (GUI/команда) | managerfix.warps.delete |
+| /warp <имя> | Телепорт на варп | managerfix.warps.use или managerfix.warps.warp.<имя> |
+| /setwarp <имя> | Создать варп | managerfix.warps.create |
+| /delwarp <имя> | Удалить варп | managerfix.warps.delete |
+| /editwarp <имя> | Редактировать варп | managerfix.warps.edit |
 
 ### Дома
 
-| Команда | Право |
-|---------|--------|
-| /sethome [имя] | managerfix.homes.set |
-| /home [имя] | managerfix.homes.teleport |
-| /delhome <имя> | managerfix.homes.delete |
-| /homes | managerfix.homes.use |
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /sethome [имя] | Установить дом | managerfix.homes.set |
+| /home [имя] | Телепорт к дому | managerfix.homes.teleport |
+| /delhome <имя> | Удалить дом | managerfix.homes.delete |
+| /homes | GUI домов | managerfix.homes.use |
+| /adminhomes <игрок> | GUI домов другого игрока | managerfix.homes.admin |
+| /adminsethome <игрок> <дом> | Установить дом другому игроку | managerfix.homes.admin.set |
+
+Лимиты домов: `managerfix.homes.limit.1/.3/.5/.10/.20`  
+Обход кулдауна: `managerfix.homes.bypass.cooldown`
 
 ### TPA
 
-| Команда | Право |
-|---------|--------|
-| /tpa <игрок> | managerfix.tpa.use |
-| /tpaccept | managerfix.tpa.use |
-| /tpdeny | managerfix.tpa.use |
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /tpa <игрок> | Запрос телепорта к игроку | managerfix.tpa.use |
+| /tpahere <игрок> | Запрос телепорта игрока к вам | managerfix.tpa.use |
+| /tpaccept | Принять запрос | managerfix.tpa.use |
+| /tpdeny | Отклонить запрос | managerfix.tpa.use |
+| /tpadeny | Отклонить запрос (alias) | managerfix.tpa.use |
+| /tpatoggle | Включить/выключить приём запросов | managerfix.tpa.use |
+| /tpablacklist [add|remove|list] [игрок] | Чёрный список TPA | managerfix.tpa.use |
+| /tpareply | Открыть GUI ответа (по клику) | managerfix.tpa.use |
 
-### Other (краткий список)
+Обход кулдауна: `managerfix.tpa.bypass.cooldown`
 
-| Команда | Право |
-|---------|--------|
-| /god, /god <name> | managerfix.other.god, managerfix.other.god.others |
-| /fly, /fly <name> | managerfix.other.fly, managerfix.other.fly.others |
-| /gmc /gms /gmsp (+ <name>) | managerfix.other.gamemode.* + managerfix.other.gamemode.others |
-| /repair [all] [player] | managerfix.other.repair, managerfix.other.repair.all, managerfix.other.repair.others |
-| /ec [player] | managerfix.other.ec, managerfix.other.ec.others |
-| /invsee <name> | managerfix.other.invsee, managerfix.other.invsee.modify |
-| /workbench /anvil /stonecutter /grindstone /cartography /loom /enchanting | managerfix.other.<cmd> |
-| /killmob <type> <radius> | managerfix.other.killmob |
-| /spawnmob <type> <amount> | managerfix.other.spawnmob |
-| /tp to|here|location | managerfix.other.tp, managerfix.other.tp.location |
-| /near | managerfix.other.near |
-| /v | managerfix.other.vanish |
-| /back | managerfix.other.back |
-| /dback | managerfix.other.dback |
-| /weather /sun /rain /thunder | managerfix.other.weather |
-| /day /night | managerfix.other.time |
-| /health [name] | managerfix.other.health, managerfix.other.health.others |
-| /food [name] | managerfix.other.food, managerfix.other.food.others |
-| /food god | managerfix.other.food.god |
-| /clear [name] | managerfix.other.clear |
-| /give <name> <item> <amount> | managerfix.other.give |
-| /info <name> | managerfix.other.info, managerfix.other.info.ip |
-| /freeze <name> | managerfix.other.freeze |
-| /lockchat | managerfix.other.chatlock |
-| /broadcast <message> | managerfix.other.broadcast |
-| /sudo <name> <command> | managerfix.other.sudo |
-| /ping [name] | managerfix.other.ping |
-| /coords | managerfix.other.coords |
-| /seen <name> | managerfix.other.seen |
-| /top | managerfix.other.top |
-| /world <name> | managerfix.other.world |
-| /pull <name> | managerfix.other.pull |
-| /push <name> | managerfix.other.push |
-| /speed <value> | managerfix.other.speed |
-| /staffmode | managerfix.other.staffmode |
+### RTP
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /rtp | Случайный телепорт | managerfix.rtp.use |
+
+Обход кулдауна: `managerfix.rtp.bypass.cooldown`  
+Расширенные варианты: `managerfix.rtp.option.1000`, `managerfix.rtp.option.5000`, `managerfix.rtp.option.randomplayer`
+
+### Spawn
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /spawn | Телепорт на спавн | managerfix.spawn.use |
+| /setspawn | Установить спавн | managerfix.spawn.set |
+| /editspawn | GUI настроек спавна | managerfix.spawn.edit |
+
+### Чат и ЛС
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /chattoggle | Переключить локальный/глобальный чат | managerfix.chat.use |
+| /pm <игрок> <сообщение> | Личное сообщение | managerfix.chat.use |
+| /tell <игрок> <сообщение> | Личное сообщение | managerfix.chat.use |
+| /msg <игрок> <сообщение> | Личное сообщение | managerfix.chat.use |
+| /r <сообщение> | Ответ последнему собеседнику | managerfix.chat.use |
+| /pmblock <игрок> | Блок ЛС от игрока | managerfix.chat.pmblock |
+| /ignore [add|remove|list] [игрок] | Игнор для ЛС | managerfix.chat.pmblock |
+| /chatspy | Видеть локальный чат вне радиуса | managerfix.chat.spy |
+| /commandspy | Видеть команды игроков | managerfix.chat.commandspy |
+
+Обход анти-спама: `managerfix.chat.bypass.cooldown`
+
+### AFK
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /afk | Включить/выключить AFK | managerfix.afk.use |
+
+Обход кика: `managerfix.afk.bypass`
+
+### Баны
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /ban <игрок> [причина] | Забанить игрока | managerfix.ban.use |
+| /tempban <игрок> <время> [причина] | Временный бан | managerfix.ban.use |
+| /unban <игрок> | Разбанить | managerfix.ban.unban |
+| /banlist | Открыть список банов | managerfix.ban.list |
+
+### Kits
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /kit [имя] | Получить кит | managerfix.kits.use и managerfix.kits.kit.<имя> |
+| /kits | Открыть GUI китов | managerfix.kits.use |
+| /kit create <имя> | Создать кит | managerfix.kits.create |
+
+### Worlds
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /world | GUI миров | managerfix.worlds.teleport |
+| /world tp <мир> | Телепорт в мир | managerfix.worlds.teleport |
+| /world create <мир> [generator] | Создать мир | managerfix.worlds.create |
+| /world delete <мир> | Удалить мир | managerfix.worlds.delete |
+
+### Names
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /nick <ник> | Установить ник | managerfix.names.nick |
+| /nickadmin <игрок> <ник\|reset> | Установить/сбросить ник | managerfix.names.admin |
+| /names | GUI администрирования ников | managerfix.names.admin |
+
+Обходы: `managerfix.names.bypass.cooldown`, `managerfix.names.bypass.length`, `managerfix.names.bypass.format`
+
+### Other (админ-утилиты)
+
+| Команда | Описание | Права |
+|---------|----------|-------|
+| /god [игрок] | Неуязвимость | managerfix.other.god, managerfix.other.god.others |
+| /fly [игрок] | Полёт | managerfix.other.fly, managerfix.other.fly.others |
+| /gmc /gms /gmsp [игрок] | Смена режима | managerfix.other.gamemode.* + managerfix.other.gamemode.others |
+| /repair [all] [игрок] | Ремонт предметов | managerfix.other.repair, managerfix.other.repair.all, managerfix.other.repair.others |
+| /ec [игрок] | Эндер‑сундук | managerfix.other.ec, managerfix.other.ec.others |
+| /invsee <игрок> | Просмотр инвентаря | managerfix.other.invsee, managerfix.other.invsee.modify |
+| /workbench | Верстак | managerfix.other.workbench |
+| /anvil | Наковальня | managerfix.other.anvil |
+| /stonecutter | Камнерез | managerfix.other.stonecutter |
+| /grindstone | Точило | managerfix.other.grindstone |
+| /cartography | Картографический стол | managerfix.other.cartography |
+| /loom | Ткацкий станок | managerfix.other.loom |
+| /enchanting | Стол зачарований | managerfix.other.enchanting |
+| /killmob <тип> <радиус> | Убить мобов в радиусе | managerfix.other.killmob |
+| /spawnmob <тип> <кол-во> | Заспавнить мобов | managerfix.other.spawnmob |
+| /tp to|here|location | Телепорт админов (без ожидания) | managerfix.other.tp, managerfix.other.tp.location |
+| /pull <игрок> | Притянуть игрока | managerfix.other.pull |
+| /push <игрок> | Телепорт к игроку | managerfix.other.push |
+| /near | Игроки рядом | managerfix.other.near |
+| /v | Vanish | managerfix.other.vanish |
+| /back | Назад на прошлую точку | managerfix.other.back |
+| /dback | Назад на место смерти | managerfix.other.dback |
+| /weather <clear|rain|thunder> | Погода | managerfix.other.weather |
+| /sun /rain /thunder | Быстрая погода | managerfix.other.weather |
+| /day /night | Время | managerfix.other.time |
+| /health [игрок] | Показать здоровье | managerfix.other.health, managerfix.other.health.others |
+| /food [игрок] | Насыщение | managerfix.other.food, managerfix.other.food.others |
+| /food god | FoodGod (не тратится голод) | managerfix.other.food.god |
+| /clear [игрок] | Очистить инвентарь | managerfix.other.clear |
+| /give <игрок> <предмет> <кол-во> | Выдать предмет | managerfix.other.give |
+| /info <игрок> | Информация об игроке | managerfix.other.info, managerfix.other.info.ip |
+| /freeze <игрок> | Заморозить игрока | managerfix.other.freeze |
+| /lockchat | Закрыть/открыть чат | managerfix.other.chatlock |
+| /broadcast <сообщение> | Объявление в чат и title | managerfix.other.broadcast |
+| /sudo <игрок> <команда> | Выполнить команду от игрока | managerfix.other.sudo |
+| /ping [игрок] | Пинг игрока | managerfix.other.ping |
+| /coords | Координаты | managerfix.other.coords |
+| /seen <игрок> | Был в сети | managerfix.other.seen |
+| /top | Top (если AFK выключен) | managerfix.other.top |
+| /world <мир> | Телепорт в мир (fallback) | managerfix.other.world |
+| /speed <значение> | Скорость ходьбы/полёта | managerfix.other.speed |
+| /staffmode | Режим модератора | managerfix.other.staffmode |
 
 **Универсальные права:**  
 - `managerfix.bypass.cooldown` — обход кулдаунов.  
 - `managerfix.bypass.limit` — обход лимитов.
+
+**Примечание о совместимости:** в `plugin.yml` присутствуют legacy‑узлы `managerfix.command.*`. Они оставлены для совместимости, но актуальная логика использует профильные разрешения `managerfix.<module>.*` и `managerfix.other.*`.
 
 ---
 
