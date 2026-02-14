@@ -1,6 +1,6 @@
 # ManagerFix — подробная документация
 
-Подробная документация плагина **ManagerFix** для серверов Minecraft (Paper 1.21.4, Java 21).
+Подробная документация плагина **ManagerFix** для серверов Minecraft (Paper 1.21.x, Java 21).
 
 ---
 
@@ -25,7 +25,7 @@
 
 ## Описание
 
-**ManagerFix** — модульный плагин для Paper 1.21.4 (Java 21), объединяющий типовые функции сервера: дома, варпы, киты, TPA, RTP, AFK, чат, баны, спавн, миры, таб-лист, объявления и расширенный административный пакет **Other**.
+**ManagerFix** — модульный плагин для Paper 1.21.x (Java 21), объединяющий типовые функции сервера: дома, варпы, киты, TPA, RTP, AFK, чат, баны, спавн, миры, таб-лист, объявления и расширенный административный пакет **Other**.
 
 Особенности:
 
@@ -41,7 +41,7 @@
 
 ## Требования
 
-- **Сервер:** Paper 1.21.4
+- **Сервер:** Paper 1.21.x (включая 1.21.1)
 - **Java:** 21
 - **Опционально:** PlaceholderAPI (плейсхолдеры в чате, табе, объявлениях), Vault + плагин совместимости (префиксы в чате)
 
@@ -348,7 +348,7 @@ plugins/ManagerFix/
 | allow-create | Разрешить создание. |
 | allow-delete | Разрешить удаление. |
 
-**Команды:** `/world` (GUI), `/world tp`, `/world create`, `/world delete`  
+**Команды:** `/world` (GUI), `/world <мир>`, `/world tp`, `/world create`, `/world delete`  
 **Права:** `managerfix.worlds.teleport`, `managerfix.worlds.create`, `managerfix.worlds.delete`
 
 ---
@@ -363,7 +363,7 @@ plugins/ManagerFix/
 
 ## Other (админ-утилиты)
 
-**Назначение:** Пакет админских команд уровня Essentials. Содержит god/fly/gamemode, repair, invsee, vanish, back, weather/time, info/seen, staffmode, утилиты блоков, мобов и телепортацию.
+**Назначение:** Пакет админских команд уровня Essentials. Содержит god/fly/gamemode, repair, invsee (с бронёй и второй рукой), vanish, back, weather/time, pinfo/seen, утилиты блоков, мобов и телепортацию (/tp top).
 
 **Конфиг:** `modules/other.yml`
 
@@ -375,8 +375,6 @@ plugins/ManagerFix/
 | vanish-hide-join-quit | Скрывать join/quit. |
 | vanish-persist | Сохранять vanish в профиле. |
 | food-god-persist | Сохранять FoodGod. |
-| staffmode-enable-fly | Включать fly в staffmode. |
-| staffmode-enable-god | Включать god в staffmode. |
 | aliases | Алиасы команд (map). |
 | cooldowns | Кулдауны по ключам команд. |
 | broadcast.* | Заголовок/сабтайтл/звук для /broadcast. |
@@ -499,6 +497,7 @@ plugins/ManagerFix/
 | Команда | Описание | Права |
 |---------|----------|-------|
 | /world | GUI миров | managerfix.worlds.teleport |
+| /world <мир> | Телепорт в мир (короткая форма) | managerfix.worlds.teleport |
 | /world tp <мир> | Телепорт в мир | managerfix.worlds.teleport |
 | /world create <мир> [generator] | Создать мир | managerfix.worlds.create |
 | /world delete <мир> | Удалить мир | managerfix.worlds.delete |
@@ -532,7 +531,7 @@ plugins/ManagerFix/
 | /enchanting | Стол зачарований | managerfix.other.enchanting |
 | /killmob <тип> <радиус> | Убить мобов в радиусе | managerfix.other.killmob |
 | /spawnmob <тип> <кол-во> | Заспавнить мобов | managerfix.other.spawnmob |
-| /tp to|here|location | Телепорт админов (без ожидания) | managerfix.other.tp, managerfix.other.tp.location |
+| /tp to|here|location|top | Телепорт админов (без ожидания) | managerfix.other.tp, managerfix.other.tp.location |
 | /pull <игрок> | Притянуть игрока | managerfix.other.pull |
 | /push <игрок> | Телепорт к игроку | managerfix.other.push |
 | /near | Игроки рядом | managerfix.other.near |
@@ -547,7 +546,7 @@ plugins/ManagerFix/
 | /food god | FoodGod (не тратится голод) | managerfix.other.food.god |
 | /clear [игрок] | Очистить инвентарь | managerfix.other.clear |
 | /give <игрок> <предмет> <кол-во> | Выдать предмет | managerfix.other.give |
-| /info <игрок> | Информация об игроке | managerfix.other.info, managerfix.other.info.ip |
+| /pinfo <игрок> | Информация об игроке | managerfix.other.info, managerfix.other.info.ip |
 | /freeze <игрок> | Заморозить игрока | managerfix.other.freeze |
 | /lockchat | Закрыть/открыть чат | managerfix.other.chatlock |
 | /broadcast <сообщение> | Объявление в чат и title | managerfix.other.broadcast |
@@ -555,10 +554,8 @@ plugins/ManagerFix/
 | /ping [игрок] | Пинг игрока | managerfix.other.ping |
 | /coords | Координаты | managerfix.other.coords |
 | /seen <игрок> | Был в сети | managerfix.other.seen |
-| /top | Top (если AFK выключен) | managerfix.other.top |
 | /world <мир> | Телепорт в мир (fallback) | managerfix.other.world |
 | /speed <значение> | Скорость ходьбы/полёта | managerfix.other.speed |
-| /staffmode | Режим модератора | managerfix.other.staffmode |
 
 **Универсальные права:**  
 - `managerfix.bypass.cooldown` — обход кулдаунов.  
@@ -629,4 +626,4 @@ if (rsp != null) {
 
 ---
 
-*Документация актуальна для ManagerFix 1.0.0 (Paper 1.21.4, Java 21).*
+*Документация актуальна для ManagerFix 1.0.0 (Paper 1.21.x, Java 21).*
