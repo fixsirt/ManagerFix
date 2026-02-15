@@ -554,7 +554,6 @@ plugins/ManagerFix/
 | /ping [игрок] | Пинг игрока | managerfix.other.ping |
 | /coords | Координаты | managerfix.other.coords |
 | /seen <игрок> | Был в сети | managerfix.other.seen |
-| /world <мир> | Телепорт в мир (fallback) | managerfix.other.world |
 | /speed <значение> | Скорость ходьбы/полёта | managerfix.other.speed |
 
 **Универсальные права:**  
