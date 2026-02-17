@@ -17,7 +17,7 @@
 7. [Модули](#модули)
 8. [Команды модулей с кулдаунами](#команды-модулей-с-кулдаунами)
 9. [Other (админ-утилиты)](#other-админ-утилиты)
-10. [Команды и права](#команды-и-права)
+10. [Все команды](#команды-и-права) — см. [COMMANDS.md](COMMANDS.md)
 11. [Языковые файлы](#языковые-файлы)
 12. [Хранилище данных](#хранилище-данных)
 13. [Миграция данных](#миграция-данных)
@@ -548,104 +548,38 @@ commands:
 
 ## Команды и права
 
+**⚠️ Полный список всех команд** см. в отдельном файле [COMMANDS.md](COMMANDS.md)
+
+Ниже приведены только основные команды модулей.
+
 ### Основные (ManagerFix)
 
 | Команда | Описание | Права |
 |---------|----------|-------|
-| /managerfix | Главное меню или перезагрузка (подкоманды) | managerfix.menu, managerfix.reload |
-| /managerfix menu | Открыть главное меню модулей | managerfix.menu, managerfix.admin |
-| /managerfix reload | Перезагрузить конфиг и модули | managerfix.reload |
+| `/managerfix` | Главное меню или перезагрузка | `managerfix.menu`, `managerfix.reload` |
+| `/managerfix menu` | Открыть меню модулей | `managerfix.menu` |
+| `/managerfix reload` | Перезагрузить конфиг и модули | `managerfix.reload` |
 
-### Варпы
+### Ключевые команды модулей
 
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /warps | Открыть GUI варпов | managerfix.warps.use |
-| /warps create <имя> | Создать варп (GUI/команда) | managerfix.warps.create |
-| /warps delete <имя> | Удалить варп (GUI/команда) | managerfix.warps.delete |
-| /warp <имя> | Телепорт на варп | managerfix.warps.use или managerfix.warps.warp.<имя> |
-| /setwarp <имя> | Создать варп | managerfix.warps.create |
-| /delwarp <имя> | Удалить варп | managerfix.warps.delete |
-| /editwarp <имя> | Редактировать варп | managerfix.warps.edit |
+| Модуль | Команды |
+|--------|---------|
+| **Warps** | `/warps`, `/warp <имя>`, `/setwarp`, `/delwarp`, `/editwarp` |
+| **Homes** | `/sethome`, `/home`, `/delhome`, `/homes`, `/adminhomes` |
+| **TPA** | `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`, `/tpatoggle` |
+| **Chat** | `/chattoggle`, `/pm`, `/r`, `/chatspy`, `/commandspy`, `/clearchat` |
+| **Ban** | `/ban`, `/tempban`, `/unban`, `/banlist`, `/mute`, `/tempmute`, `/unmute`, `/kick` |
+| **Kits** | `/kit`, `/kits` |
+| **Items** | `/i name`, `/i lore`, `/i give`, `/i save` |
+| **RTP** | `/rtp` |
+| **Spawn** | `/spawn`, `/setspawn`, `/editspawn` |
+| **Worlds** | `/world`, `/world tp`, `/world create`, `/world delete` |
+| **Names** | `/nick`, `/nickadmin`, `/names` |
+| **Other** | `/fly`, `/god`, `/heal`, `/feed`, `/repair`, `/vanish`, `/weather`, `/ping` |
 
-### Дома
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /sethome [имя] | Установить дом | managerfix.homes.set |
-| /home [имя] | Телепорт к дому | managerfix.homes.teleport |
-| /delhome <имя> | Удалить дом | managerfix.homes.delete |
-| /homes | GUI домов | managerfix.homes.use |
-| /adminhomes <игрок> | GUI домов другого игрока | managerfix.homes.admin |
-| /adminsethome <игрок> <дом> | Установить дом другому игроку | managerfix.homes.admin.set |
-
-Лимиты домов: `managerfix.homes.limit.1/.3/.5/.10/.20`  
-Обход кулдауна: `managerfix.homes.bypass.cooldown`
-
-### TPA
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /tpa <игрок> | Запрос телепорта к игроку | managerfix.tpa.use |
-| /tpahere <игрок> | Запрос телепорта игрока к вам | managerfix.tpa.use |
-| /tpaccept | Принять запрос | managerfix.tpa.use |
-| /tpdeny | Отклонить запрос | managerfix.tpa.use |
-| /tpadeny | Отклонить запрос (alias) | managerfix.tpa.use |
-| /tpatoggle | Включить/выключить приём запросов | managerfix.tpa.use |
-| /tpablacklist [add|remove|list] [игрок] | Чёрный список TPA | managerfix.tpa.use |
-| /tpareply | Открыть GUI ответа (по клику) | managerfix.tpa.use |
-
-Обход кулдауна: `managerfix.tpa.bypass.cooldown`
-
-### RTP
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /rtp | Случайный телепорт | managerfix.rtp.use |
-
-Обход кулдауна: `managerfix.rtp.bypass.cooldown`  
-Расширенные варианты: `managerfix.rtp.option.1000`, `managerfix.rtp.option.5000`, `managerfix.rtp.option.randomplayer`
-
-### Spawn
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /spawn | Телепорт на спавн | managerfix.spawn.use |
-| /setspawn | Установить спавн | managerfix.spawn.set |
-| /editspawn | GUI настроек спавна | managerfix.spawn.edit |
-
-### Чат и ЛС
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /chattoggle | Переключить локальный/глобальный чат | managerfix.chat.use |
-| /pm <игрок> <сообщение> | Личное сообщение | managerfix.chat.use |
-| /tell <игрок> <сообщение> | Личное сообщение | managerfix.chat.use |
-| /msg <игрок> <сообщение> | Личное сообщение | managerfix.chat.use |
-| /r <сообщение> | Ответ последнему собеседнику | managerfix.chat.use |
-| /pmblock <игрок> | Блок ЛС от игрока | managerfix.chat.pmblock |
-| /ignore [add|remove|list] [игрок] | Игнор для ЛС | managerfix.chat.pmblock |
-| /chatspy | Видеть локальный чат вне радиуса | managerfix.chat.spy |
-| /commandspy | Видеть команды игроков | managerfix.chat.commandspy |
-
-Обход анти-спама: `managerfix.chat.bypass.cooldown`
-
-### AFK
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /afk | Включить/выключить AFK | managerfix.afk.use |
-
-Обход кика: `managerfix.afk.bypass`
-
-### Баны
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /ban <игрок> [причина] | Забанить игрока | managerfix.ban.use |
-| /tempban <игрок> <время> [причина] | Временный бан | managerfix.ban.use |
-| /unban <игрок> | Разбанить | managerfix.ban.unban |
-| /banlist | Открыть список банов | managerfix.ban.list |
+**Универсальные права:**
+- `managerfix.bypass.cooldown` — обход кулдаунов
+- `managerfix.bypass.limit` — обход лимитов
 
 ### Kits
 
