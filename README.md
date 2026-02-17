@@ -2,6 +2,8 @@
 
 Подробная документация плагина **ManagerFix** для серверов Minecraft (Paper 1.21.x, Java 21).
 
+**Автор:** tg:fixsirt
+
 ---
 
 ## Содержание
@@ -13,13 +15,15 @@
 5. [Структура файлов](#структура-файлов)
 6. [Главный конфиг](#главный-конфиг)
 7. [Модули](#модули)
-8. [Other (админ-утилиты)](#other-админ-утилиты)
-9. [Команды и права](#команды-и-права)
-10. [Языковые файлы](#языковые-файлы)
-11. [Хранилище данных](#хранилище-данных)
-12. [Кластер (Redis)](#кластер-redis)
-13. [PlaceholderAPI](#placeholderapi)
-14. [API для разработчиков](#api-для-разработчиков)
+8. [Команды модулей с кулдаунами](#команды-модулей-с-кулдаунами)
+9. [Other (админ-утилиты)](#other-админ-утилиты)
+10. [Команды и права](#команды-и-права)
+11. [Языковые файлы](#языковые-файлы)
+12. [Хранилище данных](#хранилище-данных)
+13. [Миграция данных](#миграция-данных)
+14. [Кластер (Redis)](#кластер-redis)
+15. [PlaceholderAPI](#placeholderapi)
+16. [API для разработчиков](#api-для-разработчиков)
 
 ---
 
@@ -85,24 +89,59 @@ plugins/ManagerFix/
 ├── config.yml              # Главный конфиг (модули, хранилище, кластер, общие настройки)
 ├── lang/
 │   └── ru.yml              # Русские сообщения (MiniMessage)
-├── modules/                # Конфиги модулей
-│   ├── afk.yml
-│   ├── announcer.yml
-│   ├── ban.yml
-│   ├── chat.yml
-│   ├── homes.yml
-│   ├── kits.yml
-│   ├── other.yml
-│   ├── rtp.yml
-│   ├── spawn.yml
-│   ├── tab.yml
-│   ├── tpa.yml
-│   ├── warps.yml
-│   └── worlds.yml
-└── data/                   # Создаётся при первом использовании
+├── modules/                # Конфиги модулей (каждый в отдельной папке)
+│   ├── afk/
+│   │   ├── config.yml      # Настройки AFK
+│   │   └── commands.yml    # Команды, алиасы, кулдауны
+│   ├── announcer/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── ban/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── chat/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── homes/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── items/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── kits/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── names/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── other/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── rtp/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── spawn/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── tab/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── tpa/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   ├── warps/
+│   │   ├── config.yml
+│   │   └── commands.yml
+│   └── worlds/
+│       ├── config.yml
+│       └── commands.yml
+└── data/                   # Данные (создаётся при первом использовании)
+    ├── players/            # Профили игроков (при YAML-хранилище)
     ├── warps.yml           # Варпы (при YAML-хранилище)
     ├── bans.yml            # Список банов
-    └── ...
+    ├── mutes.yml           # Список мутов
+    ├── kits.yml            # Наборы предметов
+    └── items.yml           # Сохранённые предметы
 ```
 
 Профили игроков (дома, кулдауны, метаданные) и при необходимости варпы хранятся в БД, если в `config.yml` указано `storage.type: MYSQL`.
@@ -175,6 +214,97 @@ plugins/ManagerFix/
 
 ---
 
+### Команды модулей с кулдаунами
+
+Каждый модуль имеет файл `modules/<название>/commands.yml`, который настраивает:
+
+- **Алиасы команд** — короткие названия
+- **Кулдауны** — задержка между использованиями (в секундах)
+- **Bypass permission** — разрешение для обхода кулдауна (по умолчанию OP)
+
+#### Формат commands.yml
+
+```yaml
+commands:
+  <command_name>:
+    enabled: true/false          # Включена ли команда
+    aliases: [alias1, alias2]    # Алиасы команды
+    cooldown: 5                  # Кулдаун в секундах
+    bypass-permission: managerfix.module.bypass.cooldown
+```
+
+#### Пример для Chat модуля
+
+```yaml
+commands:
+  pm:
+    enabled: true
+    aliases: [tell, msg, message]
+    cooldown: 1
+    bypass-permission: managerfix.chat.bypass.cooldown
+  clearchat:
+    enabled: true
+    aliases: [chatchlear, cc]
+    cooldown: 10
+    bypass-permission: managerfix.chat.admin
+```
+
+#### Сообщение о кулдауне
+
+Если игрок использует команду слишком часто, он получит сообщение:
+
+```
+Подождите ещё X сек. перед использованием этой команды!
+```
+
+#### Обход кулдауна
+
+Игроки с соответствующим `bypass-permission` не получают кулдаун.
+
+---
+
+### Миграция данных
+
+При переключении между `YAML` и `MYSQL` в `config.yml` плагин **автоматически** переносит данные:
+
+#### Что мигрирует:
+
+- ✅ Варпы (`data/warps.yml` ↔ таблица `warps`)
+- ✅ Киты (`data/kits.yml` ↔ таблица `kits`)
+- ✅ Баны (`data/bans.yml` ↔ таблица `bans`)
+- ✅ Муты (`data/mutes.yml` ↔ таблица `mutes`)
+- ✅ Сохранённые предметы (`data/items.yml` ↔ таблица `saved_items`)
+- ✅ Профили игроков (мигрируются при входе/выходе)
+
+#### Как работает:
+
+1. При старте плагин проверяет `data/last_storage_type.txt`
+2. Если тип хранилища изменился → запускается миграция
+3. Данные копируются, но **не удаляются** из старого хранилища
+4. После миграции создаётся флаг `data/migration_done.flag`
+
+#### Логи миграции:
+
+```
+[INFO] Storage type changed: YAML → MYSQL
+[INFO] Starting data migration...
+[INFO] Migrated warps to MySQL.
+[INFO] Migrated kits to MySQL.
+[INFO] Migrated bans to MySQL.
+[INFO] Migrated mutes to MySQL.
+[INFO] Migrated items to MySQL.
+[INFO] Migration completed successfully!
+```
+
+#### Безопасность:
+
+- Данные **не удаляются** при миграции
+- Используется `INSERT ... ON DUPLICATE KEY UPDATE`
+- Миграция запускается **один раз** при смене типа хранилища
+- Если данных нет в исходном хранилище → миграция пропускается
+
+---
+
 ### Chat (чат)
 
 **Назначение:** Формат сообщений, локальный/глобальный чат, анти-спам, hover, локальные звуки.
@@ -205,8 +335,8 @@ plugins/ManagerFix/
 | format-quit | Формат выхода. |
 | format-death | Формат смерти. |
 
-**Команды:** `/chattoggle`, `/pm`, `/tell`, `/msg`, `/r`, `/pmblock`, `/ignore`, `/chatspy`, `/commandspy`  
-**Права:** `managerfix.chat.use`, `managerfix.chat.bypass.cooldown`, `managerfix.chat.spy`
+**Команды:** `/chattoggle`, `/pm`, `/tell`, `/msg`, `/r`, `/pmblock`, `/ignore`, `/chatspy`, `/commandspy`, `/clearchat`, `/chatchlear`
+**Права:** `managerfix.chat.use`, `managerfix.chat.bypass.cooldown`, `managerfix.chat.spy`, `managerfix.command.clearchat`
 
 ---
 
@@ -241,6 +371,39 @@ plugins/ManagerFix/
 **Права:** `managerfix.kits.use`, `managerfix.kits.create`, `managerfix.kits.kit.<имя>`
 
 ---
+
+### Items (предметы)
+
+**Назначение:** Управление предметами в руке: название, описание, количество, зачарования, атрибуты, сохранение и выдача.
+
+**Конфиг:** `modules/items/config.yml`
+
+| Параметр | Описание |
+|----------|----------|
+| messages.no-permission | Сообщение об отсутствии прав. |
+| messages.no-item | Сообщение, если предмет не в руке. |
+| messages.invalid-number | Сообщение о неверном числе. |
+| messages.item-saved | Сообщение о сохранении предмета. |
+| messages.item-given | Сообщение о выдаче предмета. |
+
+**Команды:** `/i name`, `/i lore`, `/i amount`, `/i enchant`, `/i attribute`, `/i save`, `/i give`, `/i reload`
+
+#### Примеры использования:
+
+```
+/i name <название>              # Изменить название предмета
+/i lore <описание>              # Изменить описание
+/i amount <число>               # Изменить количество
+/i enchant <зачарование> <уровень>  # Зачаровать
+/i save <имя>                   # Сохранить предмет
+/i give <ник> <предмет> [кол-во]  # Выдать предмет игроку
+/i reload                       # Перезагрузить конфиг
+```
+
+**Права:** `managerfix.items.name`, `managerfix.items.lore`, `managerfix.items.amount`, `managerfix.items.enchant`, `managerfix.items.attribute`, `managerfix.items.save`, `managerfix.items.give`, `managerfix.items.reload`
+
+---
+
 
 ### RTP (случайная телепортация)
 
@@ -550,6 +713,7 @@ plugins/ManagerFix/
 | /freeze <игрок> | Заморозить игрока | managerfix.other.freeze |
 | /lockchat | Закрыть/открыть чат | managerfix.other.chatlock |
 | /broadcast <сообщение> | Объявление в чат и title | managerfix.other.broadcast |
+| /clearchat, /chatchlear | Очистить чат | managerfix.command.clearchat |
 | /sudo <игрок> <команда> | Выполнить команду от игрока | managerfix.other.sudo |
 | /ping [игрок] | Пинг игрока | managerfix.other.ping |
 | /coords | Координаты | managerfix.other.coords |
