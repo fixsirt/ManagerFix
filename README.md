@@ -1,726 +1,834 @@
-# ManagerFix — подробная документация
+# 🎮 ManagerFix — Универсальный плагин для Paper 1.21.x
 
-Подробная документация плагина **ManagerFix** для серверов Minecraft (Paper 1.21.x, Java 21).
+<div align="center">
 
-**Автор:** tg:fixsirt
+![Версия](https://img.shields.io/badge/версия-1.0.0-blue)
+![Java](https://img.shields.io/badge/Java-21-orange)
+![Paper](https://img.shields.io/badge/Paper-1.21.x-green)
+![Лицензия](https://img.shields.io/badge/лицензия-MIT-gray)
 
----
+**Модульный плагин для Minecraft серверов с мощным API и красивыми GUI**
 
-## Содержание
+[Особенности](#-особенности) • [Установка](#-установка) • [Модули](#-модули) • [API](#-api-для-разработчиков) • [Поддержка](#-поддержка)
 
-1. [Описание](#описание)
-2. [Требования](#требования)
-3. [Установка и обновление](#установка-и-обновление)
-4. [Сборка из исходников](#сборка-из-исходников)
-5. [Структура файлов](#структура-файлов)
-6. [Главный конфиг](#главный-конфиг)
-7. [Модули](#модули)
-8. [Команды модулей с кулдаунами](#команды-модулей-с-кулдаунами)
-9. [Other (админ-утилиты)](#other-админ-утилиты)
-10. [Все команды](#команды-и-права) — см. [COMMANDS.md](COMMANDS.md)
-11. [Языковые файлы](#языковые-файлы)
-12. [Хранилище данных](#хранилище-данных)
-13. [Миграция данных](#миграция-данных)
-14. [Кластер (Redis)](#кластер-redis)
-15. [PlaceholderAPI](#placeholderapi)
-16. [API для разработчиков](#api-для-разработчиков)
+</div>
 
 ---
 
-## Описание
+## 📖 Содержание
 
-**ManagerFix** — модульный плагин для Paper 1.21.x (Java 21), объединяющий типовые функции сервера: дома, варпы, киты, TPA, RTP, AFK, чат, баны, спавн, миры, таб-лист, объявления и расширенный административный пакет **Other**.
+<details>
+<summary>Нажмите, чтобы развернуть полное содержание</summary>
 
-Особенности:
+1. [Описание](#-описание)
+2. [Особенности](#-особенности)
+3. [Требования](#-требования)
+4. [Установка](#-установка)
+5. [Структура файлов](#-структура-файлов)
+6. [Модули](#-модули)
+   - [Warps](#warps-варпы)
+   - [Homes](#homes-дома)
+   - [Spawn](#spawn-спавн)
+   - [Chat](#chat-чат)
+   - [TPA](#tpa-телепортация)
+   - [RTP](#rtp-случайная-телепортация)
+   - [Ban](#ban-баны)
+   - [AFK](#afk-афк)
+   - [Kits](#kits-наборы)
+   - [Items](#items-предметы)
+   - [Worlds](#worlds-миры)
+   - [Other](#other-админ-утилиты)
+   - [Tab](#tab-таб-лист)
+   - [Announcer](#announcer-объявления)
+   - [Names](#names-ники)
+7. [Конфигурация](#-конфигурация)
+8. [Права доступа](#-права-доступа)
+9. [PlaceholderAPI](#-placeholderapi)
+10. [API для разработчиков](#-api-для-разработчиков)
+11. [Сборка из исходников](#-сборка-из-исходников)
+12. [Поддержка](#-поддержка)
 
-- **Модульность** — каждый функционал включается/выключается в конфиге или через GUI.
-- **Единая архитектура** — модули, EventBus, сервисы, асинхронное хранилище (YAML/MySQL).
-- **GUI** — меню варпов, домов, китов, банов, миров, TPA-подтверждение, главное меню.
-- **Сообщения и настройки** — все тексты из языковых файлов (MiniMessage), настройки из `modules/*.yml`.
-- **Опционально**: PlaceholderAPI, Vault (префиксы в чате), кластер Redis.
-
-**Автор:** tg:fixsirt
-
----
-
-## Требования
-
-- **Сервер:** Paper 1.21.x (включая 1.21.1)
-- **Java:** 21
-- **Опционально:** PlaceholderAPI (плейсхолдеры в чате, табе, объявлениях), Vault + плагин совместимости (префиксы в чате)
-
----
-
-## Установка и обновление
-
-1. Скачайте `ManagerFix-1.0.0.jar` (или актуальную версию).
-2. Поместите JAR в папку `plugins/` сервера.
-3. Перезапустите сервер (первая загрузка всегда через полный рестарт).
-4. Настройте `plugins/ManagerFix/config.yml` и при необходимости файлы в `plugins/ManagerFix/modules/`.
-5. Языковой файл: `plugins/ManagerFix/lang/ru.yml`.
-
-Обновление:
-
-- Сохраните ваши `config.yml`, `modules/*.yml`, `lang/`.
-- Замените JAR, перезапустите сервер.
-- Сравните новые дефолтные модули с вашим конфигом, при необходимости перенесите новые ключи.
+</details>
 
 ---
 
-## Сборка из исходников
+## 📝 Описание
 
-Требуется JDK 21 и Maven.
+**ManagerFix** — это современный модульный плагин для серверов Minecraft (Paper 1.21.x), объединяющий все необходимые функции в одном решении:
 
-1. Установите JDK 21 и убедитесь, что `java -version` показывает 21.
-2. Выполните сборку:
+- 🏠 **Система домов** с лимитами и GUI
+- 📍 **Варпы** с категориями и иконками
+- 💬 **Продвинутый чат** с локальным/глобальным режимом
+- 🛡️ **Система банов** с GUI и историей
+- 🎒 **Киты** с настраиваемыми кулдаунами
+- 🗺️ **Управление мирами** и многое другое
 
-```bash
-mvn -q -DskipTests package
-```
-
-Готовый JAR лежит в `target/ManagerFix-1.0.0.jar`.
+Плагин поддерживает **YAML** и **MySQL/MariaDB** хранилища, имеет встроенное **API** для интеграции с другими плагинами и полностью настраиваемые **GUI интерфейсы**.
 
 ---
 
-## Структура файлов
+## ✨ Особенности
+
+| 🎯 | Особенность | Описание |
+|----|-------------|----------|
+| 🧩 | **Модульность** | Включайте только нужные функции в `config.yml` |
+| 🎨 | **Красивые GUI** | Стильные меню с анимацией и кастомизацией |
+| 💾 | **2 типа хранилищ** | YAML (файлы) или MySQL/MariaDB (база данных) |
+| 🔄 | **Миграция данных** | Автоматический перенос между YAML и MySQL |
+| 🔌 | **API** | Готовое API для интеграции с другими плагинами |
+| 🌐 | **Кластер Redis** | Синхронизация между несколькими серверами |
+| 📦 | **PlaceholderAPI** | Поддержка плейсхолдеров в чате и GUI |
+| 🛠️ | **Vault** | Интеграция с экономикой и префиксами |
+| ⚡ | **Асинхронность** | Не блокирует основной поток сервера |
+| 🎭 | **Темы GUI** | Настраиваемый дизайн интерфейсов |
+
+---
+
+## 📋 Требования
+
+| Компонент | Версия | Обязательно |
+|-----------|--------|-------------|
+| **Сервер** | Paper 1.21.x | ✅ Да |
+| **Java** | 21+ | ✅ Да |
+| **PlaceholderAPI** | 2.11+ | ❌ Опционально |
+| **Vault** | 1.7+ | ❌ Опционально |
+| **LuckPerms** | 5.x | ❌ Опционально |
+| **ProtocolLib** | 5.x | ❌ Опционально |
+
+---
+
+## 📥 Установка
+
+### Быстрая установка
+
+1. **Скачайте** плагин:
+   ```bash
+   # Или скопируйте из target/ после сборки
+   ManagerFix-1.0.0.jar
+   ```
+
+2. **Поместите** файл в папку сервера:
+   ```
+   сервер/
+   └── plugins/
+       └── ManagerFix-1.0.0.jar
+   ```
+
+3. **Запустите сервер** — конфигурация создастся автоматически
+
+4. **Настройте** файлы в `plugins/ManagerFix/`:
+   - `config.yml` — главный конфиг
+   - `modules/*.yml` — настройки модулей
+   - `lang/ru.yml` — языковые сообщения
+
+### Обновление
+
+1. Сохраните папки `config.yml`, `modules/`, `lang/`
+2. Замените `.jar` файл на новую версию
+3. Перезапустите сервер
+4. При необходимости обновите конфиги
+
+---
+
+## 📁 Структура файлов
 
 ```
 plugins/ManagerFix/
-├── config.yml              # Главный конфиг (модули, хранилище, кластер, общие настройки)
-├── lang/
-│   └── ru.yml              # Русские сообщения (MiniMessage)
-├── modules/                # Конфиги модулей (каждый в отдельной папке)
+│
+├── 📄 config.yml              # Главный конфиг (модули, БД, кластер)
+├── 📂 lang/
+│   └── ru.yml                 # Русские сообщения (MiniMessage)
+│
+├── 📂 modules/                # Конфигурация модулей
 │   ├── afk/
-│   │   ├── config.yml      # Настройки AFK
-│   │   └── commands.yml    # Команды, алиасы, кулдауны
+│   │   ├── config.yml         # Настройки AFK
+│   │   └── commands.yml       # Команды и кулдауны
 │   ├── announcer/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── ban/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── chat/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── homes/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── items/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── kits/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── names/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── other/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── rtp/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── spawn/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── tab/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── tpa/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   ├── warps/
-│   │   ├── config.yml
-│   │   └── commands.yml
 │   └── worlds/
-│       ├── config.yml
-│       └── commands.yml
-└── data/                   # Данные (создаётся при первом использовании)
-    ├── players/            # Профили игроков (при YAML-хранилище)
-    ├── warps.yml           # Варпы (при YAML-хранилище)
-    ├── bans.yml            # Список банов
-    ├── mutes.yml           # Список мутов
-    ├── kits.yml            # Наборы предметов
-    └── items.yml           # Сохранённые предметы
+│
+├── 📂 data/                   # Данные (при YAML хранилище)
+│   ├── players/               # Профили игроков
+│   ├── warps.yml              # Варпы
+│   ├── bans.yml               # Баны
+│   ├── mutes.yml              # Муты
+│   ├── kits.yml               # Наборы
+│   └── items.yml              # Предметы
+│
+└── 📂 storage/
+    └── last_storage_type.txt  # Тип хранилища (для миграции)
 ```
 
-Профили игроков (дома, кулдауны, метаданные) и при необходимости варпы хранятся в БД, если в `config.yml` указано `storage.type: MYSQL`.
+---
+
+## ⚙️ Модули
+
+### Warps (Варпы)
+
+> Система варпов с GUI, кулдаунами и правами доступа
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/warps` | Открыть GUI варпов | `managerfix.command.warps` |
+| `/warp <имя>` | Телепорт на варп | `managerfix.command.warp` |
+| `/setwarp <имя>` | Создать варп | `managerfix.command.setwarp` |
+| `/delwarp <имя>` | Удалить варп | `managerfix.command.delwarp` |
+| `/editwarp <имя>` | Редактировать варп | `managerfix.command.editwarp` |
+
+**Конфигурация** (`modules/warps/config.yml`):
+```yaml
+settings:
+  max-warps-per-player: 10      # Максимум варпов на игрока
+  teleport-delay: 3             # Задержка телепортации (сек)
+  cooldown: 5                   # Кулдаун между телепортациями
+  
+gui:
+  enabled: true                 # Включить GUI
+  title: "Варпы сервера"
+  
+categories:                     # Категории в GUI
+  spawn:
+    icon: GRASS_BLOCK
+    name: "Спавн"
+  pvp:
+    icon: DIAMOND_SWORD
+    name: "PVP Арена"
+```
 
 ---
 
-## Главный конфиг
+### Homes (Дома)
 
-Файл: `config.yml`
+> Личные точки телепортации игроков с лимитами
 
-| Параметр | Описание |
-|----------|----------|
-| **modules** | Включение/выключение модулей (`true`/`false`). Имена: warps, homes, spawn, chat, tpa, rtp, ban, afk, kits, worlds, other, tab, announcer, names. |
-| **storage.type** | `YAML` или `MYSQL` — тип хранилища для профилей и (при поддержке) варпов. |
-| **database** | Параметры MySQL: host, port, database, username, password, pool-size. Используется при `storage.type: MYSQL`. |
-| **cluster** | Кластер для нескольких серверов: enabled, type (REDIS), server-id, redis (host, port, password, channel-prefix). |
-| **settings** | debug, default-language (например `ru`), profile-autosave-minutes, warp-cooldown-seconds, gui-animation-ticks. |
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/sethome [название]` | Установить дом | `managerfix.command.sethome` |
+| `/home [название]` | Телепорт домой | `managerfix.command.home` |
+| `/delhome <название>` | Удалить дом | `managerfix.command.delhome` |
+| `/homes` | GUI домов | `managerfix.command.homes` |
+| `/adminhomes <игрок>` | Дома другого игрока | `managerfix.command.adminhomes` |
 
----
-
-## Модули
-
-### AFK
-
-**Назначение:** Режим «отошёл», авто-AFK по отсутствию движения, опциональный кик и блокировка команд.
-
-**Конфиг:** `modules/afk.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| afk-timeout-seconds | Секунд без движения до автоматического перевода в AFK. |
-| broadcast-afk | Сообщать ли в чат о входе/выходе из AFK. |
-| block-commands-while-afk | Блокировать команды в AFK (кроме /afk и с обходом по праву). |
-| kick-timeout-seconds | Кикать в AFK через столько секунд (0 — отключено). |
-
-**Команды:** `/afk`  
-**Права:** `managerfix.afk.use`, `managerfix.afk.bypass`  
-**PlaceholderAPI:** `%managerfix_afk%`
+**Лимиты по правам:**
+```
+managerfix.homes.limit.1    — 1 дом
+managerfix.homes.limit.3    — 3 дома
+managerfix.homes.limit.5    — 5 домов
+managerfix.homes.limit.10   — 10 домов
+managerfix.homes.limit.20   — 20 домов
+```
 
 ---
 
-### Announcer (объявления)
+### Spawn (Спавн)
 
-**Назначение:** Периодическая рассылка сообщений в чат или в action bar.
+> Точка спавна с настройками телепортации
 
-**Конфиг:** `modules/announcer.yml`
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/spawn` | Телепорт на спавн | `managerfix.command.spawn` |
+| `/setspawn` | Установить спавн | `managerfix.command.setspawn` |
+| `/editspawn` | Настройки спавна | `managerfix.command.editspawn` |
 
-| Параметр | Описание |
-|----------|----------|
-| interval-seconds | Интервал между сообщениями (в секундах). |
-| messages | Список строк (MiniMessage). Поддерживается PlaceholderAPI. |
-| broadcast-type | `CHAT` или `ACTION_BAR`. |
-
----
-
-### Ban (баны)
-
-**Назначение:** Баны и временные баны, кик при входе, GUI со списком банов.
-
-**Конфиг:** `modules/ban.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| default-duration | По умолчанию постоянный бан. |
-| broadcast-bans | Оповещать ли о банах в чат. |
-| kick-message | Текст кика (MiniMessage). Плейсхолдер: `{reason}`. |
-
-**Команды:** `/ban`, `/unban`, `/tempban`, `/banlist`  
-**Права:** `managerfix.ban.use`, `managerfix.ban.list`, `managerfix.ban.unban`
+**Конфигурация:**
+```yaml
+settings:
+  teleport-delay-seconds: 5     # Задержка телепортации
+  cancel-on-move: true          # Отмена при движении
+  cancel-on-damage: true        # Отмена при уроне
+  spawn-on-join: false          # Телепорт при входе
+  spawn-on-death: false         # Телепорт после смерти
+  safe-teleport: true           # Проверка безопасности
+```
 
 ---
 
-### Команды модулей с кулдаунами
+### Chat (Чат)
 
-Каждый модуль имеет файл `modules/<название>/commands.yml`, который настраивает:
+> Продвинутая система чата с локальным и глобальным режимом
 
-- **Алиасы команд** — короткие названия
-- **Кулдауны** — задержка между использованиями (в секундах)
-- **Bypass permission** — разрешение для обхода кулдауна (по умолчанию OP)
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/chattoggle` | Переключить режим чата | `managerfix.command.chattoggle` |
+| `/pm <игрок> <сообщение>` | Личное сообщение | `managerfix.command.pm` |
+| `/r <сообщение>` | Ответить на ЛС | `managerfix.command.reply` |
+| `/chatspy` | Просмотр локального чата | `managerfix.command.chatspy` |
+| `/commandspy` | Просмотр команд | `managerfix.command.commandspy` |
+| `/pmblock <игрок>` | Заблокировать ЛС | `managerfix.command.pmblock` |
+| `/ignore add/remove <игрок>` | Игнор-лист | `managerfix.command.ignore` |
+| `/clearchat` | Очистить чат | `managerfix.command.clearchat` |
 
-#### Формат commands.yml
+**Особенности:**
+- 🎯 **Локальный чат** — сообщения видны в радиусе 60 блоков
+- 🌍 **Глобальный чат** — префикс `!` для отправки всем
+- 🔊 **Звуки** — при отправке/получении ЛС и локальных сообщений
+- 💬 **Тултипы** — при наведении на ник (баланс, ЛКМ — ЛС)
+- 🛡️ **Анти-спам** — кулдаун между сообщениями
+
+**Конфигурация:**
+```yaml
+format-local: "{badge} {prefix}{player}{suffix}: {message}"
+format-global: "{badge} {prefix}{player}{suffix}: {message}"
+badge-local: "｢𝐋｣"
+badge-global: "｢𝐆｣"
+local-radius: 60
+spam-cooldown: 2
+```
+
+---
+
+### TPA (Телепортация)
+
+> Система запросов телепортации к игрокам
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/tpa <игрок>` | Запрос телепортации | `managerfix.command.tpa` |
+| `/tpahere <игрок>` | Запросить игрока к себе | `managerfix.command.tpahere` |
+| `/tpaccept` | Принять запрос | `managerfix.command.tpaccept` |
+| `/tpdeny` | Отклонить запрос | `managerfix.command.tpdeny` |
+| `/tpatoggle` | Вкл/выкл получение запросов | `managerfix.command.tpatoggle` |
+| `/tpablacklist` | Чёрный список TPA | `managerfix.command.tpablacklist` |
+
+**Конфигурация:**
+```yaml
+request-timeout: 60           # Время жизни запроса (сек)
+teleport-delay: 5             # Задержка телепортации
+cooldown: 10                  # Кулдаун между запросами
+cancel-on-move: true          # Отмена при движении
+```
+
+---
+
+### RTP (Случайная телепортация)
+
+> Телепортация в случайную безопасную точку
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/rtp` | Случайная телепортация | `managerfix.command.rtp` |
+
+**Опции по правам:**
+```
+managerfix.rtp.option.1000      — RTP до 1000 блоков
+managerfix.rtp.option.5000      — RTP до 5000 блоков
+managerfix.rtp.option.randomplayer — RTP к случайному игроку
+```
+
+**Конфигурация:**
+```yaml
+min-distance: 100             # Минимальное расстояние
+max-distance: 5000            # Максимальное расстояние
+cooldown: 30                  # Кулдаун (секунды)
+```
+
+---
+
+### Ban (Баны)
+
+> Система блокировок с GUI и историей
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/ban <игрок> [время] [причина]` | Забанить | `managerfix.command.ban` |
+| `/unban <игрок>` | Разбанить | `managerfix.command.unban` |
+| `/banip <игрок> <время> <причина>` | Бан по IP | `managerfix.command.banip` |
+| `/unbanip <IP|игрок>` | Разбан по IP | `managerfix.command.unbanip` |
+| `/banlist` | GUI списка банов | `managerfix.command.banlist` |
+| `/mute <игрок> [время] [причина]` | Мут | `managerfix.command.mute` |
+| `/unmute <игрок>` | Размут | `managerfix.command.unmute` |
+| `/kick <игрок> [причина]` | Кикнуть | `managerfix.command.kick` |
+
+**Конфигурация:**
+```yaml
+default-duration: permanent     # Бан по умолчанию
+broadcast-bans: true            # Оповещать о банах
+kick-message: "<red>Вы забанены!</red>"
+```
+
+---
+
+### AFK (АФК)
+
+> Режим «отошёл» с авто-определением
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/afk` | Вкл/выкл AFK режим | `managerfix.command.afk` |
+| `/top afk` | Топ по времени AFK | `managerfix.command.top` |
+
+**Конфигурация:**
+```yaml
+afk-timeout-seconds: 300        # Авто-AFK через 5 минут
+broadcast-afk: true             # Оповещать о входе/выходе
+block-commands-while-afk: false # Блокировать команды
+kick-timeout-seconds: 0         # Кик в AFK (0 = откл)
+```
+
+**PlaceholderAPI:** `%managerfix_afk%` → `true` / `false`
+
+---
+
+### Kits (Наборы)
+
+> Выдача наборов предметов с кулдауном
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/kit [название]` | Получить кит | `managerfix.command.kit` |
+| `/kits` | GUI китов | `managerfix.command.kits` |
+| `/kit create <название>` | Создать кит | `managerfix.kits.create` |
+| `/editkits` | Админ GUI китов | `managerfix.command.editkits` |
+
+**Права на киты:**
+```
+managerfix.kits.kit.<название>  — Доступ к конкретному киту
+```
+
+**Конфигурация:**
+```yaml
+default-cooldown: 3600          # Кулдаун по умолчанию (1 час)
+gui:
+  enabled: true
+  title: "Наборы предметов"
+```
+
+---
+
+### Items (Предметы)
+
+> Редактирование предметов в руке
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/i name <название>` | Изменить название | `managerfix.items.name` |
+| `/i lore <описание>` | Изменить описание | `managerfix.items.lore` |
+| `/i amount <число>` | Изменить количество | `managerfix.items.amount` |
+| `/i enchant <зачарование> <уровень>` | Зачаровать | `managerfix.items.enchant` |
+| `/i save <имя>` | Сохранить предмет | `managerfix.items.save` |
+| `/i give <ник> <предмет> [кол-во]` | Выдать предмет | `managerfix.items.give` |
+| `/i reload` | Перезагрузить конфиг | `managerfix.items.reload` |
+
+**Примеры:**
+```
+/i name &6Легендарный меч
+/i lore &7Наносит урон всем врагам
+/i amount 64
+/i enchant sharpness 5
+/i save epic_sword
+/i give Notch diamond_sword 1
+```
+
+---
+
+### Worlds (Миры)
+
+> Управление мирами сервера
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/world` | GUI миров | `managerfix.command.world` |
+| `/world <мир>` | Телепорт в мир | `managerfix.command.world` |
+| `/world tp <мир>` | Телепорт в мир | `managerfix.command.world` |
+| `/world create <мир> [генератор]` | Создать мир | `managerfix.worlds.create` |
+| `/world delete <мир>` | Удалить мир | `managerfix.worlds.delete` |
+
+**Генераторы:** `default`, `flat`, `void`
+
+---
+
+### Other (Админ-утилиты)
+
+> Пакет административных команд (Essentials-стиль)
+
+**Основные команды:**
+
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/fly [игрок]` | Режим полёта | `managerfix.other.fly` |
+| `/god [игрок]` | Бессмертие | `managerfix.other.god` |
+| `/heal [игрок]` | Лечение | `managerfix.other.heal` |
+| `/feed [игрок]` | Насыщение | `managerfix.other.food` |
+| `/repair [all] [игрок]` | Ремонт предметов | `managerfix.other.repair` |
+| `/vanish` | Режим невидимости | `managerfix.other.vanish` |
+| `/workbench` | Верстак | `managerfix.other.workbench` |
+| `/anvil` | Наковальня | `managerfix.other.anvil` |
+| `/enderchest [игрок]` | Эндер-сундук | `managerfix.other.ec` |
+| `/invsee <игрок>` | Инвентарь игрока | `managerfix.other.invsee` |
+| `/gmc /gms /gmsp [игрок]` | Режим игры | `managerfix.other.gamemode.*` |
+
+**Телепортация:**
+| Команда | Описание |
+|---------|----------|
+| `/tp to <игрок>` | Телепорт к игроку |
+| `/tp here <игрок>` | Телепорт игрока к себе |
+| `/tp location <x> <y> <z>` | Телепорт по координатам |
+| `/tp top` | Телепорт на верхнюю точку |
+| `/back` | Возврат на предыдущую точку |
+| `/dback` | Возврат на место смерти |
+| `/pull <игрок>` | Притянуть игрока |
+| `/push <игрок>` | Телепортироваться к игроку |
+
+**Утилиты:**
+| Команда | Описание |
+|---------|----------|
+| `/killmob <тип> <радиус>` | Убить мобов |
+| `/spawnmob <тип> <кол-во>` | Заспавнить мобов |
+| `/near` | Игроки рядом |
+| `/weather <clear|rain|thunder>` | Погода |
+| `/day /night` | Время суток |
+| `/health [игрок]` | Показать здоровье |
+| `/food [игрок]` | Показать голод |
+| `/food god` | FoodGod (голод не тратится) |
+| `/clear [игрок]` | Очистить инвентарь |
+| `/give <игрок> <предмет> <кол-во>` | Выдать предмет |
+| `/pinfo <игрок>` | Информация об игроке |
+| `/freeze <игрок>` | Заморозить игрока |
+| `/lockchat` | Закрыть/открыть чат |
+| `/broadcast <сообщение>` | Объявление |
+| `/sudo <игрок> <команда>` | Выполнить от имени |
+| `/ping [игрок]` | Показать пинг |
+| `/coords` | Показать координаты |
+| `/seen <игрок>` | Когда был в сети |
+| `/speed <значение>` | Скорость полёта/ходьбы |
+
+---
+
+### Tab (Таб-лист)
+
+> Кастомный header/footer в таблице игроков
+
+**Конфигурация:**
+```yaml
+header: |
+  <#FFD700>⚡ ManagerFix Server ⚡
+  <gray>Онлайн: <white>%server_online%</white>
+footer: |
+  <gray>tps: %server_tps_1%</gray>
+update-interval-ticks: 20       # Частота обновления (1 сек)
+```
+
+---
+
+### Announcer (Объявления)
+
+> Периодическая рассылка сообщений
+
+**Конфигурация:**
+```yaml
+interval-seconds: 60            # Интервал (секунды)
+broadcast-type: CHAT            # CHAT или ACTION_BAR
+messages:
+  - "<gold>Добро пожаловать на наш сервер!</gold>"
+  - "<yellow>Купить донат: <aqua>donate.example.com</aqua></yellow>"
+  - "<green>Техническая поддержка: <aqua>discord.example.com</aqua></green>"
+```
+
+---
+
+### Names (Ники)
+
+> Кастомные никнеймы с поддержкой цветов
+
+**Команды:**
+| Команда | Описание | Право |
+|---------|----------|-------|
+| `/nick <ник>` | Сменить ник | `managerfix.names.nick` |
+| `/nickadmin <игрок> <ник|reset>` | Сменить ник другому | `managerfix.names.admin` |
+| `/names` | Админ GUI ников | `managerfix.names.admin` |
+| `/hidenick` | Скрыть/показать ник | `managerfix.names.hidenick` |
+
+**Обходы:**
+```
+managerfix.names.bypass.cooldown  — Обход кулдауна
+managerfix.names.bypass.length    — Обход лимита длины
+managerfix.names.bypass.format    — Любые цвета/HEX в нике
+```
+
+---
+
+## 🔧 Конфигурация
+
+### Главный конфиг (`config.yml`)
 
 ```yaml
-commands:
-  <command_name>:
-    enabled: true/false          # Включена ли команда
-    aliases: [alias1, alias2]    # Алиасы команды
-    cooldown: 5                  # Кулдаун в секундах
-    bypass-permission: managerfix.module.bypass.cooldown
+# Включение модулей
+modules:
+  warps: true
+  homes: true
+  spawn: true
+  chat: true
+  tpa: true
+  rtp: true
+  ban: true
+  afk: true
+  kits: true
+  worlds: false
+  other: true
+  tab: true
+  announcer: true
+  names: true
+  items: true
+
+# Тип хранилища: YAML или MYSQL
+storage:
+  type: YAML
+
+# Настройки MySQL (если storage.type: MYSQL)
+database:
+  host: localhost
+  port: 3306
+  database: managerfix
+  username: root
+  password: password
+  pool-size: 10
+
+# Глобальные настройки
+settings:
+  debug: false                  # Режим отладки
+  default-language: ru          # Язык по умолчанию
+  profile-autosave-minutes: 10  # Автосохранение профилей
+  warp-cooldown-seconds: 5      # Кулдаун варпов
+  gui-animation-ticks: 20       # Анимация GUI
 ```
-
-#### Пример для Chat модуля
-
-```yaml
-commands:
-  pm:
-    enabled: true
-    aliases: [tell, msg, message]
-    cooldown: 1
-    bypass-permission: managerfix.chat.bypass.cooldown
-  clearchat:
-    enabled: true
-    aliases: [chatchlear, cc]
-    cooldown: 10
-    bypass-permission: managerfix.chat.admin
-```
-
-#### Сообщение о кулдауне
-
-Если игрок использует команду слишком часто, он получит сообщение:
-
-```
-Подождите ещё X сек. перед использованием этой команды!
-```
-
-#### Обход кулдауна
-
-Игроки с соответствующим `bypass-permission` не получают кулдаун.
-
----
 
 ### Миграция данных
 
-При переключении между `YAML` и `MYSQL` в `config.yml` плагин **автоматически** переносит данные:
+При переключении между `YAML` и `MYSQL` плагин **автоматически** переносит данные:
 
-#### Что мигрирует:
+- ✅ Варпы, киты, баны, муты
+- ✅ Профили игроков (дома, кулдауны)
+- ✅ Сохранённые предметы
 
-- ✅ Варпы (`data/warps.yml` ↔ таблица `warps`)
-- ✅ Киты (`data/kits.yml` ↔ таблица `kits`)
-- ✅ Баны (`data/bans.yml` ↔ таблица `bans`)
-- ✅ Муты (`data/mutes.yml` ↔ таблица `mutes`)
-- ✅ Сохранённые предметы (`data/items.yml` ↔ таблица `saved_items`)
-- ✅ Профили игроков (мигрируются при входе/выходе)
-
-#### Как работает:
-
-1. При старте плагин проверяет `data/last_storage_type.txt`
-2. Если тип хранилища изменился → запускается миграция
-3. Данные копируются, но **не удаляются** из старого хранилища
-4. После миграции создаётся флаг `data/migration_done.flag`
-
-#### Логи миграции:
-
+**Команда миграции:**
 ```
-[INFO] Storage type changed: YAML → MYSQL
-[INFO] Starting data migration...
-[INFO] Migrated warps to MySQL.
-[INFO] Migrated kits to MySQL.
-[INFO] Migrated bans to MySQL.
-[INFO] Migrated mutes to MySQL.
-[INFO] Migrated items to MySQL.
-[INFO] Migration completed successfully!
+/migrate yaml2sql    # Перенос из YAML в MySQL
+/migrate sql2yaml    # Перенос из MySQL в YAML
 ```
 
-#### Безопасность:
+---
 
-- Данные **не удаляются** при миграции
-- Используется `INSERT ... ON DUPLICATE KEY UPDATE`
-- Миграция запускается **один раз** при смене типа хранилища
-- Если данных нет в исходном хранилище → миграция пропускается
+## 🎫 Права доступа
+
+### Универсальные права
+
+| Право | Описание |
+|-------|----------|
+| `managerfix.admin` | Полный доступ к админ-панели |
+| `managerfix.reload` | Перезагрузка плагина |
+| `managerfix.menu` | Открытие главного меню |
+| `managerfix.module.toggle` | Вкл/выкл модулей через GUI |
+| `managerfix.bypass.cooldown` | Обход всех кулдаунов |
+| `managerfix.bypass.limit` | Обход всех лимитов |
+
+### Права модулей
+
+| Модуль | Права |
+|--------|-------|
+| **Warps** | `managerfix.warps.*`, `managerfix.warps.warp.<имя>` |
+| **Homes** | `managerfix.homes.*`, `managerfix.homes.limit.N` |
+| **Chat** | `managerfix.chat.*`, `managerfix.chat.color`, `managerfix.chat.spy` |
+| **Ban** | `managerfix.ban.*`, `managerfix.ban.mute`, `managerfix.ban.kick` |
+| **TPA** | `managerfix.tpa.*`, `managerfix.tpa.bypass.cooldown` |
+| **AFK** | `managerfix.afk.*`, `managerfix.afk.bypass` |
+| **Kits** | `managerfix.kits.*`, `managerfix.kits.kit.<название>` |
+| **Other** | `managerfix.other.*` (fly, god, gamemode, vanish, и т.д.) |
 
 ---
 
-### Chat (чат)
+## 🔌 PlaceholderAPI
 
-**Назначение:** Формат сообщений, локальный/глобальный чат, анти-спам, hover, локальные звуки.
-
-**Конфиг:** `modules/chat.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| format-local | Формат локального чата (MiniMessage). |
-| format-global | Формат глобального чата (MiniMessage). |
-| badge-local | Префикс локального чата. |
-| badge-global | Префикс глобального чата. |
-| message-format | Формат сообщения `{text}`. |
-| hover-enabled | Включить hover по нику. |
-| hover-format | Формат hover-блока. |
-| message-hover-enabled | Hover по тексту + copy-to-clipboard. |
-| message-hover-format | Формат hover по тексту. |
-| message-hover-time-format | Формат времени. |
-| local-radius | Радиус локального чата (блоки). 0 — только глобальный. |
-| spam-cooldown | Кулдаун между сообщениями (секунды). |
-| local-chat-sounds-enabled | Включить звуки локального чата. |
-| local-sound-send | Звук отправки локального сообщения. |
-| local-sound-receive | Звук получения локального сообщения. |
-| pm-sounds-enabled | Включить звуки ЛС. |
-| pm-sound-send | Звук отправки ЛС. |
-| pm-sound-receive | Звук получения ЛС. |
-| format-join | Формат входа. |
-| format-quit | Формат выхода. |
-| format-death | Формат смерти. |
-
-**Команды:** `/chattoggle`, `/pm`, `/tell`, `/msg`, `/r`, `/pmblock`, `/ignore`, `/chatspy`, `/commandspy`, `/clearchat`, `/chatchlear`
-**Права:** `managerfix.chat.use`, `managerfix.chat.bypass.cooldown`, `managerfix.chat.spy`, `managerfix.command.clearchat`
-
----
-
-### Homes (дома)
-
-**Назначение:** Точки «дом» с лимитом, задержкой и кулдауном телепортации.
-
-**Конфиг:** `modules/homes.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| max-homes | Максимум домов на игрока (можно переопределять правами managerfix.homes.limit.N). |
-| teleport-delay | Задержка перед телепортом (секунды). Отмена при движении. |
-| cooldown | Кулдаун между телепортами (секунды). |
-
-**Команды:** `/sethome`, `/home`, `/delhome`, `/homes`  
-**Права:** `managerfix.homes.use`, `managerfix.homes.set`, `managerfix.homes.delete`, `managerfix.homes.teleport`, `managerfix.homes.rename`, `managerfix.homes.bypass.cooldown`, `managerfix.homes.limit.N`
-
----
-
-### Kits (киты)
-
-**Назначение:** Выдача наборов предметов по команде или из GUI с кулдауном.
-
-**Конфиг:** `modules/kits.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| default-cooldown | Кулдаун по умолчанию (секунды). |
-
-**Команды:** `/kit [имя]`, `/kits`, `/kit create <имя>`  
-**Права:** `managerfix.kits.use`, `managerfix.kits.create`, `managerfix.kits.kit.<имя>`
-
----
-
-### Items (предметы)
-
-**Назначение:** Управление предметами в руке: название, описание, количество, зачарования, атрибуты, сохранение и выдача.
-
-**Конфиг:** `modules/items/config.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| messages.no-permission | Сообщение об отсутствии прав. |
-| messages.no-item | Сообщение, если предмет не в руке. |
-| messages.invalid-number | Сообщение о неверном числе. |
-| messages.item-saved | Сообщение о сохранении предмета. |
-| messages.item-given | Сообщение о выдаче предмета. |
-
-**Команды:** `/i name`, `/i lore`, `/i amount`, `/i enchant`, `/i attribute`, `/i save`, `/i give`, `/i reload`
-
-#### Примеры использования:
-
-```
-/i name <название>              # Изменить название предмета
-/i lore <описание>              # Изменить описание
-/i amount <число>               # Изменить количество
-/i enchant <зачарование> <уровень>  # Зачаровать
-/i save <имя>                   # Сохранить предмет
-/i give <ник> <предмет> [кол-во]  # Выдать предмет игроку
-/i reload                       # Перезагрузить конфиг
-```
-
-**Права:** `managerfix.items.name`, `managerfix.items.lore`, `managerfix.items.amount`, `managerfix.items.enchant`, `managerfix.items.attribute`, `managerfix.items.save`, `managerfix.items.give`, `managerfix.items.reload`
-
----
-
-
-### RTP (случайная телепортация)
-
-**Назначение:** Телепорт в случайную безопасную точку в мире.
-
-**Конфиг:** `modules/rtp.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| min-distance | Минимальное расстояние от центра (блоки). |
-| max-distance | Максимальное расстояние. |
-| cooldown | Кулдаун в секундах. |
-
-**Команды:** `/rtp`  
-**Права:** `managerfix.rtp.use`, `managerfix.rtp.bypass.cooldown`
-
----
-
-### Spawn (спавн)
-
-**Назначение:** Телепортация на спавн, GUI настроек, автоматический телепорт при входе/смерти.
-
-**Конфиг:** `modules/spawn.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| settings.teleport-delay-seconds | Задержка перед телепортом. |
-| settings.cancel-on-move | Отмена телепортации при движении. |
-| settings.cancel-on-damage | Отмена телепортации при уроне. |
-| settings.spawn-on-join | Телепорт на спавн при входе. |
-| settings.spawn-on-death | Телепорт на спавн после смерти. |
-| settings.spawn-first-join-only | Только при первом входе. |
-| settings.safe-teleport | Проверка безопасности локации. |
-| animation.enabled | Включение визуальных эффектов. |
-
-**Команды:** `/spawn`, `/spawn edit`, `/setspawn`  
-**Права:** `managerfix.spawn.use`, `managerfix.spawn.set`, `managerfix.spawn.edit`
-
----
-
-### Tab (таб-лист)
-
-**Назначение:** Кастомный header/footer с PlaceholderAPI.
-
-**Конфиг:** `modules/tab.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| header | Текст сверху (MiniMessage). |
-| footer | Текст снизу. |
-| update-interval-ticks | Частота обновления. |
-
-**Права:** `managerfix.tab.use`
-
----
-
-### TPA (запросы телепортации)
-
-**Назначение:** Запросы телепортации к игроку, принятие/отклонение, GUI.
-
-**Конфиг:** `modules/tpa.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| request-timeout | Время жизни запроса (секунды). |
-| teleport-delay | Задержка перед телепортом. |
-| cooldown | Кулдаун между запросами. |
-| cancel-on-move | Отменять ли телепорт при движении. |
-
-**Команды:** `/tpa`, `/tpaccept`, `/tpdeny`  
-**Права:** `managerfix.tpa.use`, `managerfix.tpa.bypass.cooldown`
-
----
-
-### Warps (варпы)
-
-**Назначение:** Варпы с GUI, кулдауном и правами на отдельные точки.
-
-**Конфиг:** `modules/warps.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| default-permission | Право по умолчанию на варпы. |
-| max-warps-per-player | Лимит варпов на игрока. |
-| teleport-delay | Задержка телепорта. |
-| cooldown | Кулдаун после использования. |
-| icons | Иконки в GUI. |
-| categories | Группировка варпов в GUI. |
-
-**Команды:** `/warps`, `/warp`, `/setwarp`, `/delwarp`  
-**Права:** `managerfix.warps.use`, `managerfix.warps.create`, `managerfix.warps.delete`, `managerfix.warps.edit`, `managerfix.warps.bypass.cooldown`, `managerfix.warps.warp.<имя>`
-
----
-
-### Worlds (миры)
-
-**Назначение:** Управление мирами: создание, удаление, телепорт, GUI.
-
-**Конфиг:** `modules/worlds.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| default-generator | Генератор: default, flat, void. |
-| allow-teleport | Разрешить телепорт. |
-| allow-create | Разрешить создание. |
-| allow-delete | Разрешить удаление. |
-
-**Команды:** `/world` (GUI), `/world <мир>`, `/world tp`, `/world create`, `/world delete`  
-**Права:** `managerfix.worlds.teleport`, `managerfix.worlds.create`, `managerfix.worlds.delete`
-
----
-
-### Names (ники)
-
-**Назначение:** Кастомные ники с админским GUI.
-
-**Права:** `managerfix.names.use`, `managerfix.names.admin`
-
----
-
-## Other (админ-утилиты)
-
-**Назначение:** Пакет админских команд уровня Essentials. Содержит god/fly/gamemode, repair, invsee (с бронёй и второй рукой), vanish, back, weather/time, pinfo/seen, утилиты блоков, мобов и телепортацию (/tp top).
-
-**Конфиг:** `modules/other.yml`
-
-| Параметр | Описание |
-|----------|----------|
-| near-radius | Радиус команды /near. |
-| log-admin-actions | Логировать админ-действия. |
-| vanish-hide-from-tab | Скрывать из таба. |
-| vanish-hide-join-quit | Скрывать join/quit. |
-| vanish-persist | Сохранять vanish в профиле. |
-| food-god-persist | Сохранять FoodGod. |
-| aliases | Алиасы команд (map). |
-| cooldowns | Кулдауны по ключам команд. |
-| broadcast.* | Заголовок/сабтайтл/звук для /broadcast. |
-
-**TeleportService:** если сервис уже зарегистрирован, используется он; иначе включается дефолтный с интеграцией TPA.
-
----
-
-## Команды и права
-
-**⚠️ Полный список всех команд** см. в отдельном файле [COMMANDS.md](COMMANDS.md)
-
-Ниже приведены только основные команды модулей.
-
-### Основные (ManagerFix)
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| `/managerfix` | Главное меню или перезагрузка | `managerfix.menu`, `managerfix.reload` |
-| `/managerfix menu` | Открыть меню модулей | `managerfix.menu` |
-| `/managerfix reload` | Перезагрузить конфиг и модули | `managerfix.reload` |
-
-### Ключевые команды модулей
-
-| Модуль | Команды |
-|--------|---------|
-| **Warps** | `/warps`, `/warp <имя>`, `/setwarp`, `/delwarp`, `/editwarp` |
-| **Homes** | `/sethome`, `/home`, `/delhome`, `/homes`, `/adminhomes` |
-| **TPA** | `/tpa`, `/tpahere`, `/tpaccept`, `/tpdeny`, `/tpatoggle` |
-| **Chat** | `/chattoggle`, `/pm`, `/r`, `/chatspy`, `/commandspy`, `/clearchat` |
-| **Ban** | `/ban`, `/tempban`, `/unban`, `/banlist`, `/mute`, `/tempmute`, `/unmute`, `/kick` |
-| **Kits** | `/kit`, `/kits` |
-| **Items** | `/i name`, `/i lore`, `/i give`, `/i save` |
-| **RTP** | `/rtp` |
-| **Spawn** | `/spawn`, `/setspawn`, `/editspawn` |
-| **Worlds** | `/world`, `/world tp`, `/world create`, `/world delete` |
-| **Names** | `/nick`, `/nickadmin`, `/names` |
-| **Other** | `/fly`, `/god`, `/heal`, `/feed`, `/repair`, `/vanish`, `/weather`, `/ping` |
-
-**Универсальные права:**
-- `managerfix.bypass.cooldown` — обход кулдаунов
-- `managerfix.bypass.limit` — обход лимитов
-
-### Kits
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /kit [имя] | Получить кит | managerfix.kits.use и managerfix.kits.kit.<имя> |
-| /kits | Открыть GUI китов | managerfix.kits.use |
-| /kit create <имя> | Создать кит | managerfix.kits.create |
-
-### Worlds
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /world | GUI миров | managerfix.worlds.teleport |
-| /world <мир> | Телепорт в мир (короткая форма) | managerfix.worlds.teleport |
-| /world tp <мир> | Телепорт в мир | managerfix.worlds.teleport |
-| /world create <мир> [generator] | Создать мир | managerfix.worlds.create |
-| /world delete <мир> | Удалить мир | managerfix.worlds.delete |
-
-### Names
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /nick <ник> | Установить ник | managerfix.names.nick |
-| /nickadmin <игрок> <ник\|reset> | Установить/сбросить ник | managerfix.names.admin |
-| /names | GUI администрирования ников | managerfix.names.admin |
-
-Обходы: `managerfix.names.bypass.cooldown`, `managerfix.names.bypass.length`, `managerfix.names.bypass.format`
-
-### Other (админ-утилиты)
-
-| Команда | Описание | Права |
-|---------|----------|-------|
-| /god [игрок] | Неуязвимость | managerfix.other.god, managerfix.other.god.others |
-| /fly [игрок] | Полёт | managerfix.other.fly, managerfix.other.fly.others |
-| /gmc /gms /gmsp [игрок] | Смена режима | managerfix.other.gamemode.* + managerfix.other.gamemode.others |
-| /repair [all] [игрок] | Ремонт предметов | managerfix.other.repair, managerfix.other.repair.all, managerfix.other.repair.others |
-| /ec [игрок] | Эндер‑сундук | managerfix.other.ec, managerfix.other.ec.others |
-| /invsee <игрок> | Просмотр инвентаря | managerfix.other.invsee, managerfix.other.invsee.modify |
-| /workbench | Верстак | managerfix.other.workbench |
-| /anvil | Наковальня | managerfix.other.anvil |
-| /stonecutter | Камнерез | managerfix.other.stonecutter |
-| /grindstone | Точило | managerfix.other.grindstone |
-| /cartography | Картографический стол | managerfix.other.cartography |
-| /loom | Ткацкий станок | managerfix.other.loom |
-| /enchanting | Стол зачарований | managerfix.other.enchanting |
-| /killmob <тип> <радиус> | Убить мобов в радиусе | managerfix.other.killmob |
-| /spawnmob <тип> <кол-во> | Заспавнить мобов | managerfix.other.spawnmob |
-| /tp to|here|location|top | Телепорт админов (без ожидания) | managerfix.other.tp, managerfix.other.tp.location |
-| /pull <игрок> | Притянуть игрока | managerfix.other.pull |
-| /push <игрок> | Телепорт к игроку | managerfix.other.push |
-| /near | Игроки рядом | managerfix.other.near |
-| /v | Vanish | managerfix.other.vanish |
-| /back | Назад на прошлую точку | managerfix.other.back |
-| /dback | Назад на место смерти | managerfix.other.dback |
-| /weather <clear|rain|thunder> | Погода | managerfix.other.weather |
-| /sun /rain /thunder | Быстрая погода | managerfix.other.weather |
-| /day /night | Время | managerfix.other.time |
-| /health [игрок] | Показать здоровье | managerfix.other.health, managerfix.other.health.others |
-| /food [игрок] | Насыщение | managerfix.other.food, managerfix.other.food.others |
-| /food god | FoodGod (не тратится голод) | managerfix.other.food.god |
-| /clear [игрок] | Очистить инвентарь | managerfix.other.clear |
-| /give <игрок> <предмет> <кол-во> | Выдать предмет | managerfix.other.give |
-| /pinfo <игрок> | Информация об игроке | managerfix.other.info, managerfix.other.info.ip |
-| /freeze <игрок> | Заморозить игрока | managerfix.other.freeze |
-| /lockchat | Закрыть/открыть чат | managerfix.other.chatlock |
-| /broadcast <сообщение> | Объявление в чат и title | managerfix.other.broadcast |
-| /clearchat, /chatchlear | Очистить чат | managerfix.command.clearchat |
-| /sudo <игрок> <команда> | Выполнить команду от игрока | managerfix.other.sudo |
-| /ping [игрок] | Пинг игрока | managerfix.other.ping |
-| /coords | Координаты | managerfix.other.coords |
-| /seen <игрок> | Был в сети | managerfix.other.seen |
-| /speed <значение> | Скорость ходьбы/полёта | managerfix.other.speed |
-
-**Универсальные права:**  
-- `managerfix.bypass.cooldown` — обход кулдаунов.  
-- `managerfix.bypass.limit` — обход лимитов.
-
-**Примечание о совместимости:** в `plugin.yml` присутствуют legacy‑узлы `managerfix.command.*`. Они оставлены для совместимости, но актуальная логика использует профильные разрешения `managerfix.<module>.*` и `managerfix.other.*`.
-
----
-
-## Языковые файлы
-
-Файлы лежат в `plugins/ManagerFix/lang/`, например `ru.yml`.  
-Формат сообщений: **MiniMessage** (цвета, градиенты, теги).
-
-Структура (сокращённо):
-
-```yaml
-messages:
-  no-permission: "<red>У вас нет прав!"
-  player-only: "<gray>Эта команда только для игроков."
-menu:
-  main-title: "<dark_gray>ManagerFix"
-warps:
-  not-found: "<red>Варп <white>{name}</white> не найден."
-```
-
-Плейсхолдеры в сообщениях задаются в формате `{имя}`, например `{player}`, `{name}`, `{reason}`. Язык по умолчанию задаётся в `config.yml` → `settings.default-language`.
-
----
-
-## Хранилище данных
-
-- **YAML** (`storage.type: YAML`) — профили и данные в файлах в папке плагина (в т.ч. `data/`).  
-- **MYSQL** (`storage.type: MYSQL`) — профили (и при необходимости варпы) в MySQL/MariaDB.
-
-Профили содержат: метаданные (AFK, vanish, chatspy, FoodGod), кулдауны, дома. Автосохранение задаётся в `settings.profile-autosave-minutes`.
-
----
-
-## Кластер (Redis)
-
-При `cluster.enabled: true` плагин подключается к Redis и синхронизирует события между серверами. Настройки в `config.yml` → `cluster`.
-
----
-
-## PlaceholderAPI
-
-При установленном PlaceholderAPI плагин регистрирует экспансию **managerfix**.
+Плагин регистрирует экспансию **`%managerfix%`**:
 
 | Плейсхолдер | Описание |
 |-------------|----------|
-| %managerfix_afk% | `true` или `false` — в режиме ли AFK игрок. |
+| `%managerfix_afk%` | `true` / `false` — в AFK режиме |
+
+**Пример использования в чате:**
+```yaml
+format-local: "{badge} %managerfix_afk% {prefix}{player}{suffix}: {message}"
+```
 
 ---
 
-## API для разработчиков
+## 🧩 API для разработчиков
 
-Плагин регистрирует сервис **ManagerFixAPI** в `ServicesManager` Bukkit. Другие плагины могут получить API так:
+### Подключение к API
 
 ```java
-RegisteredServiceProvider<ManagerFixAPI> rsp = Bukkit.getServicesManager().getRegistration(ManagerFixAPI.class);
-if (rsp != null) {
-    ManagerFixAPI api = rsp.getProvider();
+import ru.managerfix.api.ManagerFixAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
+
+public class MyPlugin extends JavaPlugin {
+
+    private ManagerFixAPI api;
+
+    @Override
+    public void onEnable() {
+        RegisteredServiceProvider<ManagerFixAPI> rsp =
+            Bukkit.getServicesManager().getRegistration(ManagerFixAPI.class);
+
+        if (rsp == null) {
+            getLogger().severe("ManagerFix не найден!");
+            return;
+        }
+
+        this.api = rsp.getProvider();
+        getLogger().info("ManagerFix API подключён! Версия: " + api.getVersion());
+    }
 }
 ```
 
-Внутри плагина используются: **EventBus**, **ModuleManager**, **ProfileManager**, **ServiceRegistry**, **TaskScheduler**, **GuiManager**.
+### Chat API
+
+```java
+import ru.managerfix.api.chat.ChatManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
+ChatManager chat = api.getChatManager();
+
+// Отправить глобальное сообщение
+chat.sendGlobalMessage(MiniMessage.miniMessage().deserialize(
+    "<gold>Важное объявление!</gold>"
+));
+
+// Отправить личное сообщение
+chat.sendPrivateMessage(sender, target, MiniMessage.miniMessage().deserialize(
+    "<gray>[ЛС] <white>Привет!</white></gray>"
+));
+
+// Проверить мут
+if (chat.isMuted(player)) {
+    player.sendMessage(Component.text("Вы замучены!"));
+}
+
+// Замутить на 1 час
+chat.mute(player, "Нарушение правил", "Admin", 3600000);
+
+// Размутить
+chat.unmute(player);
+```
+
+### События
+
+```java
+import ru.managerfix.event.chat.PlayerChatEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class ChatListener implements Listener {
+
+    @EventHandler
+    public void onChat(PlayerChatEvent event) {
+        // Отменить событие
+        if (event.getPlayer().getWorld().getEnvironment() == World.Environment.NETHER) {
+            event.setCancelled(true);
+            return;
+        }
+
+        // Изменить сообщение
+        event.setMessage(MiniMessage.miniMessage().deserialize(
+            "<red>" + event.getMessage()
+        ));
+    }
+}
+```
+
+**Доступные события:**
+- `PlayerChatEvent` — сообщение в чат
+- `PlayerMuteEvent` — мут игрока
+- `PlayerUnmuteEvent` — размут игрока
+- `PrivateMessageEvent` — личное сообщение
+- `AfkEnterEvent` / `AfkLeaveEvent` — AFK режим
+- `HomeCreateEvent` / `HomeTeleportEvent` — дома
+- `WarpCreateEvent` / `WarpDeleteEvent` — варпы
+- `PlayerBanEvent` / `PlayerUnbanEvent` — баны
+- `ProfileLoadEvent` / `ProfileSaveEvent` — профили
 
 ---
 
-*Документация актуальна для ManagerFix 1.0.0 (Paper 1.21.x, Java 21).*
+## 🛠️ Сборка из исходников
+
+### Требования
+
+- **JDK 21** или выше
+- **Maven 3.6+**
+
+### Инструкция
+
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone https://github.com/yourusername/ManagerFix.git
+   cd ManagerFix
+   ```
+
+2. **Соберите плагин:**
+   ```bash
+   mvn clean package -DskipTests
+   ```
+
+3. **Готовый файл** появится в:
+   ```
+   target/ManagerFix-1.0.0.jar
+   ```
+
+### Команды Maven
+
+```bash
+mvn clean              # Очистка
+mvn compile            # Компиляция
+mvn test               # Тесты
+mvn package            # Сборка JAR
+mvn install            # Установка в локальный репозиторий
+```
+
+---
+
+## 📞 Поддержка
+
+| Канал | Ссылка |
+|-------|--------|
+| **Telegram** | [@fixsirt](https://t.me/fixsirt) |
+| **GitHub** | [Issues](https://github.com/yourusername/ManagerFix/issues) |
+| **Discord** | [Сервер поддержки](https://discord.gg/yourserver) |
+| **Wiki** | [Документация](https://github.com/yourusername/ManagerFix/wiki) |
+
+---
+
+## 📄 Лицензия
+
+Этот проект распространяется под лицензией **MIT**. Подробнее см. в файле [LICENSE](LICENSE).
+
+---
+
+<div align="center">
+
+**ManagerFix** © 2024 | Автор: **tg:fixsirt**
+
+⭐ Если вам нравится плагин, поставьте звезду на GitHub!
+
+</div>

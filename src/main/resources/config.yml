@@ -1,0 +1,41 @@
+# ManagerFix - Main Configuration
+# https://t.me/fixsirt
+
+modules:
+  warps: true
+  homes: true
+  spawn: true
+  chat: true
+  tpa: true
+  rtp: true
+  ban: true
+  afk: true
+  kits: true
+  worlds: false
+  other: true
+  tab: true
+  announcer: true
+  names: true
+  items: true
+
+# Storage: YAML or MYSQL
+storage:
+  type: YAML
+
+# MySQL/MariaDB (used when storage.type = MYSQL)
+database:
+  host: localhost
+  port: 3306
+  database: managerfix
+  username: root
+  password: password
+  pool-size: 10
+
+
+# Global plugin settings
+settings:
+  debug: false
+  default-language: ru
+  profile-autosave-minutes: 10
+  warp-cooldown-seconds: 5
+  gui-animation-ticks: 20

@@ -1,0 +1,14 @@
+# AFK module configuration
+# Auto-AFK after X seconds without movement
+
+# Seconds of no movement before player is marked AFK
+afk-timeout-seconds: 300
+
+# Broadcast message in chat when player enters/leaves AFK
+broadcast-afk: true
+
+# Block commands while AFK (except /afk and bypass permission)
+block-commands-while-afk: false
+
+# Kick AFK players after X seconds (0 = disabled)
+kick-timeout-seconds: 0

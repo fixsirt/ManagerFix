@@ -1,0 +1,901 @@
+name: ManagerFix
+version: 1.0.0
+main: ru.managerfix.ManagerFix
+api-version: '1.21'
+author: tg:fixsirt
+load: POSTWORLD
+
+softdepend:
+  - Vault
+  - LuckPerms
+  - PlaceholderAPI
+  - ProtocolLib
+
+commands:
+  managerfix:
+    description: Main ManagerFix command (reload, menu)
+    usage: /<command> [reload|menu]
+    permission: managerfix.command.managerfix
+  i:
+    description: Команды манипуляции предметами
+    usage: /<command> <подкоманда> [аргументы]
+    permission: managerfix.items.use
+  warps:
+    description: Warps - list, create, delete, or open GUI
+    usage: /<command> [create|delete] [name]
+  warp:
+    description: Teleport to a warp
+    usage: /<command> <name>
+  setwarp:
+    description: Create a warp at current location
+    usage: /<command> <name>
+  delwarp:
+    description: Delete a warp
+    usage: /<command> <name>
+  editwarp:
+    description: Edit a warp properties
+    usage: /<command> <name>
+  sethome:
+    description: Set a home
+    usage: /<command> [name]
+  home:
+    description: Teleport to home
+    usage: /<command> [name]
+  delhome:
+    description: Delete a home
+    usage: /<command> <name>
+  homes:
+    description: Open homes GUI
+    usage: /<command>
+  adminhomes:
+    description: Open player's homes GUI (admin)
+    usage: /<command> <player>
+  adminsethome:
+    description: Set a home for target player at your location (admin)
+    usage: /<command> <player> <home_name>
+  tpa:
+    description: Request teleport to player
+    usage: /<command> <player>
+  tpahere:
+    description: Request player to teleport to you
+    usage: /<command> <player>
+  tpaccept:
+    description: Accept TPA request
+    usage: /<command>
+  tpdeny:
+    description: Deny TPA request
+    usage: /<command>
+  tpadeny:
+    description: Deny TPA request
+    usage: /<command>
+  tpatoggle:
+    description: Toggle receiving TPA requests
+    usage: /<command>
+  tpablacklist:
+    description: TPA blacklist (add/remove/list)
+    usage: /<command> [add|remove|list] [player]
+  tpareply:
+    description: Open TPA request GUI (click message)
+    usage: /<command>
+  rtp:
+    description: Random teleport
+    usage: /<command>
+  kit:
+    description: Get a kit
+    usage: /<command> [name]
+  kits:
+    description: Open kits GUI
+    usage: /<command>
+  editkits:
+    description: Admin GUI for managing kits
+    usage: /<command>
+  fly:
+    description: Toggle fly mode
+    usage: /<command>
+  heal:
+    description: Heal yourself or target
+    usage: /<command> [player]
+  feed:
+    description: Feed yourself or target
+    usage: /<command> [player]
+  god:
+    description: Toggle god mode
+    usage: /<command>
+  workbench:
+    description: Open crafting table
+    usage: /<command>
+  enderchest:
+    description: Open ender chest
+    usage: /<command>
+    aliases: [ec]
+    permission: managerfix.other.ec
+  invsee:
+    description: View player inventory
+    usage: /<command> <player>
+  ecsee:
+    description: View player ender chest
+    usage: /<command> <player>
+  vanish:
+    description: Toggle vanish mode
+    usage: /<command>
+  sudo:
+    description: Run command as player
+    usage: /<command> <player> <command...>
+  afk:
+    description: Toggle AFK state
+    usage: /<command>
+  top:
+    description: Top lists (AFK time)
+    usage: /<command> [afk]
+  ban:
+    description: Ban a player
+    usage: /<command> <player> [time] [reason]
+  unban:
+    description: Unban a player
+    usage: /<command> <player>
+  banip:
+    description: Ban player by IP
+    usage: /<command> <player> <time> <reason>
+  unbanip:
+    description: Unban player by IP
+    usage: /<command> <ip|player>
+  banlist:
+    description: Open bans GUI
+    usage: /<command>
+  spawn:
+    description: Teleport to spawn
+    usage: /<command>
+  setspawn:
+    description: Set world spawn
+    usage: /<command>
+  editspawn:
+    description: Edit spawn settings GUI
+    usage: /<command>
+  chattoggle:
+    description: Toggle local/global chat
+    usage: /<command>
+  chatspy:
+    description: Toggle seeing local chat (when not in radius)
+    usage: /<command>
+  commandspy:
+    description: Toggle seeing other players' commands
+    usage: /<command>
+  pm:
+    description: Send a private message to a player
+    usage: /<command> <player> <message>
+  tell:
+    description: Send a private message to a player
+    usage: /<command> <player> <message>
+  msg:
+    description: Send a private message to a player
+    usage: /<command> <player> <message>
+  r:
+    description: Quick reply to last PM partner
+    usage: /<command> <message>
+  pmblock:
+    description: Block/unblock a player from sending PMs
+    usage: /<command> <player>
+  ignore:
+    description: Ignore list (add/remove players who cannot PM you)
+    usage: /<command> [add|remove|list] [player]
+  mute:
+    description: Mute a player
+    usage: /<command> <player> [time] [reason]
+  unmute:
+    description: Unmute a player
+    usage: /<command> <player>
+  clearchat:
+    description: Clear chat
+    usage: /<command>
+    aliases: [chatchlear]
+  socialspy:
+    description: Toggle social spy
+    usage: /<command>
+  world:
+    description: Worlds - GUI, tp, create, delete
+    usage: /<command> [tp|create|delete] [name] [generator]
+  nick:
+    description: Change your nickname
+    usage: /<command> <nickname>
+    permission: managerfix.names.nick
+  nickadmin:
+    description: Change or reset another player's nick
+    usage: /<command> <player> <name|reset>
+  names:
+    description: Open nick admin GUI
+    usage: /<command>
+  hidenick:
+    description: Hide/show your nick and prefix above head
+    usage: /<command>
+  gmc:
+    description: Gamemode creative
+    usage: /<command> [player]
+  gms:
+    description: Gamemode survival
+    usage: /<command> [player]
+  gmsp:
+    description: Gamemode spectator
+    usage: /<command> [player]
+  repair:
+    description: Repair item or all
+    usage: /<command> [all] [player]
+  anvil:
+    description: Open anvil
+    usage: /<command>
+  stonecutter:
+    description: Open stonecutter
+    usage: /<command>
+  grindstone:
+    description: Open grindstone
+    usage: /<command>
+  cartography:
+    description: Open cartography table
+    usage: /<command>
+  loom:
+    description: Open loom
+    usage: /<command>
+  enchanting:
+    description: Open enchanting table
+    usage: /<command>
+  killmob:
+    description: Kill mobs by type in radius
+    usage: /<command> <type> <radius>
+  spawnmob:
+    description: Spawn mobs by type
+    usage: /<command> <type> <amount>
+  tp:
+    description: Teleport to player or location
+    usage: /<command> to <name> | here <name> | location <x> <y> <z> | top
+  near:
+    description: List nearby players
+    usage: /<command>
+  v:
+    description: Toggle vanish
+    usage: /<command>
+  back:
+    description: Teleport back
+    usage: /<command>
+  dback:
+    description: Teleport to death location
+    usage: /<command>
+  weather:
+    description: Change weather
+    usage: /<command> <clear|rain|thunder>
+  day:
+    description: Set day time
+    usage: /<command>
+  night:
+    description: Set night time
+    usage: /<command>
+  sun:
+    description: Set sunny weather
+    usage: /<command>
+  rain:
+    description: Set rain
+    usage: /<command>
+  thunder:
+    description: Set thunder
+    usage: /<command>
+  health:
+    description: Show health
+    usage: /<command> [player]
+  food:
+    description: Feed or food god
+    usage: /<command> [player|god]
+  clear:
+    description: Clear inventory
+    usage: /<command> [player]
+  give:
+    description: Give item to player
+    usage: /<command> <player> <item> <amount>
+  pinfo:
+    description: Player info
+    usage: /<command> <player>
+  freeze:
+    description: Freeze player
+    usage: /<command> <player>
+  lockchat:
+    description: Toggle chat lock
+    usage: /<command>
+  broadcast:
+    description: Broadcast message
+    usage: /<command> <message>
+  ping:
+    description: Show ping
+    usage: /<command> [player]
+  coords:
+    description: Show coordinates
+    usage: /<command>
+  seen:
+    description: Show last seen
+    usage: /<command> <player>
+  pull:
+    description: Pull player to you
+    usage: /<command> <player>
+  push:
+    description: Push yourself to player
+    usage: /<command> <player>
+  speed:
+    description: Set speed
+    usage: /<command> <value>
+  kick:
+    description: Kick a player
+    usage: /<command> <player> [reason]
+  cc:
+    description: Clear chat
+    usage: /<command>
+  migrate:
+    description: Migrate data between YAML and MySQL
+    usage: /<command> <yaml2sql|sql2yaml>
+
+permissions:
+  managerfix.admin:
+    description: Full access to ManagerFix admin panel (/managerfix menu)
+    default: op
+  managerfix.reload:
+    description: Reload ManagerFix config and modules
+    default: op
+  managerfix.module.toggle:
+    description: Toggle modules via GUI (Shift+RMB in main menu)
+    default: op
+  managerfix.menu:
+    description: Open ManagerFix main menu
+    default: op
+  managerfix.warps.use:
+    description: Use warps (open GUI, teleport)
+    default: op
+  managerfix.warps.create:
+    description: Create warps
+    default: op
+  managerfix.warps.delete:
+    description: Delete warps
+    default: op
+  managerfix.warps.edit:
+    description: Edit warp location (Shift+RMB in GUI)
+    default: op
+  managerfix.warps.bypass.cooldown:
+    description: Bypass warp teleport cooldown
+    default: op
+  managerfix.warps.warp.*:
+    description: Access to all warps (or use managerfix.warps.warp.<name> for specific warp)
+    default: false
+  managerfix.homes.use:
+    description: Use homes (open GUI)
+    default: op
+  managerfix.homes.set:
+    description: Set home
+    default: op
+  managerfix.homes.delete:
+    description: Delete home
+    default: op
+  managerfix.homes.teleport:
+    description: Teleport to home
+    default: op
+  managerfix.homes.rename:
+    description: Rename home (Shift+RMB in GUI)
+    default: op
+  managerfix.homes.admin:
+    description: Admin access to view/delete other players' homes
+    default: op
+  managerfix.homes.admin.set:
+    description: Admin ability to set homes for other players
+    default: op
+  managerfix.homes.bypass.cooldown:
+    description: Bypass home teleport cooldown
+    default: op
+  managerfix.homes.limit.1:
+    description: Max 1 home
+    default: false
+  managerfix.homes.limit.3:
+    description: Max 3 homes
+    default: false
+  managerfix.homes.limit.5:
+    description: Max 5 homes
+    default: false
+  managerfix.homes.limit.10:
+    description: Max 10 homes
+    default: false
+  managerfix.homes.limit.20:
+    description: Max 20 homes
+    default: false
+  managerfix.spawn.set:
+    description: Set spawn
+    default: op
+  managerfix.spawn.use:
+    description: Teleport to spawn
+    default: op
+  managerfix.spawn.edit:
+    description: Edit spawn settings GUI
+    default: op
+  managerfix.afk.use:
+    description: Use /afk
+    default: op
+  managerfix.chat.use:
+    description: Use local/global chat and /pm, /tell, /msg
+    default: op
+  managerfix.chat.bypass.cooldown:
+    description: Bypass chat spam cooldown
+    default: op
+  managerfix.chat.color:
+    description: Use colors in chat
+    default: op
+  managerfix.chat.spy:
+    description: Use /chatspy to see local chat messages
+    default: op
+  managerfix.chat.commandspy:
+    description: Use /commandspy to see other players' commands
+    default: op
+  managerfix.chat.pmblock:
+    description: Block/unblock players from sending PMs (/pmblock)
+    default: op
+  managerfix.names.nick:
+    description: Use /nick to change own display name
+    default: op
+  managerfix.names.admin:
+    description: Use /nickadmin to change or reset any player's nick
+    default: op
+  managerfix.command.editwarp:
+    description: Use /editwarp
+    default: op
+  managerfix.command.editspawn:
+    description: Use /editspawn
+    default: op
+  managerfix.names.bypass.cooldown:
+    description: Bypass nick change cooldown
+    default: false
+  managerfix.names.bypass.length:
+    description: Bypass max nick length (self and admin)
+    default: false
+  managerfix.names.bypass.format:
+    description: Allow any colors/HEX in nick
+    default: false
+  managerfix.tpa.use:
+    description: Use TPA
+    default: op
+  managerfix.tpa.bypass.cooldown:
+    description: Bypass TPA cooldown
+    default: op
+  managerfix.rtp.use:
+    description: Use random teleport
+    default: op
+  managerfix.rtp.bypass.cooldown:
+    description: Bypass RTP cooldown
+    default: op
+  managerfix.rtp.option.1000:
+    description: RTP option up to 1000 blocks
+    default: op
+  managerfix.rtp.option.5000:
+    description: RTP option up to 5000 blocks
+    default: op
+  managerfix.rtp.option.randomplayer:
+    description: RTP to random nearby player (100 blocks)
+    default: op
+  managerfix.kits.kit:
+    description: Use specific kit (managerfix.kits.kit.<name>)
+    default: false
+  managerfix.ban.use:
+    description: Ban players
+    default: op
+  managerfix.ban.list:
+    description: Open ban list GUI
+    default: op
+  managerfix.ban.unban:
+    description: Unban players
+    default: op
+  managerfix.ban.mute:
+    description: Mute/unmute players
+    default: op
+  managerfix.ban.kick:
+    description: Kick players
+    default: op
+  managerfix.afk.bypass:
+    description: Bypass AFK kick
+    default: op
+  managerfix.kits.use:
+    description: Use kits
+    default: op
+  managerfix.kits.create:
+    description: Create kits
+    default: op
+  managerfix.worlds.teleport:
+    description: Teleport between worlds (GUI, /world tp)
+    default: op
+  managerfix.worlds.create:
+    description: Create worlds
+    default: op
+  managerfix.worlds.delete:
+    description: Delete worlds
+    default: op
+  managerfix.vanish.use:
+    description: Use vanish
+    default: op
+  managerfix.tab.use:
+    description: Custom tab list
+    default: op
+  managerfix.goodmod.use:
+    description: Goodmod features
+    default: op
+  managerfix.announcer.reload:
+    description: Reload announcer
+    default: op
+  managerfix.bypass.cooldown:
+    description: Bypass cooldowns
+    default: op
+  managerfix.bypass.limit:
+    description: Bypass limits (e.g. max homes, max warps)
+    default: op
+  managerfix.command.fly:
+    description: Use /fly
+    default: op
+  managerfix.command.heal:
+    description: Use /heal
+    default: op
+  managerfix.command.feed:
+    description: Use /feed
+    default: op
+  managerfix.command.god:
+    description: Use /god
+    default: op
+  managerfix.command.workbench:
+    description: Use /workbench
+    default: op
+  managerfix.command.enderchest:
+    description: Use /enderchest
+    default: op
+  managerfix.command.invsee:
+    description: Use /invsee
+    default: op
+  managerfix.command.ecsee:
+    description: Use /ecsee
+    default: op
+  managerfix.other.god:
+    description: Use /god
+    default: op
+  managerfix.other.god.others:
+    description: Use /god <name>
+    default: op
+  managerfix.other.fly:
+    description: Use /fly
+    default: op
+  managerfix.other.fly.others:
+    description: Use /fly <name>
+    default: op
+  managerfix.other.gamemode.creative:
+    description: Use /gmc
+    default: op
+  managerfix.other.gamemode.survival:
+    description: Use /gms
+    default: op
+  managerfix.other.gamemode.spectator:
+    description: Use /gmsp
+    default: op
+  managerfix.other.gamemode.others:
+    description: Change gamemode for others
+    default: op
+  managerfix.other.repair:
+    description: Use /repair
+    default: op
+  managerfix.other.repair.all:
+    description: Use /repair all
+    default: op
+  managerfix.other.repair.others:
+    description: Repair items for others
+    default: op
+  managerfix.other.ec:
+    description: Use /ec
+    default: op
+  managerfix.other.ec.others:
+    description: Open ender chest of others
+    default: op
+  managerfix.other.workbench:
+    description: Use /workbench
+    default: op
+  managerfix.other.anvil:
+    description: Use /anvil
+    default: op
+  managerfix.other.stonecutter:
+    description: Use /stonecutter
+    default: op
+  managerfix.other.grindstone:
+    description: Use /grindstone
+    default: op
+  managerfix.other.cartography:
+    description: Use /cartography
+    default: op
+  managerfix.other.loom:
+    description: Use /loom
+    default: op
+  managerfix.other.enchanting:
+    description: Use /enchanting
+    default: op
+  managerfix.other.killmob:
+    description: Use /killmob
+    default: op
+  managerfix.other.spawnmob:
+    description: Use /spawnmob
+    default: op
+  managerfix.other.tp:
+    description: Use /tp
+    default: op
+  managerfix.other.tp.location:
+    description: Use /tp location
+    default: op
+  managerfix.other.invsee:
+    description: Use /invsee
+    default: op
+  managerfix.other.invsee.modify:
+    description: Modify target inventory in /invsee
+    default: op
+  managerfix.other.near:
+    description: Use /near
+    default: op
+  managerfix.other.vanish:
+    description: Use /v
+    default: op
+  managerfix.other.back:
+    description: Use /back
+    default: op
+  managerfix.other.dback:
+    description: Use /dback
+    default: op
+  managerfix.other.weather:
+    description: Change weather
+    default: op
+  managerfix.other.time:
+    description: Change time
+    default: op
+  managerfix.other.health:
+    description: Use /health
+    default: op
+  managerfix.other.health.others:
+    description: Use /health <name>
+    default: op
+  managerfix.other.food:
+    description: Use /food
+    default: op
+  managerfix.other.food.others:
+    description: Use /food <name>
+    default: op
+  managerfix.other.food.god:
+    description: Use /food god
+    default: op
+  managerfix.other.clear:
+    description: Use /clear
+    default: op
+  managerfix.other.give:
+    description: Use /give
+    default: op
+  managerfix.other.info:
+    description: Use /info
+    default: op
+  managerfix.other.info.ip:
+    description: View IP in /info
+    default: op
+  managerfix.other.freeze:
+    description: Use /freeze
+    default: op
+  managerfix.other.chatlock:
+    description: Use /lockchat
+    default: op
+  managerfix.other.broadcast:
+    description: Use /broadcast
+    default: op
+  managerfix.other.sudo:
+    description: Use /sudo
+    default: op
+  managerfix.other.ping:
+    description: Use /ping
+    default: op
+  managerfix.other.coords:
+    description: Use /coords
+    default: op
+  managerfix.other.seen:
+    description: Use /seen
+    default: op
+  managerfix.other.pull:
+    description: Use /pull
+    default: op
+  managerfix.other.push:
+    description: Use /push
+    default: op
+  managerfix.other.speed:
+    description: Use /speed
+    default: op
+  managerfix.command.kick:
+    description: Use /kick
+    default: op
+  managerfix.command.cc:
+    description: Use /cc (clear chat)
+    default: op
+  managerfix.command.migrate:
+    description: Use /migrate (data migration)
+    default: op
+  managerfix.command.vanish:
+    description: Use /vanish
+    default: op
+  managerfix.command.sudo:
+    description: Use /sudo
+    default: op
+  managerfix.command.warps:
+    description: Use /warps (open warps GUI)
+    default: op
+  managerfix.command.warp:
+    description: Use /warp <name>
+    default: op
+  managerfix.command.setwarp:
+    description: Use /setwarp
+    default: op
+  managerfix.command.delwarp:
+    description: Use /delwarp
+    default: op
+  managerfix.command.sethome:
+    description: Use /sethome
+    default: op
+  managerfix.command.home:
+    description: Use /home
+    default: op
+  managerfix.command.delhome:
+    description: Use /delhome
+    default: op
+  managerfix.command.homes:
+    description: Use /homes (open homes GUI)
+    default: op
+  managerfix.command.adminhomes:
+    description: Use /adminhomes
+    default: op
+  managerfix.command.adminsethome:
+    description: Use /adminsethome
+    default: op
+  managerfix.command.tpa:
+    description: Use /tpa
+    default: op
+  managerfix.command.tpaccept:
+    description: Use /tpaccept
+    default: op
+  managerfix.command.tpdeny:
+    description: Use /tpdeny
+    default: op
+  managerfix.command.tpahere:
+    description: Use /tpahere
+    default: op
+  managerfix.command.tpadeny:
+    description: Use /tpadeny
+    default: op
+  managerfix.command.tpatoggle:
+    description: Use /tpatoggle
+    default: op
+  managerfix.command.tpablacklist:
+    description: Use /tpablacklist
+    default: op
+  managerfix.command.tpareply:
+    description: Open TPA reply GUI (from click)
+    default: op
+  managerfix.command.rtp:
+    description: Use /rtp
+    default: op
+  managerfix.command.kit:
+    description: Use /kit
+    default: op
+  managerfix.command.kits:
+    description: Use /kits (open kits GUI)
+    default: op
+  managerfix.command.editkits:
+    description: Use /editkits (admin kits GUI)
+    default: op
+  managerfix.command.afk:
+    description: Use /afk
+    default: op
+  managerfix.command.ban:
+    description: Use /ban
+    default: op
+  managerfix.command.unban:
+    description: Use /unban
+    default: op
+  managerfix.command.banlist:
+    description: Use /banlist (open bans GUI)
+    default: op
+  managerfix.command.banip:
+    description: Use /banip
+    default: op
+  managerfix.command.unbanip:
+    description: Use /unbanip
+    default: op
+  managerfix.command.spawn:
+    description: Use /spawn
+    default: op
+  managerfix.command.setspawn:
+    description: Use /setspawn
+    default: op
+  managerfix.command.chattoggle:
+    description: Use /chattoggle
+    default: op
+  managerfix.command.chatspy:
+    description: Use /chatspy
+    default: op
+  managerfix.command.commandspy:
+    description: Use /commandspy
+    default: op
+  managerfix.command.pm:
+    description: Use /pm, /tell, /msg
+    default: op
+  managerfix.command.reply:
+    description: Use /r (reply to last PM)
+    default: op
+  managerfix.command.pmblock:
+    description: Use /pmblock
+    default: op
+  managerfix.command.ignore:
+    description: Use /ignore (add/remove players who cannot PM you)
+    default: op
+  managerfix.command.mute:
+    description: Use /mute
+    default: op
+  managerfix.command.unmute:
+    description: Use /unmute
+    default: op
+  managerfix.command.clearchat:
+    description: Use /clearchat or /chatchlear
+    default: op
+  managerfix.command.socialspy:
+    description: Use /socialspy
+    default: op
+  managerfix.command.world:
+    description: Use /world
+    default: op
+  managerfix.command.nick:
+    description: Use /nick
+    default: op
+  managerfix.command.nickadmin:
+    description: Use /nickadmin
+    default: op
+  managerfix.command.names:
+    description: Use /names (nick admin GUI)
+    default: op
+  managerfix.command.hidenick:
+    description: Use /hidenick (hide/show nick)
+    default: op
+  managerfix.command.managerfix:
+    description: Use /managerfix (reload, menu)
+    default: op
+  managerfix.module.afk.admin:
+    description: Admin settings for AFK module
+    default: op
+  managerfix.module.announcer.admin:
+    description: Admin settings for Announcer module
+    default: op
+  managerfix.module.ban.admin:
+    description: Admin settings for Ban module
+    default: op
+  managerfix.module.chat.admin:
+    description: Admin settings for Chat module
+    default: op
+  managerfix.module.goodmod.admin:
+    description: Admin settings for GoodMod module
+    default: op
+  managerfix.module.homes.admin:
+    description: Admin settings for Homes module
+    default: op
+  managerfix.module.kits.admin:
+    description: Admin settings for Kits module
+    default: op
+  managerfix.module.rtp.admin:
+    description: Admin settings for RTP module
+    default: op
+  managerfix.module.spawn.admin:
+    description: Admin settings for Spawns module
+    default: op
+  managerfix.module.tab.admin:
+    description: Admin settings for Tab module
+    default: op
+  managerfix.module.tpa.admin:
+    description: Admin settings for TPA module
+    default: op
+  managerfix.module.vanish.admin:
+    description: Admin settings for Vanish module
+    default: op
+  managerfix.module.warps.admin:
+    description: Admin settings for Warps module
+    default: op
+  managerfix.module.worlds.admin:
+    description: Admin settings for Worlds module
+    default: op

@@ -1,0 +1,32 @@
+# TPA module configuration
+# Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B)
+cooldown-seconds: 30
+request-timeout-seconds: 60
+teleport-delay-seconds: 5
+allow-sound: true
+sound:
+  name: ENTITY_ENDERMAN_TELEPORT
+  volume: 1.0
+  pitch: 1.0
+
+messages:
+  request-sent: "<#FAA300>Запрос отправлен игроку {target}</#FAA300>"
+  request-received: "<gradient:#FF4D00:#FAA300>Игрок {sender} хочет телепортироваться к вам</gradient>"
+  accepted: "<#FAA300>Запрос принят!</#FAA300>"
+  denied: "<#FF4D00>Запрос отклонён.</#FF4D00>"
+  toggle-disabled: "<#FF4D00>Вы отключили запросы.</#FF4D00>"
+  toggle-enabled: "<#FAA300>Вы включили запросы.</#FAA300>"
+  click-to-reply: "<#E0E0E0>Нажмите, чтобы ответить.</#E0E0E0>"
+  blacklist-add: "<#FAA300>Игрок {player} добавлен в чёрный список.</#FAA300>"
+  blacklist-remove: "<#E0E0E0>Игрок {player} удалён из чёрного списка.</#E0E0E0>"
+  blacklist-list: "<#E0E0E0>Чёрный список: {list}</#E0E0E0>"
+  blacklist-empty: "<#E0E0E0>Чёрный список пуст.</#E0E0E0>"
+  target-disabled: "<#FF4D00>Игрок отключил приём запросов.</#FF4D00>"
+  in-blacklist: "<#FF4D00>Вы в чёрном списке этого игрока.</#FF4D00>"
+  already-request: "<#FF4D00>У игрока уже есть активный запрос.</#FF4D00>"
+  no-request: "<#FF4D00>У вас нет входящих запросов.</#FF4D00>"
+  request-expired: "<#FF4D00>Запрос истёк.</#FF4D00>"
+  cooldown: "<#FF4D00>Подождите {seconds} сек. перед следующим запросом.</#FF4D00>"
+  cancelled-move: "<#FF4D00>Телепортация отменена: вы сдвинулись.</#FF4D00>"
+  menu:
+    tpa-confirm-title: "<#1A120B>Запрос на телепортацию</#1A120B>"

@@ -1,0 +1,13 @@
+# Worlds module configuration
+# Generator: default, flat, void, or custom (e.g. minecraft:flat)
+
+default-generator: default
+
+# Allow teleport to world via GUI and /world tp
+allow-teleport: true
+
+# Allow world creation (requires permission)
+allow-create: true
+
+# Allow world deletion (requires permission, dangerous)
+allow-delete: true

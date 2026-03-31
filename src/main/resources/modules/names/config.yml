@@ -1,0 +1,24 @@
+# Names module: /nick, display name, admin GUI
+
+# Cooldown in seconds before changing nick again (0 = disabled)
+nickname-cooldown-seconds: 10
+
+# Allow HEX colors in nick (MiniMessage <#rrggbb>)
+allow-hex: true
+
+# Max nick length (Minecraft limit 16 for display)
+max-length: 16
+
+# Format for nametag above head and tab list.
+# Placeholders: {prefix} = Vault prefix, {displayName} / {nick} = custom nick.
+# NOTE: This format is ONLY used for the nametag and tab list.
+# In chat and commands (/pm, /tpa etc.) the PURE nick is used (without prefix).
+display-format: "{prefix} {displayName}"
+
+# If true, broadcast to chat when admin changes a player's nick
+admin-change-broadcast: false
+
+# Vertical offset (Y) for the TextDisplay nametag above the player's head.
+# Adjust if the nick text appears too high or too low.
+# Default 0.3 — slightly above the head.
+nametag-offset-y: 0.3

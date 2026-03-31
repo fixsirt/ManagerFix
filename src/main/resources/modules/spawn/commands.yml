@@ -1,0 +1,17 @@
+# Команды модуля Spawn
+commands:
+  spawn:
+    enabled: true
+    aliases: []
+    cooldown: 5
+    bypass-permission: managerfix.spawn.bypass.cooldown
+  setspawn:
+    enabled: true
+    aliases: []
+    cooldown: 5
+    bypass-permission: managerfix.spawn.admin
+  editspawn:
+    enabled: true
+    aliases: []
+    cooldown: 3
+    bypass-permission: managerfix.spawn.admin

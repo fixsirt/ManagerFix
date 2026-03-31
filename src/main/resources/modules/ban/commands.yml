@@ -1,0 +1,32 @@
+# Команды модуля Ban
+commands:
+  ban:
+    enabled: true
+    aliases: []
+    cooldown: 0
+    bypass-permission: managerfix.ban.bypass.cooldown
+  unban:
+    enabled: true
+    aliases: [pardon]
+    cooldown: 0
+    bypass-permission: managerfix.ban.bypass.cooldown
+  banlist:
+    enabled: true
+    aliases: [bans]
+    cooldown: 3
+    bypass-permission: managerfix.ban.bypass.cooldown
+  mute:
+    enabled: true
+    aliases: []
+    cooldown: 0
+    bypass-permission: managerfix.ban.bypass.cooldown
+  unmute:
+    enabled: true
+    aliases: []
+    cooldown: 0
+    bypass-permission: managerfix.ban.bypass.cooldown
+  kick:
+    enabled: true
+    aliases: []
+    cooldown: 0
+    bypass-permission: managerfix.ban.bypass.cooldown

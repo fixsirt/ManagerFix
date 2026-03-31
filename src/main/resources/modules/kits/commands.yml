@@ -1,0 +1,12 @@
+# Команды модуля Kits
+commands:
+  kit:
+    enabled: true
+    aliases: []
+    cooldown: 5
+    bypass-permission: managerfix.kits.bypass.cooldown
+  kits:
+    enabled: true
+    aliases: [kitlist]
+    cooldown: 3
+    bypass-permission: managerfix.kits.bypass.cooldown

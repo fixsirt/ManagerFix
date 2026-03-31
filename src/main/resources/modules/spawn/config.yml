@@ -1,0 +1,25 @@
+world: world
+x: 0.5
+y: 64.0
+z: 0.5
+yaw: 0.0
+pitch: 0.0
+
+settings:
+  teleport-delay-seconds: 5
+  cancel-on-move: true
+  cancel-on-damage: true
+  spawn-on-join: false
+  spawn-on-death: false
+  spawn-first-join-only: false
+  safe-teleport: true
+
+animation:
+  enabled: true
+  particles: PORTAL
+  secondary-particles: ENCHANT
+  sound: ENTITY_ENDERMAN_TELEPORT
+  volume: 1.0
+  pitch: 1.0
+  bossbar-countdown: true
+  title-countdown: true

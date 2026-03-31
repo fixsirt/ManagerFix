@@ -1,0 +1,7 @@
+# Команды модуля AFK
+commands:
+  afk:
+    enabled: true
+    aliases: [away]
+    cooldown: 5
+    bypass-permission: managerfix.afk.bypass.cooldown

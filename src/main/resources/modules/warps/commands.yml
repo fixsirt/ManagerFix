@@ -1,0 +1,27 @@
+# Команды модуля Warps
+commands:
+  warp:
+    enabled: true
+    aliases: [w]
+    cooldown: 5
+    bypass-permission: managerfix.warps.bypass.cooldown
+  warps:
+    enabled: true
+    aliases: [warplist]
+    cooldown: 3
+    bypass-permission: managerfix.warps.bypass.cooldown
+  setwarp:
+    enabled: true
+    aliases: [createwarp]
+    cooldown: 5
+    bypass-permission: managerfix.warps.bypass.cooldown
+  delwarp:
+    enabled: true
+    aliases: [removewarp]
+    cooldown: 3
+    bypass-permission: managerfix.warps.bypass.cooldown
+  editwarp:
+    enabled: true
+    aliases: []
+    cooldown: 3
+    bypass-permission: managerfix.warps.bypass.cooldown

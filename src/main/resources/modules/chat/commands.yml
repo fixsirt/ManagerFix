@@ -1,0 +1,37 @@
+# Команды модуля Chat
+commands:
+  chattoggle:
+    enabled: true
+    aliases: [ct]
+    cooldown: 2
+    bypass-permission: managerfix.chat.bypass.cooldown
+  chatspy:
+    enabled: true
+    aliases: [cs]
+    cooldown: 3
+    bypass-permission: managerfix.chat.spy
+  commandspy:
+    enabled: true
+    aliases: [cmds]
+    cooldown: 3
+    bypass-permission: managerfix.chat.commandspy
+  pm:
+    enabled: true
+    aliases: [tell, msg, message]
+    cooldown: 1
+    bypass-permission: managerfix.chat.bypass.cooldown
+  r:
+    enabled: true
+    aliases: [reply]
+    cooldown: 1
+    bypass-permission: managerfix.chat.bypass.cooldown
+  clearchat:
+    enabled: true
+    aliases: [chatchlear, cc]
+    cooldown: 10
+    bypass-permission: managerfix.chat.admin
+  socialspy:
+    enabled: true
+    aliases: [ss]
+    cooldown: 3
+    bypass-permission: managerfix.chat.admin

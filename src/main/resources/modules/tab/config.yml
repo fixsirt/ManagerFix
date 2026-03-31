@@ -1,0 +1,40 @@
+# Tab module — multi-line header/footer, MiniMessage, HEX, PlaceholderAPI, LuckPerms
+# Placeholders: %server_online%, %server_tps_1%, %player_ping%, %player_world%, %server_time%
+# With PlaceholderAPI: %luckperms_prefix%, %luckperms_suffix%, etc.
+# With cluster enabled: %cluster_total_online% (when cluster-placeholders: true)
+# Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B), Rust & Blood (#C0280F)
+
+# ========== HEADER (multi-line) ==========
+header:
+  - "<gradient:#FF4D00:#FAA300>✦ ᴠᴀɴɪʟᴀ sᴜɴs ✦</gradient>"
+  - "<#E0E0E0>онᴧᴀйн: <#FF4D00>%server_online%</#FF4D00> | ᴛᴘs: <#FAA300>%server_tps_1%</#FAA300>"
+  - "<#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# ========== FOOTER (multi-line) ==========
+footer:
+  - "<#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  - "<#E0E0E0>Ваш пинг: <#FAA300>%player_ping%</#FAA300> ᴍs"
+  - "<#E0E0E0>Мир: <#FF4D00>%player_world%</#FF4D00>"
+  - "<gradient:#FF6A22:#F5D742>https://t.me/vanillasunsteam</gradient>"
+
+# ========== PLAYER FORMAT ==========
+# Placeholders: {name}, {displayName}, %luckperms_prefix%, %player_ping%, PlaceholderAPI
+# {displayName} = Component from NamesModule (nick with colors)
+player-format: "%luckperms_prefix% {displayName}"
+
+# Format when player is AFK (replaces player-format for that player)
+afk-format: "<#FF4D00>｢𝐀𝐅𝐊｣</#FF4D00> <#E0E0E0>%luckperms_prefix%</#E0E0E0> {displayName}"
+
+# ========== UPDATE ==========
+# Interval in ticks (20 = 1 sec). Only changed header/footer/names are sent.
+update-interval-ticks: 40
+
+# ========== OPTIONS ==========
+# Hide vanished players from tab (vanish module: they are already hidden via hidePlayer for non-staff)
+hide-vanished: true
+# Use %cluster_total_online% when cluster is enabled
+cluster-placeholders: true
+# PlaceholderAPI cache duration in ticks (0 = no cache)
+placeholder-cache-ticks: 0
+# Sort tab list by LuckPerms weight, then group, then name (when LuckPerms is present)
+sort-by-luckperms: true

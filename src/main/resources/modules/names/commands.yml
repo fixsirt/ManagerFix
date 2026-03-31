@@ -1,0 +1,17 @@
+# Команды модуля Names
+commands:
+  nick:
+    enabled: true
+    aliases: [nickname]
+    cooldown: 10
+    bypass-permission: managerfix.names.bypass.cooldown
+  nickadmin:
+    enabled: true
+    aliases: [anick, adminnick]
+    cooldown: 0
+    bypass-permission: managerfix.names.admin
+  names:
+    enabled: true
+    aliases: [nickgui]
+    cooldown: 3
+    bypass-permission: managerfix.names.admin

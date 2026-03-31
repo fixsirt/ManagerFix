@@ -1,0 +1,7 @@
+# Команды модуля Items
+commands:
+  i:
+    enabled: true
+    aliases: [item, items]
+    cooldown: 2
+    bypass-permission: managerfix.items.bypass.cooldown

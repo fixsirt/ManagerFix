@@ -1,0 +1,295 @@
+# ManagerFix - Russian language (MiniMessage + HEX)
+# Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B), Rust & Blood (#C0280F)
+# Акценты: Flame Core (#FF6A22), Hot Ember (#F5D742), Dried Blood (#7A2E1A)
+# Премиум: Ancient Bronze (#E38B30), Pure Light (#FFFFFF/#E0E0E0)
+# https://docs.adventure.kyori.net/minimessage/format.html
+
+messages:
+  no-permission: "<#FF4D00>У вас нет прав!"
+  player-only: "<#E0E0E0>Эта команда только для игроков."
+  command-player-only: "<#E0E0E0>Эта команда только для игроков."
+  player-not-found: "<#FF4D00>Игрок <#FFFFFF>{player}</#FFFFFF> не найден или не в сети."
+  module-disabled: "<#7A2E1A>Этот модуль отключён."
+  module-enabled: "<#FAA300>Модуль включён."
+  reload: "<#FAA300>ManagerFix перезагружен!"
+  plugin-info: "<#1A120B>ManagerFix <#FFFFFF>v{version} <#1A120B>| <#E0E0E0>tg:fixsirt"
+  gamemode:
+    set: "<#FAA300>Режим игры: <#FFFFFF>{mode}</#FFFFFF>."
+    set-target: "<#FAA300>Режим игры <#FFFFFF>{mode}</#FFFFFF> для <#FFFFFF>{player}</#FFFFFF>."
+  repair:
+    done: "<#FAA300>Предметы отремонтированы."
+  usage: "<#E0E0E0>Использование: <#FFFFFF>{usage}</#FFFFFF>"
+  other:
+    blocks:
+      workbench: "<#1A120B>Верстак"
+      anvil: "<#1A120B>Наковальня"
+      stonecutter: "<#1A120B>Камнерез"
+      grindstone: "<#1A120B>Точило"
+      cartography: "<#1A120B>Картографический стол"
+      loom: "<#1A120B>Ткацкий станок"
+      enchanting: "<#1A120B>Стол зачарований"
+
+# Menu
+menu:
+  main-title: "<#1A120B>ManagerFix"
+  warps-title: "<#1A120B>Варпы"
+  homes-title: "<#1A120B>Дома"
+  kits-title: "<#1A120B>Киты"
+  banlist-title: "<#1A120B>Список банов"
+  worlds-title: "<#1A120B>Миры"
+  tpa-confirm-title: "<#1A120B>Запрос TPA"
+  names-title: "<#1A120B>Ники"
+  modules:
+    warps: "<#FFFFFF>Варпы"
+    homes: "<#FFFFFF>Дома"
+    spawn: "<#FFFFFF>Спавн"
+    chat: "<#FFFFFF>Чат"
+    tpa: "<#FFFFFF>TPA"
+    rtp: "<#FFFFFF>RTP"
+    ban: "<#FFFFFF>Баны"
+    afk: "<#FFFFFF>AFK"
+    kits: "<#FFFFFF>Киты"
+    worlds: "<#FFFFFF>Миры"
+    tab: "<#FFFFFF>Таб"
+    other: "<#FFFFFF>Other"
+    announcer: "<#FFFFFF>Объявления"
+    names: "<#FFFFFF>Ники"
+
+# Names (module + placeholders)
+names:
+  usage: "<#E0E0E0>Использование: <#FFFFFF>/nick <ник></#FFFFFF>"
+  admin-usage: "<#E0E0E0>Использование: <#FFFFFF>/nickadmin <игрок> <ник|reset></#FFFFFF>"
+  set: "<#FAA300>Ник установлен: <#FFFFFF>{nick}</#FFFFFF></#FAA300>"
+  changed-self: "<#F5D742>Ваш ник изменён на <#FFFFFF>{nick}</#FFFFFF></#F5D742>"
+  changed-admin: "<#F5D742>Вы изменили ник игрока <#FFFFFF>{player}</#FFFFFF> на <#FFFFFF>{nick}</#FFFFFF></#F5D742>"
+  changed-notify: "<#C0280F>Ваш ник был изменён администратором на <#FFFFFF>{nick}</#FFFFFF></#C0280F>"
+  reset: "<#E0E0E0>Ник сброшен.</#E0E0E0>"
+  admin-change-broadcast-msg: "<#E0E0E0>Администратор <#FFFFFF>{admin}</#FFFFFF> изменил ник игрока <#FFFFFF>{player}</#FFFFFF> на <#FFFFFF>{nick}</#FFFFFF></#E0E0E0>"
+  too-long: "<#FF4D00>Ник не длиннее <#FFFFFF>{max}</#FFFFFF> символов.</#FF4D00>"
+  cooldown: "<#FF4D00>Подождите <#FFFFFF>{seconds}</#FFFFFF> сек. перед сменой ника.</#FF4D00>"
+  enter-in-chat: "<#FAA300>Введите в чат новый ник для <#FFFFFF>{player}</#FFFFFF></#FAA300>"
+  target-offline: "<#FF4D00>Игрок вышел с сервера.</#FF4D00>"
+
+# AFK
+afk:
+  enter: "<#E0E0E0>Вы теперь в режиме AFK."
+  leave: "<#E0E0E0>Вы вышли из режима AFK."
+  broadcast-enter: "<#1A120B>[AFK] <#FFFFFF>{player}</#FFFFFF> <#E0E0E0>отошёл."
+  broadcast-leave: "<#1A120B>[AFK] <#FFFFFF>{player}</#FFFFFF> <#E0E0E0>вернулся."
+  blocked-command: "<#FF4D00>Команды заблокированы в режиме AFK."
+
+# Warps
+warps:
+  not-found: "<#FF4D00>Варп <#FFFFFF>{name}</#FFFFFF> не найден."
+  teleported: "<#FAA300>Телепортация на варп <#FFFFFF>{name}</#FFFFFF>."
+  created: "<#FAA300>Варп <#FFFFFF>{name}</#FFFFFF> создан."
+  deleted: "<#E0E0E0>Варп <#FFFFFF>{name}</#FFFFFF> удалён."
+  updated: "<#FAA300>Варп <#FFFFFF>{name}</#FFFFFF> обновлён."
+  cooldown: "<#E0E0E0>Подождите <#FFFFFF>{seconds}</#FFFFFF> сек. перед следующим телепортом."
+  usage-create: "<#E0E0E0>Использование: <#FFFFFF>/warps create <name></#FFFFFF> или <#FFFFFF>/setwarp <name></#FFFFFF>"
+  usage-delete: "<#E0E0E0>Использование: <#FFFFFF>/warps delete <name></#FFFFFF> или <#FFFFFF>/delwarp <name></#FFFFFF>"
+  warp-usage: "<#E0E0E0>Использование: <#FFFFFF>/warp <name></#FFFFFF>"
+
+# Homes
+homes:
+  set: "<#FAA300>Дом <#FFFFFF>{name}</#FFFFFF> установлен."
+  not-found: "<#FF4D00>У вас нет домов."
+  not-found-name: "<#FF4D00>Дом <#FFFFFF>{name}</#FFFFFF> не найден."
+  deleted: "<#E0E0E0>Дом <#FFFFFF>{name}</#FFFFFF> удалён."
+  teleported: "<#FAA300>Телепортация в дом <#FFFFFF>{name}</#FFFFFF>."
+  teleport-wait: "<#FAA300>Телепортация через <#FFFFFF>{seconds}</#FFFFFF> сек. Не двигайтесь!"
+  cooldown: "<#E0E0E0>Подождите <#FFFFFF>{seconds}</#FFFFFF> сек. перед следующим телепортом."
+  limit-reached: "<#FF4D00>Достигнут лимит домов (<#FFFFFF>{limit}</#FFFFFF>)."
+  usage-delhome: "<#E0E0E0>Использование: <#FFFFFF>/delhome <name></#FFFFFF>"
+  rename-hint: "<#E0E0E0>Переименование: установите новый дом с другим именем и удалите <#FFFFFF>{name}</#FFFFFF>."
+
+# TPA
+tpa:
+  sent: "<#FAA300>Запрос телепортации отправлен игроку <#FFFFFF>{player}</#FFFFFF>."
+  received: "<#FAA300><#FFFFFF>{player}</#FFFFFF> хочет телепортироваться к вам. /tpaccept или /tpdeny"
+  accepted: "<#FAA300>Запрос принят. Телепортация..."
+  denied: "<#FF4D00>Запрос отклонён."
+  denied-target: "<#E0E0E0>Игрок <#FFFFFF>{player}</#FFFFFF> отклонил запрос."
+  expired: "<#FF4D00>Запрос истёк."
+  no-request: "<#FF4D00>У вас нет запросов на телепорт."
+  cooldown: "<#E0E0E0>Подождите <#FFFFFF>{seconds}</#FFFFFF> сек. перед следующим запросом."
+  cancelled-move: "<#FF4D00>Запрос отменён — вы сдвинулись."
+  usage: "<#E0E0E0>Использование: <#FFFFFF>/tpa <player></#FFFFFF>"
+  self: "<#FF4D00>Нельзя отправить запрос самому себе."
+
+# RTP
+rtp:
+  searching: "<#FAA300>Поиск безопасного места..."
+  success: "<#FAA300>Телепортация!"
+  failed: "<#FF4D00>Не удалось найти безопасное место. Попробуйте позже."
+  cooldown: "<#E0E0E0>Подождите <#FFFFFF>{seconds}</#FFFFFF> сек. перед следующим RTP."
+
+# Kits
+kits:
+  received: "<#FAA300>Вы получили кит <#FFFFFF>{name}</#FFFFFF>."
+  cooldown: "<#E0E0E0>Кит <#FFFFFF>{name}</#FFFFFF> доступен через <#FFFFFF>{seconds}</#FFFFFF> сек."
+  not-found: "<#FF4D00>Кит <#FFFFFF>{name}</#FFFFFF> не найден."
+  no-permission: "<#FF4D00>У вас нет прав на этот кит."
+  list-title: "<#1A120B>Киты"
+  create-usage: "<#E0E0E0>Использование: <#FFFFFF>/kit create <name></#FFFFFF>"
+  created: "<#FAA300>Кит <#FFFFFF>{name}</#FFFFFF> создан."
+
+# Player utilities
+fly:
+  enabled: "<#4ADE80>✦</#4ADE80> <gray>Полёт:</gray> <#4ADE80>включён"
+  disabled: "<#F87171>✦</#F87171> <gray>Полёт:</gray> <#F87171>выключен"
+heal:
+  healed: "<#FAA300>Вы исцелены."
+  healed-target: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> исцелён."
+feed:
+  fed: "<#FAA300>Вы сыты."
+  fed-target: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> накормлен."
+god:
+  enabled: "<#FAA300>Режим бога включён."
+  disabled: "<#E0E0E0>Режим бога выключен."
+
+# Chat
+chat:
+  no-permission: "<#FF4D00>У вас нет прав писать в чат."
+  spam: "<#FF4D00>Подождите <#FFFFFF>{seconds}</#FFFFFF> сек. перед следующим сообщением."
+  mode-local: "<#E0E0E0>Режим чата: <#FFFFFF>локальный</#FFFFFF>."
+  mode-global: "<#E0E0E0>Режим чата: <#FFFFFF>глобальный</#FFFFFF>."
+  local-disabled: "<#E0E0E0>Локальный чат отключён."
+  spy-prefix: "<#1A120B>[Spy] </#1A120B>"
+  chatspy-on: "<#FAA300>ChatSpy включён — вы видите локальные и личные сообщения (ЛС).</#FAA300>"
+  chatspy-off: "<#E0E0E0>ChatSpy выключен.</#E0E0E0>"
+  commandspy-on: "<#FAA300>CommandSpy включён — вы видите команды игроков."
+  commandspy-off: "<#E0E0E0>CommandSpy выключен."
+  commandspy-format: "<#1A120B>[CommandSpy] <#E0E0E0>{player}: <#FFFFFF>{command}</#FFFFFF></#1A120B>"
+  # Если другой плагин показывает «ошибка проверки чата» — сообщение всё равно доставлено; это подсказка игроку
+  global-sent-note: "<#E0E0E0>Сообщение доставлено в глобальный чат. Если появилось предупреждение от другого плагина — его можно проигнорировать.</#E0E0E0>"
+  pm:
+    usage: "<#E0E0E0>Использование: <#FFFFFF>/pm <игрок> <сообщение></#FFFFFF></#E0E0E0>"
+    you: "Вы"
+    self: "<#FF4D00>Нельзя отправить личное сообщение самому себе.</#FF4D00>"
+    blocked: "<#FF4D00>Вам запрещено отправлять личные сообщения.</#FF4D00>"
+  reply:
+    usage: "<#E0E0E0>Использование: <#FFFFFF>/r <сообщение></#FFFFFF> — ответить последнему, кто писал вам в ЛС.</#E0E0E0>"
+  reply-no-target: "<#FF4D00>Нет кому ответить. Сначала напишите кому-то в ЛС или дождитесь сообщения.</#FF4D00>"
+  pmblock:
+    usage: "<#E0E0E0>Использование: <#FFFFFF>/pmblock <игрок></#FFFFFF></#E0E0E0>"
+    blocked: "<#FAA300>Игроку <#FFFFFF>{player}</#FFFFFF> запрещены личные сообщения.</#FAA300>"
+    unblocked: "<#E0E0E0>Игрок <#FFFFFF>{player}</#FFFFFF> снова может писать в ЛС.</#E0E0E0>"
+    you-blocked: "<#FF4D00>Вам запретили отправлять личные сообщения.</#FF4D00>"
+    you-unblocked: "<#FAA300>Вам снова разрешено отправлять личные сообщения.</#FAA300>"
+  ignore:
+    usage: "<#E0E0E0>Использование: <#FFFFFF>/ignore add <игрок></#FFFFFF> | <#FFFFFF>/ignore remove <игрок></#FFFFFF> | <#FFFFFF>/ignore list</#FFFFFF></#E0E0E0>"
+    added: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> добавлен в чёрный список — он не сможет писать вам в ЛС.</#FAA300>"
+    removed: "<#E0E0E0>Игрок <#FFFFFF>{player}</#FFFFFF> удалён из чёрного списка.</#E0E0E0>"
+    list: "<#E0E0E0>Чёрный список: <#FFFFFF>{list}</#FFFFFF></#E0E0E0>"
+    list-empty: "<#E0E0E0>Чёрный список пуст.</#E0E0E0>"
+    cannot-message: "<#FF4D00>Этот игрок добавил вас в чёрный список.</#FF4D00>"
+    already-in: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> уже в чёрном списке.</#FAA300>"
+    not-in: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> не в чёрном списке.</#FAA300>"
+    self: "<#FF4D00>Нельзя добавить себя в чёрный список.</#FF4D00>"
+  pm-spy-prefix: "<#1A120B>[PM Spy] </#1A120B>"
+  muted: "<#FF4D00>Вы замьючены. <#E0E0E0>До: <#FFFFFF>{until}</#FFFFFF></#E0E0E0>"
+
+# Ban
+ban:
+  usage: "<#E0E0E0>Использование: <#FFFFFF>/ban <player> [time] [reason]</#FFFFFF>"
+  banned: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> забанен."
+  unbanned: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> разбанен."
+  kick-message: "<#FF4D00>Вы забанены. Причина: <#FFFFFF>{reason}</#FFFFFF>"
+banip:
+  usage: "<#E0E0E0>Использование: <#FFFFFF>/banip <player> <time> <reason></#FFFFFF>"
+  invalid-time: "<#FF4D00>Неверный формат времени. Пример: 10m, 1h, 1d, -1 (навсегда)"
+  no-ip-found: "<#FF4D00>Не удалось найти IP адрес игрока <#FFFFFF>{player}</#FFFFFF></#FF4D00>"
+  banned: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> забанен по IP <#FFFFFF>{ip}</#FFFFFF>."
+  kick-message: "<#FF4D00>Вы забанены по IP. Причина: <#FFFFFF>{reason}</#FFFFFF>"
+unbanip:
+  usage: "<#E0E0E0>Использование: <#FFFFFF>/unbanip <ip|player></#FFFFFF>"
+  no-ip-found: "<#FF4D00>Не удалось найти IP адрес игрока <#FFFFFF>{player}</#FFFFFF></#FF4D00>"
+  not-banned: "<#FF4D00>IP <#FFFFFF>{ip}</#FFFFFF> не забанен."
+  unbanned: "<#FAA300>IP <#FFFFFF>{ip}</#FFFFFF> разбанен."
+unban:
+  usage: "<#E0E0E0>Использование: <#FFFFFF>/unban <player></#FFFFFF>"
+  not-banned: "<#FF4D00>Игрок <#FFFFFF>{player}</#FFFFFF> не забанен."
+
+# GoodMod
+goodmod:
+  mute-usage: "<#E0E0E0>Использование: <#FFFFFF>/mute <player> [time]</#FFFFFF>"
+  unmute-usage: "<#E0E0E0>Использование: <#FFFFFF>/unmute <player></#FFFFFF>"
+  muted: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> замьючен."
+  unmuted: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> размьючен."
+  you-muted: "<#FF4D00>Вы замьючены и не можете писать в чат."
+  cleared: "<#E0E0E0>Чат очищен."
+  socialspy-on: "<#E0E0E0>SocialSpy включён."
+  socialspy-off: "<#E0E0E0>SocialSpy выключен."
+
+# Worlds
+worlds:
+  tp-usage: "<#E0E0E0>Использование: <#FFFFFF>/world tp <name></#FFFFFF>"
+  create-usage: "<#E0E0E0>Использование: <#FFFFFF>/world create <name> [generator]</#FFFFFF> <#E0E0E0>(generator: default, flat, void)"
+  delete-usage: "<#E0E0E0>Использование: <#FFFFFF>/world delete <name></#FFFFFF>"
+  not-found: "<#FF4D00>Мир <#FFFFFF>{world}</#FFFFFF> не найден."
+  already-exists: "<#FF4D00>Мир <#FFFFFF>{world}</#FFFFFF> уже существует."
+  created: "<#FAA300>Мир <#FFFFFF>{world}</#FFFFFF> создан."
+  create-failed: "<#FF4D00>Не удалось создать мир <#FFFFFF>{world}</#FFFFFF>."
+  deleted: "<#E0E0E0>Мир <#FFFFFF>{world}</#FFFFFF> удалён."
+  delete-forbidden: "<#FF4D00>Удаление этого мира запрещено."
+  teleported: "<#FAA300>Телепортация в мир <#FFFFFF>{world}</#FFFFFF>."
+
+# Admin
+invsee:
+  usage: "<#E0E0E0>Использование: <#FFFFFF>/invsee <player></#FFFFFF>"
+  opened: "<#E0E0E0>Инвентарь <#FFFFFF>{player}</#FFFFFF>."
+ecsee:
+  opened: "<#E0E0E0>Эндер-сундук <#FFFFFF>{player}</#FFFFFF>."
+vanish:
+  enabled: "<#FAA300>Ванш включён."
+  disabled: "<#E0E0E0>Ванш выключен."
+sudo:
+  usage: "<#E0E0E0>Использование: <#FFFFFF>/sudo <player> <command...></#FFFFFF>"
+  executed: "<#E0E0E0>Команда выполнена от имени <#FFFFFF>{player}</#FFFFFF>."
+
+# Other
+other:
+  mob:
+    invalid-type: "<#FF4D00>Неверный тип моба."
+    invalid-radius: "<#FF4D00>Неверный радиус."
+    killed: "<#FAA300>Убито мобов: <#FFFFFF>{count}</#FFFFFF>."
+    spawned: "<#FAA300>Заспавнено мобов: <#FFFFFF>{count}</#FFFFFF>."
+  tp:
+    invalid-location: "<#FF4D00>Неверные координаты."
+  back:
+    not-found: "<#FF4D00>Точка возврата не найдена."
+    death-not-found: "<#FF4D00>Точка смерти не найдена."
+  weather:
+    clear: "<#FAA300>Погода: ясно."
+    rain: "<#FAA300>Погода: дождь."
+    thunder: "<#FAA300>Погода: гроза."
+  time:
+    day: "<#FAA300>Время: день."
+    night: "<#FAA300>Время: ночь."
+  clear:
+    self: "<#FAA300>Инвентарь очищен."
+    target: "<#FAA300>Инвентарь игрока <#FFFFFF>{player}</#FFFFFF> очищен."
+  give:
+    invalid-item: "<#FF4D00>Неверный предмет."
+    done: "<#FAA300>Выдано <#FFFFFF>{amount}</#FFFFFF> <#FFFFFF>{item}</#FFFFFF> игроку <#FFFFFF>{player}</#FFFFFF>."
+  freeze:
+    enabled: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> заморожен."
+    disabled: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> разморожен."
+  chatlock:
+    enabled: "<#FAA300>Чат закрыт."
+    disabled: "<#FAA300>Чат открыт."
+  sudo:
+    done: "<#FAA300>Команда выполнена от имени <#FFFFFF>{player}</#FFFFFF>."
+  speed:
+    invalid: "<#FF4D00>Неверное значение скорости."
+  world:
+    not-found: "<#FF4D00>Мир не найден."
+    teleported: "<#FAA300>Телепортация в мир <#FFFFFF>{world}</#FFFFFF>."
+  seen:
+    online: "<#FAA300>Игрок <#FFFFFF>{player}</#FFFFFF> сейчас онлайн."
+  top:
+    unavailable: "<#FF4D00>Модуль AFK отключён."
+
+plugin:
+  prefix: "<#1A120B>[<#FAA300>ManagerFix</#FAA300>] </#1A120B>"

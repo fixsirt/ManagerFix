@@ -1,0 +1,8 @@
+# Warps module configuration
+max-warps: 1
+group-limits:
+  default: 1
+  vip: 3
+  premium: 5
+
+# Warp data is stored in data/warps.yml

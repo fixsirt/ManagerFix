@@ -1,0 +1,8 @@
+# Homes module configuration
+max-homes: 5
+teleport-delay: 0
+cooldown: 0
+group-limits:
+  default: 5
+  vip: 10
+  premium: 15

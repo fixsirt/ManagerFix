@@ -1,0 +1,32 @@
+# Команды модуля Homes
+commands:
+  sethome:
+    enabled: true
+    aliases: [createhome]
+    cooldown: 3
+    bypass-permission: managerfix.homes.bypass.cooldown
+  home:
+    enabled: true
+    aliases: []
+    cooldown: 3
+    bypass-permission: managerfix.homes.bypass.cooldown
+  delhome:
+    enabled: true
+    aliases: [removehome]
+    cooldown: 1
+    bypass-permission: managerfix.homes.bypass.cooldown
+  homes:
+    enabled: true
+    aliases: [homelist]
+    cooldown: 2
+    bypass-permission: managerfix.homes.bypass.cooldown
+  adminhomes:
+    enabled: true
+    aliases: [ahomes]
+    cooldown: 2
+    bypass-permission: managerfix.homes.admin
+  adminsethome:
+    enabled: true
+    aliases: [asethome]
+    cooldown: 3
+    bypass-permission: managerfix.homes.admin

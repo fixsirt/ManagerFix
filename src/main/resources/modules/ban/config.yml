@@ -1,0 +1,19 @@
+# Ban module configuration
+default-duration: permanent
+broadcast-bans: true
+# Also broadcast mute events
+broadcast-mutes: true
+
+# Kick message (MiniMessage), {reason} placeholder
+# Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B), Rust & Blood (#C0280F)
+kick-message: "<color:#FF4D00>Вы забанены. Причина: <color:#FAA300>{reason}</color></color>"
+
+# Formats for broadcasts (MiniMessage).
+# Available placeholders:
+# {targetReal}, {targetNick}, {sourceReal}, {sourceNick}, {reason}, {duration}
+format:
+  ban-broadcast: "<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>\n<color:#FF4D00>⛔ БАН</color>\n<color:#E0E0E0>Игрок:</color> <color:#FFFFFF>{targetReal}</color>\n<color:#E0E0E0>Забанил:</color> <color:#FFFFFF>{sourceReal}</color>\n<color:#E0E0E0>На:</color> <color:#FAA300>{duration}</color>\n<color:#E0E0E0>Причина:</color> <color:#FAA300>{reason}</color>\n<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>"
+  kick-broadcast: "<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>\n<color:#FAA300>⬤ КИК</color>\n<color:#E0E0E0>Игрок:</color> <color:#FFFFFF>{targetReal}</color>\n<color:#E0E0E0>Кикнул:</color> <color:#FFFFFF>{sourceReal}</color>\n<color:#E0E0E0>Причина:</color> <color:#FF4D00>{reason}</color>\n<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>"
+  mute-broadcast: "<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>\n<color:#FF4D00>🔇 МУТ</color>\n<color:#E0E0E0>Игрок:</color> <color:#FFFFFF>{targetReal}</color>\n<color:#E0E0E0>Замутил:</color> <color:#FFFFFF>{sourceReal}</color>\n<color:#E0E0E0>На:</color> <color:#FAA300>{duration}</color>\n<color:#E0E0E0>Причина:</color> <color:#FAA300>{reason}</color>\n<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>"
+  ip-ban-broadcast: "<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>\n<color:#FF4D00>⛔ IP БАН</color>\n<color:#E0E0E0>Игрок:</color> <color:#FFFFFF>{targetReal}</color>\n<color:#E0E0E0>IP:</color> <color:#FFFFFF>{ip}</color>\n<color:#E0E0E0>Забанил:</color> <color:#FFFFFF>{sourceReal}</color>\n<color:#E0E0E0>На:</color> <color:#FAA300>{duration}</color>\n<color:#E0E0E0>Причина:</color> <color:#FAA300>{reason}</color>\n<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>"
+  ip-unban-broadcast: "<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>\n<color:#FAA300>⬤ IP РАЗБАН</color>\n<color:#E0E0E0>IP:</color> <color:#FFFFFF>{ip}</color>\n<color:#E0E0E0>Разбанил:</color> <color:#FFFFFF>{sourceReal}</color>\n<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>"

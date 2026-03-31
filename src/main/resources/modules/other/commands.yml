@@ -1,0 +1,242 @@
+# Команды модуля Other
+commands:
+  fly:
+    enabled: true
+    aliases: [flight]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  heal:
+    enabled: true
+    aliases: [healself]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  feed:
+    enabled: true
+    aliases: [eat]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  god:
+    enabled: true
+    aliases: [godmode]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  workbench:
+    enabled: true
+    aliases: [wb, craft]
+    cooldown: 2
+    bypass-permission: managerfix.other.bypass.cooldown
+  enderchest:
+    enabled: true
+    aliases: [ec]
+    cooldown: 2
+    bypass-permission: managerfix.other.bypass.cooldown
+  invsee:
+    enabled: true
+    aliases: []
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  ecsee:
+    enabled: true
+    aliases: []
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  vanish:
+    enabled: true
+    aliases: [v]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  sudo:
+    enabled: true
+    aliases: []
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  afk:
+    enabled: true
+    aliases: [away]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  top:
+    enabled: true
+    aliases: [toplist]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  ban:
+    enabled: true
+    aliases: []
+    cooldown: 0
+    bypass-permission: managerfix.other.bypass.cooldown
+  unban:
+    enabled: true
+    aliases: [pardon]
+    cooldown: 0
+    bypass-permission: managerfix.other.bypass.cooldown
+  banlist:
+    enabled: true
+    aliases: [bans]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  spawn:
+    enabled: true
+    aliases: []
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  setspawn:
+    enabled: true
+    aliases: []
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  editspawn:
+    enabled: true
+    aliases: []
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  gmc:
+    enabled: true
+    aliases: [creative]
+    cooldown: 2
+    bypass-permission: managerfix.other.bypass.cooldown
+  gms:
+    enabled: true
+    aliases: [survival]
+    cooldown: 2
+    bypass-permission: managerfix.other.bypass.cooldown
+  gmsp:
+    enabled: true
+    aliases: [spectator]
+    cooldown: 2
+    bypass-permission: managerfix.other.bypass.cooldown
+  repair:
+    enabled: true
+    aliases: [fix]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  killmob:
+    enabled: true
+    aliases: [killmobs]
+    cooldown: 10
+    bypass-permission: managerfix.other.bypass.cooldown
+  spawnmob:
+    enabled: true
+    aliases: [smob]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  tp:
+    enabled: true
+    aliases: [teleport]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  near:
+    enabled: true
+    aliases: [nearby]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  back:
+    enabled: true
+    aliases: [return]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  dback:
+    enabled: true
+    aliases: [deathback]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  weather:
+    enabled: true
+    aliases: [weath]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  day:
+    enabled: true
+    aliases: [setday]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  night:
+    enabled: true
+    aliases: [setnight]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  sun:
+    enabled: true
+    aliases: [setsun]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  rain:
+    enabled: true
+    aliases: [setrain]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  thunder:
+    enabled: true
+    aliases: [setthunder]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  health:
+    enabled: true
+    aliases: [hp]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  food:
+    enabled: true
+    aliases: [hunger]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  clear:
+    enabled: true
+    aliases: [clearinventory, ci]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  give:
+    enabled: true
+    aliases: []
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  pinfo:
+    enabled: true
+    aliases: [playerinfo]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  freeze:
+    enabled: true
+    aliases: [freezeplayer]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  lockchat:
+    enabled: true
+    aliases: [lc]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  broadcast:
+    enabled: true
+    aliases: [bc]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  ping:
+    enabled: true
+    aliases: []
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  coords:
+    enabled: true
+    aliases: [coordinates, xyz]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  seen:
+    enabled: true
+    aliases: [lastseen]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown
+  pull:
+    enabled: true
+    aliases: [pullplayer]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  push:
+    enabled: true
+    aliases: [pushplayer]
+    cooldown: 5
+    bypass-permission: managerfix.other.bypass.cooldown
+  speed:
+    enabled: true
+    aliases: [setspeed]
+    cooldown: 3
+    bypass-permission: managerfix.other.bypass.cooldown

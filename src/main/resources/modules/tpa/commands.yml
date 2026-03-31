@@ -1,0 +1,37 @@
+# Команды модуля TPA
+commands:
+  tpa:
+    enabled: true
+    aliases: [teleportrequest]
+    cooldown: 5
+    bypass-permission: managerfix.tpa.bypass.cooldown
+  tpahere:
+    enabled: true
+    aliases: [teleporthere]
+    cooldown: 5
+    bypass-permission: managerfix.tpa.bypass.cooldown
+  tpaccept:
+    enabled: true
+    aliases: [tpyes]
+    cooldown: 0
+    bypass-permission: managerfix.tpa.bypass.cooldown
+  tpdeny:
+    enabled: true
+    aliases: [tpno]
+    cooldown: 0
+    bypass-permission: managerfix.tpa.bypass.cooldown
+  tpadeny:
+    enabled: true
+    aliases: []
+    cooldown: 0
+    bypass-permission: managerfix.tpa.bypass.cooldown
+  tpatoggle:
+    enabled: true
+    aliases: [tpaoff]
+    cooldown: 3
+    bypass-permission: managerfix.tpa.bypass.cooldown
+  tpablacklist:
+    enabled: true
+    aliases: [tpabl]
+    cooldown: 2
+    bypass-permission: managerfix.tpa.bypass.cooldown

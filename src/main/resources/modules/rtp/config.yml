@@ -1,0 +1,13 @@
+# RTP module configuration
+# Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B)
+cooldown: 300
+messages:
+  searching: "<#FAA300>Поиск безопасного места...</#FAA300>"
+  failed: "<#FF4D00>Не удалось найти безопасное место.</#FF4D00>"
+  success: "<#FAA300>Вы были телепортированы.</#FAA300>"
+  cooldown: "<#FF4D00>Подождите {seconds} сек. перед следующим телепортом.</#FF4D00>"
+  no-nearby: "<#FF4D00>Рядом нет игроков для телепорта.</#FF4D00>"
+  insufficient-funds: "<#FF4D00>Недостаточно средств: требуется {amount}.</#FF4D00>"
+  eco-unavailable: "<#FF4D00>Экономика недоступна.</#FF4D00>"
+costs:
+  near-player: 1000

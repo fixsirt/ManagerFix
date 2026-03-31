@@ -1,0 +1,7 @@
+# Команды модуля Announcer
+commands:
+  announcer:
+    enabled: true
+    aliases: [ann]
+    cooldown: 0
+    bypass-permission: managerfix.announcer.admin

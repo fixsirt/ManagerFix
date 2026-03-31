@@ -1,0 +1,7 @@
+# Команды модуля Tab
+commands:
+  tab:
+    enabled: true
+    aliases: [tablist]
+    cooldown: 0
+    bypass-permission: managerfix.tab.admin

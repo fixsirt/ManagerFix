@@ -1,0 +1,7 @@
+# Команды модуля Worlds
+commands:
+  world:
+    enabled: true
+    aliases: [worlds]
+    cooldown: 3
+    bypass-permission: managerfix.worlds.bypass.cooldown

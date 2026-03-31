@@ -1,0 +1,17 @@
+# Конфигурация модуля Items
+
+messages:
+  no-permission: "&cУ вас нет разрешения."
+  no-item: "&cВ руке нет предмета."
+  invalid-number: "&cНеверное число."
+  invalid-material: "&cНеверный материал."
+  invalid-enchantment: "&cНеверное зачарование."
+  invalid-attribute: "&cНеверный атрибут."
+  item-saved: "&aПредмет сохранён как {name}."
+  item-given: "&aПредмет выдан."
+  config-reloaded: "&aКонфиг перезагружен."
+  name-changed: "&aНазвание предмета изменено."
+  lore-changed: "&aОписание предмета изменено."
+  amount-changed: "&aКоличество предметов изменено."
+  enchantment-added: "&aЗачарование добавлено."
+  attribute-added: "&aАтрибут добавлен."

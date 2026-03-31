@@ -1,0 +1,7 @@
+# Команды модуля RTP
+commands:
+  rtp:
+    enabled: true
+    aliases: [randomteleport, random]
+    cooldown: 30
+    bypass-permission: managerfix.rtp.bypass.cooldown
