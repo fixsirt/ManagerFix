@@ -88,7 +88,7 @@ public final class BanListGui {
             if (list.isEmpty()) {
                 int center = CONTENT_SLOTS[CONTENT_SLOTS.length / 2];
                 ItemStack empty = new ItemBuilder(Material.BARRIER)
-                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Нет активных банов</#e9d5ff>"))
+                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Нет активных банов</#F0F4F8>"))
                         .hideFlags(true)
                         .build();
                 builder.button(center, Button.builder(empty).build());
@@ -99,17 +99,17 @@ public final class BanListGui {
                     int slot = CONTENT_SLOTS[contentIndex];
                     boolean permanent = r.isPermanent();
                     String nameLine = permanent
-                            ? "<red>⛔ " + r.getTargetName() + "</red>"
+                            ? "<#FF3366>⛔ " + r.getTargetName() + "</#FF3366>"
                             : UIThemeManager.GRADIENT_ACCENT + r.getTargetName() + "</gradient>";
                     ItemBuilder ib = new ItemBuilder(Material.PLAYER_HEAD)
                             .skullOwner(r.getTargetName())
                             .name(MessageUtil.parse(nameLine))
-                            .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Причина: " + (r.getReason() != null ? r.getReason() : "") + "</#e9d5ff>"))
-                            .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Кем: " + (r.getSource() != null ? r.getSource() : "Console") + "</#e9d5ff>"));
+                            .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Причина: " + (r.getReason() != null ? r.getReason() : "") + "</#F0F4F8>"))
+                            .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Кем: " + (r.getSource() != null ? r.getSource() : "Console") + "</#F0F4F8>"));
                     if (permanent) {
-                        ib.addLore(MessageUtil.parse("<red>Навсегда</red>"));
+                        ib.addLore(MessageUtil.parse("<#FF3366>Навсегда</#FF3366>"));
                     } else {
-                        ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "До: " + new java.util.Date(r.getExpiresAt()) + "</#e9d5ff>"));
+                        ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "До: " + new java.util.Date(r.getExpiresAt()) + "</#F0F4F8>"));
                     }
                     ib.hideFlags(true);
                     ItemStack icon = ib.build();
@@ -119,22 +119,22 @@ public final class BanListGui {
 
             if (totalPages > 1) {
                 ItemStack prev = new ItemBuilder(Material.ARROW)
-                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#e9d5ff>"))
+                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#F0F4F8>"))
                         .hideFlags(true).build();
                 ItemStack next = new ItemBuilder(Material.ARROW)
-                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#e9d5ff>"))
+                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#F0F4F8>"))
                         .hideFlags(true).build();
                 builder.button(PREV_SLOT, Button.builder(prev).onClick(e -> { if (safePage > 0) open(player, safePage - 1, sort, filter); }).build());
                 builder.button(NEXT_SLOT, Button.builder(next).onClick(e -> { if (safePage < totalPages - 1) open(player, safePage + 1, sort, filter); }).build());
                 ItemStack pageInfo = new ItemBuilder(Material.PAPER)
-                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Страница " + (safePage + 1) + " / " + totalPages + "</#e9d5ff>"))
+                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Страница " + (safePage + 1) + " / " + totalPages + "</#F0F4F8>"))
                         .hideFlags(true).build();
                 builder.button(49, Button.builder(pageInfo).build());
             }
 
             ItemStack sortBtn = new ItemBuilder(Material.COMPASS)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Сортировка: " + (sort == SortMode.BY_DATE ? "дата" : "ник") + "</#e9d5ff>"))
-                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Сортировка: " + (sort == SortMode.BY_DATE ? "дата" : "ник") + "</#F0F4F8>"))
+                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить</#F0F4F8>"))
                     .hideFlags(true).build();
             builder.button(SORT_SLOT, Button.builder(sortBtn).onClick(e -> {
                 SortMode nextSort = (sort == SortMode.BY_DATE) ? SortMode.BY_NAME : SortMode.BY_DATE;
@@ -146,8 +146,8 @@ public final class BanListGui {
                         case ALL -> "все";
                         case PERM_ONLY -> "перманентные";
                         case TEMP_ONLY -> "временные";
-                    } + "</#e9d5ff>"))
-                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить</#e9d5ff>"))
+                    } + "</#F0F4F8>"))
+                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить</#F0F4F8>"))
                     .hideFlags(true).build();
             builder.button(FILTER_SLOT, Button.builder(filterBtn).onClick(e -> {
                 FilterMode nextFilter = switch (filter) {

@@ -9,6 +9,8 @@ import ru.managerfix.ManagerFix;
 import ru.managerfix.core.AbstractModule;
 import ru.managerfix.core.ConfigManager;
 import ru.managerfix.core.LoggerUtil;
+import ru.managerfix.modules.chat.filter.FilterCommand;
+import ru.managerfix.modules.chat.filter.ProfanityFilter;
 import ru.managerfix.profile.ProfileManager;
 import ru.managerfix.service.ExternalApiService;
 import ru.managerfix.service.ServiceRegistry;
@@ -30,6 +32,7 @@ public final class ChatModule extends AbstractModule {
     private Listener chatListener;
     private Listener chatJoinQuitDeathListener;
     private Listener commandSpyListener;
+    private ProfanityFilter profanityFilter;
     /** Last PM partner per player (UUID -> UUID) for /r reply. */
     private final Map<UUID, UUID> lastPmPartner = new ConcurrentHashMap<>();
 
@@ -56,6 +59,11 @@ public final class ChatModule extends AbstractModule {
         // Инициализация команд
         initCommandConfig(MODULE_NAME);
 
+        // Инициализация фильтра мата
+        if (configManager.getModuleConfig("chat/filter.yml") != null) {
+            profanityFilter = new ProfanityFilter(plugin, configManager.getModuleConfig("chat/filter.yml"));
+        }
+
         if (profileManager != null) {
             chatListener = new ChatListener(this, profileManager, externalApiService);
             plugin.getServer().getPluginManager().registerEvents(chatListener, plugin);
@@ -63,8 +71,6 @@ public final class ChatModule extends AbstractModule {
         chatJoinQuitDeathListener = new ChatJoinQuitDeathListener(this);
         plugin.getServer().getPluginManager().registerEvents(chatJoinQuitDeathListener, plugin);
         if (plugin instanceof ManagerFix mf) {
-            ChatCommand chatCommand = new ChatCommand(mf, this);
-            mf.getCommandManager().register("chattoggle", chatCommand, chatCommand);
             ChatSpyCommand chatSpyCommand = new ChatSpyCommand(mf);
             mf.getCommandManager().register("chatspy", chatSpyCommand, chatSpyCommand);
             CommandSpyCommand commandSpyCommand = new CommandSpyCommand(mf);
@@ -80,6 +86,15 @@ public final class ChatModule extends AbstractModule {
             mf.getCommandManager().register("clearchat", chatClearCmd, chatClearCmd);
             mf.getCommandManager().register("chatchlear", chatClearCmd, chatClearCmd);
             mf.getCommandManager().register("cc", chatClearCmd, chatClearCmd);
+
+            // Команда broadcast
+            BroadcastCommand broadcastCommand = new BroadcastCommand(mf);
+            mf.getCommandManager().register("broadcast", broadcastCommand, broadcastCommand);
+            mf.getCommandManager().register("bc", broadcastCommand, broadcastCommand);
+
+            // Команда фильтра мата
+            FilterCommand filterCommand = new FilterCommand(mf);
+            mf.getCommandManager().register("filter", filterCommand, filterCommand);
             
             if (profileManager != null) {
                 PmBlockCommand pmBlockCommand = new PmBlockCommand(mf, profileManager);
@@ -225,7 +240,7 @@ public final class ChatModule extends AbstractModule {
 
     public String getHoverFormat() {
         return moduleConfig != null ? moduleConfig.getString("hover-format",
-                "<#1A120B>Баланс: <#FAA300>{balance}</#FAA300>\n<#E0E0E0>Нажмите ЛКМ — личное сообщение <#FFFFFF>{player}</#FFFFFF></#E0E0E0>") : "";
+                "<#F0F4F8>Баланс: <#00C8FF>{balance}</#00C8FF>\n<#F0F4F8>Нажмите ЛКМ — личное сообщение <#F0F4F8>{player}</#F0F4F8></#F0F4F8>") : "";
     }
 
     /** Hover over message text: show send time. Right-click to copy. Placeholder: {time} */
@@ -235,11 +250,19 @@ public final class ChatModule extends AbstractModule {
 
     public String getMessageHoverFormat() {
         return moduleConfig != null ? moduleConfig.getString("message-hover-format",
-                "<#E0E0E0>Отправлено: <#FFFFFF>{time}</#FFFFFF>\nПКМ — скопировать сообщение</#E0E0E0>") : "";
+                "<#F0F4F8>Отправлено: <#F0F4F8>{time}</#F0F4F8>\nПКМ — скопировать сообщение</#F0F4F8>") : "";
     }
 
     /** Time format for message hover (e.g. HH:mm, dd.MM.yyyy HH:mm) */
     public String getMessageHoverTimeFormat() {
         return moduleConfig != null ? moduleConfig.getString("message-hover-time-format", "HH:mm") : "HH:mm";
+    }
+
+    public ProfanityFilter getProfanityFilter() {
+        return profanityFilter;
+    }
+
+    public boolean isFilterEnabled() {
+        return moduleConfig != null && moduleConfig.getBoolean("filter-enabled", true);
     }
 }

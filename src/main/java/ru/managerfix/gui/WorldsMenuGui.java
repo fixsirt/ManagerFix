@@ -66,8 +66,8 @@ public final class WorldsMenuGui {
             Material iconMat = w.getEnvironment() == World.Environment.NETHER ? Material.NETHERRACK : (w.getEnvironment() == World.Environment.THE_END ? Material.END_STONE : Material.GRASS_BLOCK);
             ItemStack item = new ItemBuilder(iconMat)
                     .name(MessageUtil.parse(UIThemeManager.GRADIENT_ACCENT + w.getName() + "</gradient>"))
-                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Игроков: " + w.getPlayers().size() + "</#e9d5ff>"))
-                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — телепорт</#e9d5ff>"))
+                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Игроков: " + w.getPlayers().size() + "</#F0F4F8>"))
+                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — телепорт</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
             builder.button(slot, Button.builder(item).onClick(e -> {
@@ -83,10 +83,10 @@ public final class WorldsMenuGui {
 
         if (totalPages > 1) {
             ItemStack prev = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#F0F4F8>"))
                     .hideFlags(true).build();
             ItemStack next = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#F0F4F8>"))
                     .hideFlags(true).build();
             builder.button(PREV_SLOT, Button.builder(prev).onClick(e -> { if (safePage > 0) open(player, safePage - 1); }).build());
             builder.button(NEXT_SLOT, Button.builder(next).onClick(e -> { if (safePage < totalPages - 1) open(player, safePage + 1); }).build());

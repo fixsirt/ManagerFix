@@ -1,10 +1,5 @@
 # Команды модуля Chat
 commands:
-  chattoggle:
-    enabled: true
-    aliases: [ct]
-    cooldown: 2
-    bypass-permission: managerfix.chat.bypass.cooldown
   chatspy:
     enabled: true
     aliases: [cs]
@@ -30,8 +25,12 @@ commands:
     aliases: [chatchlear, cc]
     cooldown: 10
     bypass-permission: managerfix.chat.admin
-  socialspy:
+  broadcast:
     enabled: true
-    aliases: [ss]
-    cooldown: 3
+    aliases: [bc]
+    cooldown: 10
     bypass-permission: managerfix.chat.admin
+  filter:
+    enabled: true
+    cooldown: 0
+    bypass-permission: managerfix.chat.filter

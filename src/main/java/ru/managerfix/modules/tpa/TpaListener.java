@@ -68,6 +68,6 @@ public final class TpaListener implements Listener {
         if (startOpt.get().getWorld() == null || !startOpt.get().getWorld().equals(player.getWorld())) return;
         if (startOpt.get().distance(event.getTo()) <= MOVE_THRESHOLD) return;
         service.cancelPendingTeleport(player.getUniqueId());
-        player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("cancelled-move", "<red>Телепортация отменена: вы сдвинулись.")));
+        player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("cancelled-move", "<#FF3366>Телепортация отменена: вы сдвинулись.")));
     }
 }

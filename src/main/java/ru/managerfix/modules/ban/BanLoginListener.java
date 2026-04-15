@@ -51,13 +51,13 @@ public final class BanLoginListener implements Listener {
                     String duration = r.isPermanent() ? "Навсегда" : formatDuration(r.getExpiresAt() - System.currentTimeMillis());
                     
                     // Формируем красивое сообщение
-                    String raw = "<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>\n" +
-                                 "<color:#FF4D00>⛔ IP БАН</color>\n" +
-                                 "<color:#E0E0E0>IP:</color> <color:#FFFFFF>{ip}</color>\n" +
-                                 "<color:#E0E0E0>Забанил:</color> <color:#FFFFFF>{source}</color>\n" +
-                                 "<color:#E0E0E0>На:</color> <color:#FAA300>{duration}</color>\n" +
-                                 "<color:#E0E0E0>Причина:</color> <color:#FAA300>{reason}</color>\n" +
-                                 "<color:#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>";
+                    String raw = "<color:#F0F4F8>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>\n" +
+                                 "<color:#FF3366>⛔ IP БАН</color>\n" +
+                                 "<color:#F0F4F8>IP:</color> <color:#F0F4F8>{ip}</color>\n" +
+                                 "<color:#F0F4F8>Забанил:</color> <color:#F0F4F8>{source}</color>\n" +
+                                 "<color:#F0F4F8>На:</color> <color:#00C8FF>{duration}</color>\n" +
+                                 "<color:#F0F4F8>Причина:</color> <color:#00C8FF>{reason}</color>\n" +
+                                 "<color:#F0F4F8>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>";
                     
                     String msg = raw.replace("{ip}", ipAddress)
                                     .replace("{source}", source)

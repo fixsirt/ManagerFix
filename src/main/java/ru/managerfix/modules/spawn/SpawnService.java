@@ -31,7 +31,7 @@ public class SpawnService {
     public void teleportToSpawn(Player player) {
         Location spawnLoc = config.getSpawnLocation();
         if (spawnLoc == null) {
-            player.sendMessage(MessageUtil.parse("<#FF4D00>Спавн не установлен!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Спавн не установлен!"));
             return;
         }
 
@@ -41,7 +41,7 @@ public class SpawnService {
                 if (safeLoc != null) {
                     spawnLoc = safeLoc;
                 } else {
-                    player.sendMessage(MessageUtil.parse("<#FF4D00>Не удалось найти безопасное место для телепортации!"));
+                    player.sendMessage(MessageUtil.parse("<#FF3366>Не удалось найти безопасное место для телепортации!"));
                     return;
                 }
             }
@@ -60,7 +60,7 @@ public class SpawnService {
         }
         // Фоллбек: мгновенный телепорт (если TPA модуль недоступен)
         player.teleport(spawnLoc);
-        player.sendMessage(MessageUtil.parse("<#FAA300>Телепортация на спавн."));
+        player.sendMessage(MessageUtil.parse("<#00C8FF>Телепортация на спавн."));
     }
 
     public void cancelTeleport(UUID uuid) {

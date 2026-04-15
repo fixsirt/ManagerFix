@@ -32,18 +32,18 @@ public final class MuteCommand implements CommandExecutor, TabCompleter {
         MuteManager mm = banModule.getMuteManager();
 
         if (mm == null) {
-            sender.sendMessage(MessageUtil.parse("<#C0280F>Модуль мутов не загружен!"));
+            sender.sendMessage(MessageUtil.parse("<#FF3366>Модуль мутов не загружен!"));
             return true;
         }
 
         if ("mute".equals(cmd)) {
             if (args.length < 1) {
-                sender.sendMessage(MessageUtil.parse("<#C0280F>Использование: /mute <игрок> [время] [причина]"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Использование: /mute <игрок> [время] [причина]"));
                 return true;
             }
             OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
             if (target == null || (!target.isOnline() && !target.hasPlayedBefore())) {
-                sender.sendMessage(MessageUtil.parse("<#C0280F>Игрок не найден!"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Игрок не найден!"));
                 return true;
             }
             
@@ -69,7 +69,7 @@ public final class MuteCommand implements CommandExecutor, TabCompleter {
             
             final long finalExpiresAt = expiresAt;
             mm.mute(target.getUniqueId(), target.getName(), reason, source, finalExpiresAt, () -> {
-                sender.sendMessage(MessageUtil.parse("<#FAA300>Игрок замучен!"));
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>Игрок замучен!"));
                 if (banModule.isBroadcastMutes()) {
                     String duration = finalExpiresAt == 0 ? "Навсегда" : formatDuration(finalExpiresAt - System.currentTimeMillis());
                     broadcast(banModule.getFormatMuteBroadcast(), sender, target.getUniqueId(), target.getName(), reason, duration);
@@ -79,23 +79,23 @@ public final class MuteCommand implements CommandExecutor, TabCompleter {
         }
         if ("unmute".equals(cmd)) {
             if (args.length < 1) {
-                sender.sendMessage(MessageUtil.parse("<#C0280F>Использование: /unmute <игрок>"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Использование: /unmute <игрок>"));
                 return true;
             }
             OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
             if (target == null || (!target.isOnline() && !target.hasPlayedBefore())) {
-                sender.sendMessage(MessageUtil.parse("<#C0280F>Игрок не найден!"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Игрок не найден!"));
                 return true;
             }
             
             // Проверяем, замьючен ли игрок
             var muteOpt = mm.getMute(target.getUniqueId());
             if (muteOpt.isEmpty() || muteOpt.get().isExpired()) {
-                sender.sendMessage(MessageUtil.parse("<#FF4D00>Игрок <#FFFFFF>" + target.getName() + "</#FFFFFF> не замьючен."));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Игрок <#F0F4F8>" + target.getName() + "</#F0F4F8> не замьючен."));
                 return true;
             }
             
-            mm.unmute(target.getUniqueId(), () -> sender.sendMessage(MessageUtil.parse("<#FAA300>Игрок <#FFFFFF>" + target.getName() + "</#FFFFFF> размучен!")));
+            mm.unmute(target.getUniqueId(), () -> sender.sendMessage(MessageUtil.parse("<#00C8FF>Игрок <#F0F4F8>" + target.getName() + "</#F0F4F8> размучен!")));
             return true;
         }
         return false;

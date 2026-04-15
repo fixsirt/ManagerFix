@@ -33,19 +33,23 @@ public final class WarpsDataStorage {
     private final Map<String, Warp> warps = new HashMap<>();
     private final DatabaseManager databaseManager;
     private final boolean useSql;
+    private final boolean isSqlite;
 
     public WarpsDataStorage(JavaPlugin plugin) {
         this.plugin = plugin;
         
-        // Проверяем используется ли SQL
-        boolean isMySql = false;
+        // Проверяем используется ли SQL (MySQL или SQLite)
+        boolean useSqlStorage = false;
+        boolean isSqliteStorage = false;
         DatabaseManager dbManager = null;
         if (plugin instanceof ManagerFix mf) {
-            isMySql = mf.isMySqlStorage();
+            useSqlStorage = mf.isMySqlStorage() || mf.isSqliteStorage();
+            isSqliteStorage = mf.isSqliteStorage();
             dbManager = mf.getDatabaseManager();
         }
         
-        this.useSql = isMySql;
+        this.useSql = useSqlStorage;
+        this.isSqlite = isSqliteStorage;
         this.databaseManager = dbManager;
     }
 
@@ -177,14 +181,24 @@ public final class WarpsDataStorage {
         if (useSql && databaseManager != null) {
             // Сохраняем в SQL
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                String sql;
+                if (isSqlite) {
+                    sql = "INSERT INTO warps (name, world, x, y, z, yaw, pitch, permission, category, icon, slot, description, teleport_delay, enabled, hidden, owner) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                            "ON CONFLICT(name) DO UPDATE SET world = excluded.world, x = excluded.x, y = excluded.y, z = excluded.z, " +
+                            "yaw = excluded.yaw, pitch = excluded.pitch, permission = excluded.permission, category = excluded.category, " +
+                            "icon = excluded.icon, slot = excluded.slot, description = excluded.description, teleport_delay = excluded.teleport_delay, " +
+                            "enabled = excluded.enabled, hidden = excluded.hidden, owner = excluded.owner";
+                } else {
+                    sql = "INSERT INTO warps (name, world, x, y, z, yaw, pitch, permission, category, icon, slot, description, teleport_delay, enabled, hidden, owner) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                            "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), " +
+                            "yaw = VALUES(yaw), pitch = VALUES(pitch), permission = VALUES(permission), category = VALUES(category), " +
+                            "icon = VALUES(icon), slot = VALUES(slot), description = VALUES(description), teleport_delay = VALUES(teleport_delay), " +
+                            "enabled = VALUES(enabled), hidden = VALUES(hidden), owner = VALUES(owner)";
+                }
                 try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement ps = conn.prepareStatement(
-                         "INSERT INTO warps (name, world, x, y, z, yaw, pitch, permission, category, icon, slot, description, teleport_delay, enabled, hidden, owner) " +
-                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                         "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), " +
-                         "yaw = VALUES(yaw), pitch = VALUES(pitch), permission = VALUES(permission), category = VALUES(category), " +
-                         "icon = VALUES(icon), slot = VALUES(slot), description = VALUES(description), teleport_delay = VALUES(teleport_delay), " +
-                         "enabled = VALUES(enabled), hidden = VALUES(hidden), owner = VALUES(owner)")) {
+                     PreparedStatement ps = conn.prepareStatement(sql)) {
                     
                     ps.setString(1, warp.getName().toLowerCase());
                     ps.setString(2, warp.getLocation().getWorld().getName());

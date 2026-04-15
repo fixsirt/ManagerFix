@@ -9,20 +9,26 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * SQL-based profile storage. All operations run async via TaskScheduler.
+ * SQL-based profile storage. All operations run async via TaskScheduler. Supports both MySQL and SQLite.
  */
 public final class SqlProfileStorage implements ProfileStorage {
 
     private static final String SELECT = "SELECT uuid, name, last_activity, metadata, cooldowns, last_ip FROM profiles WHERE uuid = ?";
     private static final String SELECT_HOMES = "SELECT name, world, x, y, z, yaw, pitch FROM homes WHERE uuid = ?";
-    private static final String UPSERT = "INSERT INTO profiles (uuid, name, last_activity, metadata, cooldowns, last_ip) VALUES (?, ?, ?, ?, ?, ?) " +
+    private static final String UPSERT_MYSQL = "INSERT INTO profiles (uuid, name, last_activity, metadata, cooldowns, last_ip) VALUES (?, ?, ?, ?, ?, ?) " +
             "ON DUPLICATE KEY UPDATE name = VALUES(name), last_activity = VALUES(last_activity), metadata = VALUES(metadata), cooldowns = VALUES(cooldowns), last_ip = VALUES(last_ip)";
-    private static final String INSERT_HOME = "INSERT INTO homes (uuid, name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
+    private static final String UPSERT_SQLITE = "INSERT INTO profiles (uuid, name, last_activity, metadata, cooldowns, last_ip) VALUES (?, ?, ?, ?, ?, ?) " +
+            "ON CONFLICT(uuid) DO UPDATE SET name = excluded.name, last_activity = excluded.last_activity, metadata = excluded.metadata, cooldowns = excluded.cooldowns, last_ip = excluded.last_ip";
+    private static final String INSERT_HOME_MYSQL = "INSERT INTO homes (uuid, name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
             "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch)";
+    private static final String INSERT_HOME_SQLITE = "INSERT INTO homes (uuid, name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
+            "ON CONFLICT(uuid, name) DO UPDATE SET world = excluded.world, x = excluded.x, y = excluded.y, z = excluded.z, yaw = excluded.yaw, pitch = excluded.pitch";
     private static final String DELETE_HOME = "DELETE FROM homes WHERE uuid = ? AND name = ?";
 
     private final DatabaseManager databaseManager;
     private final TaskScheduler scheduler;
+    private String upsertSql;
+    private String insertHomeSql;
 
     public SqlProfileStorage(DatabaseManager databaseManager, TaskScheduler scheduler) {
         this.databaseManager = databaseManager;
@@ -31,7 +37,9 @@ public final class SqlProfileStorage implements ProfileStorage {
 
     @Override
     public void init() {
-        // Tables created by DatabaseManager
+        boolean isSqlite = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType());
+        this.upsertSql = isSqlite ? UPSERT_SQLITE : UPSERT_MYSQL;
+        this.insertHomeSql = isSqlite ? INSERT_HOME_SQLITE : INSERT_HOME_MYSQL;
     }
 
     @Override
@@ -119,16 +127,16 @@ public final class SqlProfileStorage implements ProfileStorage {
             String playerName = null;
             
             // Сохраняем профиль
-            try (PreparedStatement ps = conn.prepareStatement(UPSERT)) {
+            try (PreparedStatement ps = conn.prepareStatement(upsertSql)) {
                 ps.setString(1, profile.getUuid().toString());
                 ps.setString(2, playerName);
                 ps.setLong(3, profile.getLastActivity());
-                ps.setString(4, profile.getLastIpAddress() != null ? profile.getLastIpAddress() : "");
                 Map<String, Object> meta = new HashMap<>(profile.getMetadataSnapshot());
                 // Не сохраняем homes в metadata - они в отдельной таблице
                 meta.remove("homes");
-                ps.setString(5, serializeMetadata(meta));
-                ps.setString(6, serializeCooldowns(profile.getCooldownsSnapshot()));
+                ps.setString(4, serializeMetadata(meta));
+                ps.setString(5, serializeCooldowns(profile.getCooldownsSnapshot()));
+                ps.setString(6, profile.getLastIpAddress() != null ? profile.getLastIpAddress() : "");
                 ps.executeUpdate();
             }
 
@@ -159,7 +167,7 @@ public final class SqlProfileStorage implements ProfileStorage {
         }
         
         // Добавляем/обновляем дома из профиля
-        try (PreparedStatement ps = conn.prepareStatement(INSERT_HOME)) {
+        try (PreparedStatement ps = conn.prepareStatement(insertHomeSql)) {
             for (Map.Entry<String, String> entry : currentHomes.entrySet()) {
                 String homeName = entry.getKey();
                 String location = entry.getValue();

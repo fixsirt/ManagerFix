@@ -31,11 +31,13 @@ public final class TpaCommand implements CommandExecutor, TabCompleter {
     private final ManagerFix plugin;
     private final TpaService service;
     private final TpaGui tpaGui;
+    private final TpaRequestsGui tpaRequestsGui;
 
-    public TpaCommand(ManagerFix plugin, TpaService service, GuiManager guiManager) {
+    public TpaCommand(ManagerFix plugin, TpaService service, GuiManager guiManager, TpaGui tpaGui, TpaRequestsGui tpaRequestsGui) {
         this.plugin = plugin;
         this.service = service;
-        this.tpaGui = new TpaGui(plugin, guiManager, service);
+        this.tpaGui = tpaGui;
+        this.tpaRequestsGui = tpaRequestsGui;
     }
 
     @Override
@@ -46,7 +48,9 @@ public final class TpaCommand implements CommandExecutor, TabCompleter {
             if (!CommandManager.checkPlayer(sender, plugin)) return true;
             Player player = (Player) sender;
             if (!CommandManager.checkCommandPermission(sender, "tpareply", PERM_USE, plugin)) return true;
-            tpaGui.openIfHasRequest(player);
+            if (tpaRequestsGui != null) {
+                tpaRequestsGui.open(player, 0);
+            }
             return true;
         }
 
@@ -80,13 +84,15 @@ public final class TpaCommand implements CommandExecutor, TabCompleter {
         if ("tpaccept".equals(cmd)) {
             if (!CommandManager.checkPlayer(sender, plugin)) return true;
             if (!CommandManager.checkCommandPermission(sender, "tpaccept", PERM_USE, plugin)) return true;
-            return handleAccept((Player) sender);
+            String targetName = args.length > 0 ? args[0] : null;
+            return handleAccept((Player) sender, targetName);
         }
 
         if ("tpadeny".equals(cmd) || "tpdeny".equals(cmd)) {
             if (!CommandManager.checkPlayer(sender, plugin)) return true;
             if (!CommandManager.checkCommandPermission(sender, "tpadeny", PERM_USE, plugin)) return true;
-            return handleDeny((Player) sender);
+            String targetName = args.length > 0 ? args[0] : null;
+            return handleDeny((Player) sender, targetName);
         }
 
         return false;
@@ -128,34 +134,86 @@ public final class TpaCommand implements CommandExecutor, TabCompleter {
         String senderDisplay = NickResolver.plainDisplayName(sender);
         sendTpaMessage(sender, "request-sent", Map.of("target", targetDisplay));
 
-        Component requestMsg = buildRequestReceivedMessage(senderDisplay);
+        Component requestMsg = buildRequestReceivedMessage(senderDisplay, sender.getUniqueId(), tpaHere, target.getUniqueId());
         target.sendMessage(requestMsg);
-        // Меню открывается только по клику на сообщение (/tpareply), не автоматически
         return true;
     }
 
-    private Component buildRequestReceivedMessage(String senderName) {
-        String text = service.getConfig().getMessage("request-received", "<gradient:#FF4D00:#FAA300>Игрок {sender} хочет телепортироваться к вам</gradient>");
-        text = text.replace("{sender}", senderName);
-        Component main = MessageUtil.parse(text);
-        String clickHint = service.getConfig().getMessage("click-to-reply", "Нажмите, чтобы ответить.");
-        Component hint = MessageUtil.parse("<#E0E0E0>" + clickHint);
-        Component full = main.append(Component.newline()).append(hint);
-        return full.clickEvent(ClickEvent.runCommand("/tpareply"))
-                .hoverEvent(HoverEvent.showText(MessageUtil.parse("<#FAA300>Открыть меню ответа</#FAA300>")));
+    private Component buildRequestReceivedMessage(String senderName, UUID senderUuid, boolean tpaHere, UUID targetUuid) {
+        int totalRequests = service.getRequestCount(targetUuid);
+        String actionText = tpaHere ? "хочет телепортировать вас к себе" : "хочет телепортироваться к вам";
+        
+        Component acceptBtn = MessageUtil.parse("<#00C8FF>[ ПРИНЯТЬ ]</#00C8FF>")
+                .clickEvent(ClickEvent.runCommand("/tpaccept " + senderUuid))
+                .hoverEvent(HoverEvent.showText(MessageUtil.parse("<#00C8FF>Принять</#00C8FF>")));
+        Component denyBtn = MessageUtil.parse("<#FF3366>[ ОТКЛОНИТЬ ]</#FF3366>")
+                .clickEvent(ClickEvent.runCommand("/tpdeny " + senderUuid))
+                .hoverEvent(HoverEvent.showText(MessageUtil.parse("<#FF3366>Отклонить</#FF3366>")));
+        Component allBtn = MessageUtil.parse("<#7000FF>[Все заявки (" + totalRequests + ")]</#7000FF>")
+                .clickEvent(ClickEvent.runCommand("/tpareply"))
+                .hoverEvent(HoverEvent.showText(MessageUtil.parse("<#00C8FF>Все заявки</#00C8FF>")));
+        
+        Component separator = MessageUtil.parse("<#7000FF>─────────────────────────────</#7000FF>");
+        
+        return Component.empty()
+                .append(separator).appendNewline()
+                .append(MessageUtil.parse("<gradient:#00C8FF:#7000FF>" + senderName + "</gradient>")).appendNewline()
+                .append(MessageUtil.parse("<#F0F4F8>" + actionText + "</#F0F4F8>")).appendNewline()
+                .append(separator).appendNewline()
+                .append(acceptBtn)
+                .append(MessageUtil.parse("  <#7000FF>|</#7000FF>  "))
+                .append(denyBtn).appendNewline()
+                .append(allBtn).appendNewline()
+                .append(separator);
     }
 
-    private boolean handleAccept(Player accepter) {
-        var reqOpt = service.removeRequest(accepter.getUniqueId());
+    private boolean handleAccept(Player accepter, String targetName) {
+        if (targetName != null && !targetName.isEmpty()) {
+            UUID targetUuid = null;
+            try {
+                targetUuid = UUID.fromString(targetName);
+            } catch (IllegalArgumentException ignored) {}
+            
+            Player target = NickResolver.resolve(targetName);
+            UUID finalTargetUuid = targetUuid != null ? targetUuid : (target != null ? target.getUniqueId() : null);
+            
+            if (finalTargetUuid == null) {
+                MessageUtil.send(plugin, accepter, "player-not-found", Map.of("player", targetName));
+                return true;
+            }
+            var reqOpt = service.removeRequest(accepter.getUniqueId(), finalTargetUuid);
+            if (reqOpt.isEmpty()) {
+                String displayName;
+                if (target != null) {
+                    displayName = NickResolver.plainDisplayName(target);
+                } else if (targetUuid != null) {
+                    displayName = Bukkit.getOfflinePlayer(targetUuid).getName();
+                    if (displayName == null) displayName = targetName;
+                } else {
+                    displayName = targetName;
+                }
+                sendTpaMessage(accepter, "request-already-processed", Map.of("player", displayName));
+                return true;
+            }
+            TpaRequest req = reqOpt.get();
+            acceptRequest(accepter, req);
+            return true;
+        }
+
+        var reqOpt = service.removeFirstRequest(accepter.getUniqueId());
         if (reqOpt.isEmpty()) {
             sendTpaMessage(accepter, "no-request", null);
             return true;
         }
-        TpaRequest req = reqOpt.get();
+        acceptRequest(accepter, reqOpt.get());
+        return true;
+    }
+
+    private void acceptRequest(Player accepter, TpaRequest req) {
         Player from = NickResolver.getPlayerByUuid(req.getFrom());
         if (from == null || !from.isOnline()) {
             sendTpaMessage(accepter, "request-expired", null);
-            return true;
+            return;
         }
         sendTpaMessage(accepter, "accepted", null);
         sendTpaMessage(from, "accepted", null);
@@ -167,22 +225,56 @@ public final class TpaCommand implements CommandExecutor, TabCompleter {
             service.scheduleTeleport(from, accepter.getLocation().clone(), () ->
                     sendTpaMessage(from, "cancelled-move", null));
         }
-        return true;
     }
 
-    private boolean handleDeny(Player denier) {
-        var reqOpt = service.removeRequest(denier.getUniqueId());
+    private boolean handleDeny(Player denier, String targetName) {
+        if (targetName != null && !targetName.isEmpty()) {
+            UUID targetUuid = null;
+            try {
+                targetUuid = UUID.fromString(targetName);
+            } catch (IllegalArgumentException ignored) {}
+            
+            Player target = NickResolver.resolve(targetName);
+            UUID finalTargetUuid = targetUuid != null ? targetUuid : (target != null ? target.getUniqueId() : null);
+            
+            if (finalTargetUuid == null) {
+                MessageUtil.send(plugin, denier, "player-not-found", Map.of("player", targetName));
+                return true;
+            }
+            var reqOpt = service.removeRequest(denier.getUniqueId(), finalTargetUuid);
+            if (reqOpt.isEmpty()) {
+                String displayName;
+                if (target != null) {
+                    displayName = NickResolver.plainDisplayName(target);
+                } else if (targetUuid != null) {
+                    displayName = Bukkit.getOfflinePlayer(targetUuid).getName();
+                    if (displayName == null) displayName = targetName;
+                } else {
+                    displayName = targetName;
+                }
+                sendTpaMessage(denier, "request-already-processed", Map.of("player", displayName));
+                return true;
+            }
+            TpaRequest req = reqOpt.get();
+            denyRequest(denier, req);
+            return true;
+        }
+
+        var reqOpt = service.removeFirstRequest(denier.getUniqueId());
         if (reqOpt.isEmpty()) {
             sendTpaMessage(denier, "no-request", null);
             return true;
         }
+        denyRequest(denier, reqOpt.get());
+        return true;
+    }
+
+    private void denyRequest(Player denier, TpaRequest req) {
         sendTpaMessage(denier, "denied", null);
-        TpaRequest req = reqOpt.get();
         Player from = NickResolver.getPlayerByUuid(req.getFrom());
         if (from != null && from.isOnline()) {
             sendTpaMessage(from, "denied", null);
         }
-        return true;
     }
 
     private boolean handleBlacklist(Player player, String[] args) {

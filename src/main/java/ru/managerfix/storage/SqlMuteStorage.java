@@ -9,18 +9,21 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * SQL-based mute storage.
+ * SQL-based mute storage. Supports both MySQL and SQLite.
  */
 public final class SqlMuteStorage implements MuteStorage {
 
     private static final String SELECT = "SELECT * FROM mutes WHERE uuid = ?";
-    private static final String INSERT = "INSERT INTO mutes (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
+    private static final String INSERT_MYSQL = "INSERT INTO mutes (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
             "ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
+    private static final String INSERT_SQLITE = "INSERT INTO mutes (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
+            "ON CONFLICT(uuid) DO UPDATE SET name = excluded.name, reason = excluded.reason, source = excluded.source, created_at = excluded.created_at, expires_at = excluded.expires_at";
     private static final String DELETE = "DELETE FROM mutes WHERE uuid = ?";
 
     private final DatabaseManager databaseManager;
     private final TaskScheduler scheduler;
     private final Map<UUID, MuteRecord> cache = new java.util.concurrent.ConcurrentHashMap<>();
+    private String insertSql;
 
     public SqlMuteStorage(DatabaseManager databaseManager, TaskScheduler scheduler) {
         this.databaseManager = databaseManager;
@@ -29,6 +32,7 @@ public final class SqlMuteStorage implements MuteStorage {
 
     @Override
     public void init() {
+        this.insertSql = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType()) ? INSERT_SQLITE : INSERT_MYSQL;
         loadAllMutes();
     }
 
@@ -99,7 +103,7 @@ public final class SqlMuteStorage implements MuteStorage {
     public void addMuteAsync(MuteRecord record, Runnable onDone) {
         scheduler.runAsync(() -> {
             try (Connection conn = databaseManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(INSERT)) {
+                 PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 ps.setString(1, record.getTargetUuid().toString());
                 ps.setString(2, record.getTargetName());
                 ps.setString(3, record.getReason());

@@ -49,15 +49,15 @@ public class SpawnConfig {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "modules/spawn/config.yml");
         
-        // Проверяем используется ли MySQL
-        boolean isMySql = false;
+        // Проверяем используется ли SQL (MySQL или SQLite)
+        boolean useSqlStorage = false;
         DatabaseManager dbManager = null;
         if (plugin instanceof ManagerFix mf) {
-            isMySql = mf.isMySqlStorage();
+            useSqlStorage = mf.isMySqlStorage() || mf.isSqliteStorage();
             dbManager = mf.getDatabaseManager();
         }
         
-        this.useSql = isMySql;
+        this.useSql = useSqlStorage;
         this.databaseManager = dbManager;
         
         reload();
@@ -155,13 +155,18 @@ public class SpawnConfig {
         this.spawnLocation = loc;
         
         if (useSql && databaseManager != null) {
-            // Сохраняем в MySQL
+            // Сохраняем в SQL
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                String sql;
+                if ("SQLITE".equalsIgnoreCase(databaseManager.getStorageType())) {
+                    sql = "INSERT OR REPLACE INTO spawn (id, world, x, y, z, yaw, pitch) VALUES (1, ?, ?, ?, ?, ?, ?)";
+                } else {
+                    sql = "INSERT INTO spawn (id, world, x, y, z, yaw, pitch) VALUES (1, ?, ?, ?, ?, ?, ?) " +
+                          "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), " +
+                          "z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch)";
+                }
                 try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement ps = conn.prepareStatement(
-                         "INSERT INTO spawn (id, world, x, y, z, yaw, pitch) VALUES (1, ?, ?, ?, ?, ?, ?) " +
-                         "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), " +
-                         "z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch)")) {
+                     PreparedStatement ps = conn.prepareStatement(sql)) {
                     ps.setString(1, loc.getWorld().getName());
                     ps.setDouble(2, loc.getX());
                     ps.setDouble(3, loc.getY());

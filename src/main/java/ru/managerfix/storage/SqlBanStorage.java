@@ -9,19 +9,22 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * SQL-based ban storage.
+ * SQL-based ban storage. Supports both MySQL and SQLite.
  */
 public final class SqlBanStorage implements BanStorage {
 
     private static final String SELECT = "SELECT * FROM bans WHERE uuid = ?";
-    private static final String INSERT = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
+    private static final String INSERT_MYSQL = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
             "ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
+    private static final String INSERT_SQLITE = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
+            "ON CONFLICT(uuid) DO UPDATE SET name = excluded.name, reason = excluded.reason, source = excluded.source, created_at = excluded.created_at, expires_at = excluded.expires_at";
     private static final String DELETE = "DELETE FROM bans WHERE uuid = ?";
     private static final String LIST = "SELECT * FROM bans";
 
     private final DatabaseManager databaseManager;
     private final TaskScheduler scheduler;
     private final Map<UUID, BanRecord> cache = new java.util.concurrent.ConcurrentHashMap<>();
+    private String insertSql;
 
     public SqlBanStorage(DatabaseManager databaseManager, TaskScheduler scheduler) {
         this.databaseManager = databaseManager;
@@ -30,6 +33,7 @@ public final class SqlBanStorage implements BanStorage {
 
     @Override
     public void init() {
+        this.insertSql = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType()) ? INSERT_SQLITE : INSERT_MYSQL;
         loadAllBans();
     }
 
@@ -75,7 +79,7 @@ public final class SqlBanStorage implements BanStorage {
     public void addBanAsync(BanRecord record, Runnable onDone) {
         scheduler.runAsync(() -> {
             try (Connection conn = databaseManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(INSERT)) {
+                 PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 ps.setString(1, record.getTargetUuid().toString());
                 ps.setString(2, record.getTargetName());
                 ps.setString(3, record.getReason());
@@ -86,7 +90,6 @@ public final class SqlBanStorage implements BanStorage {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            // Обновляем кэш и вызываем onDone асинхронно
             cache.put(record.getTargetUuid(), record);
             if (onDone != null) {
                 onDone.run();

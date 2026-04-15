@@ -30,7 +30,7 @@ public final class CommandSpyListener implements Listener {
         String lang = plugin.getConfigManager().getDefaultLanguage();
         String formatKey = "chat.commandspy-format";
         String raw = MessageUtil.getRaw(plugin, lang, formatKey);
-        String format = raw != null ? raw : "<#1A120B>[CommandSpy] <#E0E0E0>{player}: <#FFFFFF>{command}</#FFFFFF></#1A120B>";
+        String format = raw != null ? raw : "<#F0F4F8>[CommandSpy] <#F0F4F8>{player}: <#F0F4F8>{command}</#F0F4F8></#F0F4F8>";
         String line = format.replace("{player}", sender.getName()).replace("{command}", message.trim());
 
         for (Player other : plugin.getServer().getOnlinePlayers()) {

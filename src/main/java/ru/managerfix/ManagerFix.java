@@ -104,12 +104,11 @@ public final class ManagerFix extends JavaPlugin {
 
             storageType = configManager.getStorageType();
 
-            if (configManager.isMySqlStorage()) {
-                databaseManager = new DatabaseManager(this, configManager.getMainConfig());
+            if (configManager.isMySqlStorage() || configManager.isSqliteStorage()) {
+                databaseManager = new DatabaseManager(this, configManager.getMainConfig(), configManager);
                 try {
                     databaseManager.init();
                 } catch (RuntimeException e) {
-                    // Закрываем connection pool при ошибке инициализации
                     if (databaseManager != null) {
                         databaseManager.shutdown();
                     }
@@ -374,6 +373,10 @@ public final class ManagerFix extends JavaPlugin {
 
     public boolean isMySqlStorage() {
         return configManager != null && configManager.isMySqlStorage();
+    }
+
+    public boolean isSqliteStorage() {
+        return configManager != null && configManager.isSqliteStorage();
     }
 
     public ru.managerfix.storage.SqlKitStorage getSqlKitStorage() {

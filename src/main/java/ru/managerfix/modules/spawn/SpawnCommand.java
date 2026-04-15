@@ -27,7 +27,7 @@ public class SpawnCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(MessageUtil.parse("<#FF4D00>Эта команда только для игроков."));
+            sender.sendMessage(MessageUtil.parse("<#FF3366>Эта команда только для игроков."));
             return true;
         }
 
@@ -35,17 +35,17 @@ public class SpawnCommand implements CommandExecutor, TabCompleter {
 
         if (cmdName.equals("setspawn")) {
             if (!player.hasPermission("managerfix.spawn.set")) {
-                player.sendMessage(MessageUtil.parse("<#FF4D00>У вас нет прав на установку спавна!"));
+                player.sendMessage(MessageUtil.parse("<#FF3366>У вас нет прав на установку спавна!"));
                 return true;
             }
             config.setSpawnLocation(player.getLocation());
-            player.sendMessage(MessageUtil.parse("<#FAA300>Спавн сервера установлен в вашей позиции."));
+            player.sendMessage(MessageUtil.parse("<#00C8FF>Спавн сервера установлен в вашей позиции."));
             return true;
         }
 
         if (cmdName.equals("editspawn")) {
             if (!player.hasPermission("managerfix.spawn.edit")) {
-                player.sendMessage(MessageUtil.parse("<#FF4D00>У вас нет прав на редактирование настроек спавна!"));
+                player.sendMessage(MessageUtil.parse("<#FF3366>У вас нет прав на редактирование настроек спавна!"));
                 return true;
             }
             editGui.open(player);
@@ -54,7 +54,7 @@ public class SpawnCommand implements CommandExecutor, TabCompleter {
 
         if (cmdName.equals("spawn")) {
             if (!player.hasPermission("managerfix.spawn.use")) {
-                player.sendMessage(MessageUtil.parse("<#FF4D00>У вас нет прав на использование команды спавна!"));
+                player.sendMessage(MessageUtil.parse("<#FF3366>У вас нет прав на использование команды спавна!"));
                 return true;
             }
             spawnService.teleportToSpawn(player);

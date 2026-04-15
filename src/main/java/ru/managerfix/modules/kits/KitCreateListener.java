@@ -37,14 +37,14 @@ public final class KitCreateListener implements Listener {
         String kitName = event.getMessage().trim();
 
         if (kitName.length() < 2 || kitName.length() > 20) {
-            player.sendMessage(MessageUtil.parse("<red>Название должно быть от 2 до 20 символов!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Название должно быть от 2 до 20 символов!"));
             return;
         }
 
         // Проверяем, нет ли уже такого кита
         KitManager kitManager = kitsModule.getKitManager();
         if (kitManager.getKit(kitName).isPresent()) {
-            player.sendMessage(MessageUtil.parse("<red>Кит с таким названием уже существует!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Кит с таким названием уже существует!"));
             return;
         }
 
@@ -58,7 +58,7 @@ public final class KitCreateListener implements Listener {
         }
 
         if (items.isEmpty()) {
-            player.sendMessage(MessageUtil.parse("<red>У вас нет предметов в инвентаре! Возьмите предметы и используйте /kit create <name>"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>У вас нет предметов в инвентаре! Возьмите предметы и используйте /kit create <name>"));
             return;
         }
 
@@ -67,9 +67,9 @@ public final class KitCreateListener implements Listener {
         kitManager.saveKit(newKit);
         LoggerUtil.debug("[KitCreate] Kit save requested for: " + kitName);
 
-        player.sendMessage(MessageUtil.parse("<green>✓ Кит <white>" + kitName + "</white> создан!"));
-        player.sendMessage(MessageUtil.parse("<gray>Предметов: <white>" + items.size() + "</white></gray>"));
-        player.sendMessage(MessageUtil.parse("<gray>КД: <white>24 часа</white> (измените через /editkits)</gray>"));
+        player.sendMessage(MessageUtil.parse("<#00C8FF>✓ Кит <#F0F4F8>" + kitName + "</#F0F4F8> создан!"));
+        player.sendMessage(MessageUtil.parse("<#F0F4F8>Предметов: <#F0F4F8>" + items.size() + "</#F0F4F8></#F0F4F8>"));
+        player.sendMessage(MessageUtil.parse("<#F0F4F8>КД: <#F0F4F8>24 часа</#F0F4F8> (измените через /editkits)</#F0F4F8>"));
         
         // Отключаем слушатель после обработки
         HandlerList.unregisterAll(this);

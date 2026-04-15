@@ -35,14 +35,14 @@ public final class KitRenameListener implements Listener {
         String newName = event.getMessage().trim();
 
         if (newName.length() < 2 || newName.length() > 20) {
-            player.sendMessage(MessageUtil.parse("<red>Название должно быть от 2 до 20 символов!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Название должно быть от 2 до 20 символов!"));
             return;
         }
 
         // Проверяем, нет ли уже такого кита
         KitManager kitManager = kitsModule.getKitManager();
         if (kitManager.getKit(newName).isPresent() && !newName.equals(kit.getName())) {
-            player.sendMessage(MessageUtil.parse("<red>Кит с таким названием уже существует!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Кит с таким названием уже существует!"));
             return;
         }
 
@@ -51,11 +51,11 @@ public final class KitRenameListener implements Listener {
         newKit.setPriority(kit.getPriority());
         newKit.setOneTime(kit.isOneTime());
         kitManager.saveKit(newKit);
-        
+
         // Удаляем старый кит
         kitManager.getStorage().saveKit(kit); // Сохраняем изменения (если были)
-        
-        player.sendMessage(MessageUtil.parse("<green>✓ Кит переименован: <white>" + kit.getName() + "</white> → <white>" + newName + "</white>"));
+
+        player.sendMessage(MessageUtil.parse("<#00C8FF>✓ Кит переименован: <#F0F4F8>" + kit.getName() + "</#F0F4F8> → <#F0F4F8>" + newName + "</#F0F4F8>"));
         
         // Отключаем слушатель после обработки
         HandlerList.unregisterAll(this);

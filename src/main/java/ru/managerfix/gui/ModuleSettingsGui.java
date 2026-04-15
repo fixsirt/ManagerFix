@@ -59,8 +59,8 @@ public final class ModuleSettingsGui {
 
         builder.button(SLOT_TOGGLE, Button.builder(
                 new ItemBuilder(enabled ? Material.LIME_DYE : Material.GRAY_DYE)
-                        .name(MessageUtil.parse(enabled ? "<#FAA300>Включить: ДА</#FAA300>" : "<#FF4D00>Включить: НЕТ</#FF4D00>"))
-                        .addLore(MessageUtil.parse("<#E0E0E0>ЛКМ — переключить модуль"))
+                        .name(MessageUtil.parse(enabled ? "<#00C8FF>Включить: ДА</#00C8FF>" : "<#FF3366>Включить: НЕТ</#FF3366>"))
+                        .addLore(MessageUtil.parse("<#F0F4F8>ЛКМ — переключить модуль"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> throttle(player, () -> {
@@ -72,8 +72,8 @@ public final class ModuleSettingsGui {
 
         builder.button(SLOT_RELOAD, Button.builder(
                 new ItemBuilder(Material.REDSTONE)
-                        .name(MessageUtil.parse("<#FAA300>Перезагрузить модуль</#FAA300>"))
-                        .addLore(MessageUtil.parse("<#E0E0E0>ЛКМ — hot reload"))
+                        .name(MessageUtil.parse("<#00C8FF>Перезагрузить модуль</#00C8FF>"))
+                        .addLore(MessageUtil.parse("<#F0F4F8>ЛКМ — hot reload"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> throttle(player, () -> {
@@ -83,18 +83,18 @@ public final class ModuleSettingsGui {
         })).build());
 
         ItemBuilder statsIb = new ItemBuilder(Material.PAPER)
-                .name(MessageUtil.parse("<#FFFFFF>Статистика</#FFFFFF>"))
-                .addLore(MessageUtil.parse("<#E0E0E0>" + (stats != null && !stats.equals("-") ? stats : "—")))
-                .addLore(MessageUtil.parse("<#E0E0E0>Статус: " + (enabled ? "Enabled" : "Disabled")))
+                .name(MessageUtil.parse("<#F0F4F8>Статистика</#F0F4F8>"))
+                .addLore(MessageUtil.parse("<#F0F4F8>" + (stats != null && !stats.equals("-") ? stats : "—")))
+                .addLore(MessageUtil.parse("<#F0F4F8>Статус: " + (enabled ? "Enabled" : "Disabled")))
                 .hideFlags(true);
-        reasonOpt.ifPresent(r -> statsIb.addLore(MessageUtil.parse("<#FF4D00>" + r)));
+        reasonOpt.ifPresent(r -> statsIb.addLore(MessageUtil.parse("<#FF3366>" + r)));
         builder.button(SLOT_STATS, Button.builder(statsIb.build()).build());
 
         builder.button(SLOT_CLEAR, Button.builder(
                 new ItemBuilder(Material.TNT)
-                        .name(MessageUtil.parse("<#FF4D00>Очистить данные</#FF4D00>"))
-                        .addLore(MessageUtil.parse("<#E0E0E0>ЛКМ — очистить кэш/данные модуля"))
-                        .addLore(MessageUtil.parse("<#FF4D00>Только для опытных!</#FF4D00>"))
+                        .name(MessageUtil.parse("<#FF3366>Очистить данные</#FF3366>"))
+                        .addLore(MessageUtil.parse("<#F0F4F8>ЛКМ — очистить кэш/данные модуля"))
+                        .addLore(MessageUtil.parse("<#FF3366>Только для опытных!</#FF3366>"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> throttle(player, () -> {
@@ -109,7 +109,7 @@ public final class ModuleSettingsGui {
 
         builder.button(SLOT_BACK, Button.builder(
                 new ItemBuilder(Material.ARROW)
-                        .name(MessageUtil.parse("<#E0E0E0>← Назад в панель</#E0E0E0>"))
+                        .name(MessageUtil.parse("<#F0F4F8>← Назад в панель</#F0F4F8>"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> throttle(player, () -> new ManagerFixPanelGui(plugin, guiManager).open(player))).build());

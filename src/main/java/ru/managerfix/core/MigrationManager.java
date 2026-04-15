@@ -35,12 +35,14 @@ public final class MigrationManager {
     private final FileManager fileManager;
     private final DatabaseManager databaseManager;
     private final String currentStorageType;
+    private final boolean isSqlite;
 
     public MigrationManager(ManagerFix plugin, FileManager fileManager, DatabaseManager databaseManager, String storageType) {
         this.plugin = plugin;
         this.fileManager = fileManager;
         this.databaseManager = databaseManager;
         this.currentStorageType = storageType.toUpperCase();
+        this.isSqlite = "SQLITE".equalsIgnoreCase(storageType);
     }
 
     /**
@@ -70,7 +72,7 @@ public final class MigrationManager {
             LoggerUtil.info("Starting data migration...");
             
             try {
-                if ("MYSQL".equals(currentStorageType)) {
+                if ("MYSQL".equals(currentStorageType) || "SQLITE".equals(currentStorageType)) {
                     if (hasDataInYaml()) {
                         migrateYamlToSql();
                     } else {
@@ -80,7 +82,7 @@ public final class MigrationManager {
                     if (hasDataInSql()) {
                         migrateSqlToYaml();
                     } else {
-                        LoggerUtil.info("No MySQL data to migrate.");
+                        LoggerUtil.info("No SQL data to migrate.");
                     }
                 }
                 
@@ -159,8 +161,11 @@ public final class MigrationManager {
         File banHistoryFile = new File(dataFolder, "ban_history.yml");
         if (banHistoryFile.exists()) {
             FileConfiguration config = YamlConfiguration.loadConfiguration(banHistoryFile);
-            if (config.contains("entries") && !config.getList("entries").isEmpty()) {
-                return true;
+            if (config.contains("entries")) {
+                List<?> entries = config.getList("entries");
+                if (entries != null && !entries.isEmpty()) {
+                    return true;
+                }
             }
         }
 
@@ -168,7 +173,7 @@ public final class MigrationManager {
     }
 
     /**
-     * Проверяет, есть ли данные в MySQL.
+     * Проверяет, есть ли данные в SQL (MySQL или SQLite).
      */
     @SuppressWarnings("unchecked")
     public boolean hasDataInSql() {
@@ -176,12 +181,14 @@ public final class MigrationManager {
              Statement st = conn.createStatement()) {
             
             // Проверяем количество записей в каждой таблице
-            String[] tables = {"warps", "kits", "bans", "mutes", "saved_items"};
+            String[] tables = {"warps", "kits", "bans", "mutes", "saved_items", "ip_bans", "ban_history"};
             for (String table : tables) {
                 try (ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM " + table)) {
                     if (rs.next() && rs.getInt(1) > 0) {
                         return true;
                     }
+                } catch (SQLException ignored) {
+                    // Таблица может не существовать
                 }
             }
         } catch (SQLException e) {
@@ -235,23 +242,31 @@ public final class MigrationManager {
         try (Connection conn = databaseManager.getConnection();
              Statement st = conn.createStatement()) {
             
-            // Отключаем foreign key checks для безопасной очистки
-            st.execute("SET FOREIGN_KEY_CHECKS = 0");
+            boolean isSqlite = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType());
             
-            // Очищаем таблицы в правильном порядке (с учётом внешних ключей)
-            st.execute("TRUNCATE TABLE ban_history");
-            st.execute("TRUNCATE TABLE tpa_blacklist");
-            st.execute("TRUNCATE TABLE tpa_data");
-            st.execute("TRUNCATE TABLE saved_items");
-            st.execute("TRUNCATE TABLE mutes");
-            st.execute("TRUNCATE TABLE bans");
-            st.execute("TRUNCATE TABLE homes");
-            st.execute("TRUNCATE TABLE kits");
-            st.execute("TRUNCATE TABLE warps");
-            st.execute("TRUNCATE TABLE profiles");
+            if (!isSqlite) {
+                st.execute("SET FOREIGN_KEY_CHECKS = 0");
+            }
             
-            // Включаем foreign key checks обратно
-            st.execute("SET FOREIGN_KEY_CHECKS = 1");
+            // SQLite использует DELETE FROM вместо TRUNCATE TABLE
+            String clearQuery = isSqlite ? "DELETE FROM %s" : "TRUNCATE TABLE %s";
+            
+            st.execute(String.format(clearQuery, "ban_history"));
+            st.execute(String.format(clearQuery, "tpa_blacklist"));
+            st.execute(String.format(clearQuery, "tpa_data"));
+            st.execute(String.format(clearQuery, "saved_items"));
+            st.execute(String.format(clearQuery, "mutes"));
+            st.execute(String.format(clearQuery, "bans"));
+            st.execute(String.format(clearQuery, "ip_bans"));
+            st.execute(String.format(clearQuery, "homes"));
+            st.execute(String.format(clearQuery, "kits"));
+            st.execute(String.format(clearQuery, "warps"));
+            st.execute(String.format(clearQuery, "profiles"));
+            st.execute(String.format(clearQuery, "spawn"));
+            
+            if (!isSqlite) {
+                st.execute("SET FOREIGN_KEY_CHECKS = 1");
+            }
             
             LoggerUtil.info("SQL tables cleared.");
         }
@@ -299,12 +314,22 @@ public final class MigrationManager {
         FileConfiguration config = YamlConfiguration.loadConfiguration(warpsFile);
         if (!config.contains("warps")) return;
 
-        String sql = "INSERT INTO warps (name, world, x, y, z, yaw, pitch, permission, category, icon, slot, description, teleport_delay, enabled, hidden, owner) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), " +
-                "yaw = VALUES(yaw), pitch = VALUES(pitch), permission = VALUES(permission), category = VALUES(category), " +
-                "icon = VALUES(icon), slot = VALUES(slot), description = VALUES(description), teleport_delay = VALUES(teleport_delay), " +
-                "enabled = VALUES(enabled), hidden = VALUES(hidden), owner = VALUES(owner)";
+        String sql;
+        if (isSqlite) {
+            sql = "INSERT INTO warps (name, world, x, y, z, yaw, pitch, permission, category, icon, slot, description, teleport_delay, enabled, hidden, owner) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                    "ON CONFLICT(name) DO UPDATE SET world = excluded.world, x = excluded.x, y = excluded.y, z = excluded.z, " +
+                    "yaw = excluded.yaw, pitch = excluded.pitch, permission = excluded.permission, category = excluded.category, " +
+                    "icon = excluded.icon, slot = excluded.slot, description = excluded.description, teleport_delay = excluded.teleport_delay, " +
+                    "enabled = excluded.enabled, hidden = excluded.hidden, owner = excluded.owner";
+        } else {
+            sql = "INSERT INTO warps (name, world, x, y, z, yaw, pitch, permission, category, icon, slot, description, teleport_delay, enabled, hidden, owner) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                    "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), " +
+                    "yaw = VALUES(yaw), pitch = VALUES(pitch), permission = VALUES(permission), category = VALUES(category), " +
+                    "icon = VALUES(icon), slot = VALUES(slot), description = VALUES(description), teleport_delay = VALUES(teleport_delay), " +
+                    "enabled = VALUES(enabled), hidden = VALUES(hidden), owner = VALUES(owner)";
+        }
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -331,7 +356,7 @@ public final class MigrationManager {
             }
             ps.executeBatch();
         }
-        LoggerUtil.info("Migrated warps to MySQL.");
+        LoggerUtil.info("Migrated warps to SQL.");
     }
 
     private void migrateWarpsSqlToYaml() {
@@ -380,8 +405,9 @@ public final class MigrationManager {
         FileConfiguration config = YamlConfiguration.loadConfiguration(kitsFile);
         if (!config.contains("kits")) return;
 
-        String sql = "INSERT INTO kits (name, cooldown, permission, items) VALUES (?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE cooldown = VALUES(cooldown), permission = VALUES(permission), items = VALUES(items)";
+        String sql = isSqlite
+                ? "INSERT INTO kits (name, cooldown, permission, items) VALUES (?, ?, ?, ?) ON CONFLICT(name) DO UPDATE SET cooldown = excluded.cooldown, permission = excluded.permission, items = excluded.items"
+                : "INSERT INTO kits (name, cooldown, permission, items) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE cooldown = VALUES(cooldown), permission = VALUES(permission), items = VALUES(items)";
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -400,7 +426,7 @@ public final class MigrationManager {
             }
             ps.executeBatch();
         }
-        LoggerUtil.info("Migrated kits to MySQL.");
+        LoggerUtil.info("Migrated kits to SQL.");
     }
 
     /**
@@ -462,9 +488,9 @@ public final class MigrationManager {
         FileConfiguration config = YamlConfiguration.loadConfiguration(bansFile);
         if (!config.contains("bans")) return;
 
-        String sql = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), " +
-                "created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
+        String sql = isSqlite
+                ? "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(uuid) DO UPDATE SET name = excluded.name, reason = excluded.reason, source = excluded.source, created_at = excluded.created_at, expires_at = excluded.expires_at"
+                : "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -481,7 +507,7 @@ public final class MigrationManager {
             }
             ps.executeBatch();
         }
-        LoggerUtil.info("Migrated bans to MySQL.");
+        LoggerUtil.info("Migrated bans to SQL.");
     }
 
     private void migrateBansSqlToYaml() {
@@ -517,9 +543,9 @@ public final class MigrationManager {
         FileConfiguration config = YamlConfiguration.loadConfiguration(mutesFile);
         if (!config.contains("mutes")) return;
 
-        String sql = "INSERT INTO mutes (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), " +
-                "created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
+        String sql = isSqlite
+                ? "INSERT INTO mutes (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(uuid) DO UPDATE SET name = excluded.name, reason = excluded.reason, source = excluded.source, created_at = excluded.created_at, expires_at = excluded.expires_at"
+                : "INSERT INTO mutes (uuid, name, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -536,7 +562,7 @@ public final class MigrationManager {
             }
             ps.executeBatch();
         }
-        LoggerUtil.info("Migrated mutes to MySQL.");
+        LoggerUtil.info("Migrated mutes to SQL.");
     }
 
     private void migrateMutesSqlToYaml() {
@@ -572,8 +598,9 @@ public final class MigrationManager {
         FileConfiguration config = YamlConfiguration.loadConfiguration(itemsFile);
         if (!config.contains("saved")) return;
 
-        String sql = "INSERT INTO saved_items (name, data) VALUES (?, ?) " +
-                "ON DUPLICATE KEY UPDATE data = VALUES(data)";
+        String sql = isSqlite
+                ? "INSERT INTO saved_items (name, data) VALUES (?, ?) ON CONFLICT(name) DO UPDATE SET data = excluded.data"
+                : "INSERT INTO saved_items (name, data) VALUES (?, ?) ON DUPLICATE KEY UPDATE data = VALUES(data)";
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -594,7 +621,7 @@ public final class MigrationManager {
             }
             ps.executeBatch();
         }
-        LoggerUtil.info("Migrated items to MySQL.");
+        LoggerUtil.info("Migrated items to SQL.");
     }
 
     @SuppressWarnings("unchecked")
@@ -650,10 +677,12 @@ public final class MigrationManager {
         
         LoggerUtil.info("Found " + yamlFiles.length + " player profile(s) to migrate.");
 
-        String sql = "INSERT INTO profiles (uuid, last_activity, metadata, cooldowns) VALUES (?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity), metadata = VALUES(metadata), cooldowns = VALUES(cooldowns)";
-        String homeSql = "INSERT INTO homes (uuid, name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch)";
+        String sql = isSqlite
+                ? "INSERT INTO profiles (uuid, last_activity, metadata, cooldowns) VALUES (?, ?, ?, ?) ON CONFLICT(uuid) DO UPDATE SET last_activity = excluded.last_activity, metadata = excluded.metadata, cooldowns = excluded.cooldowns"
+                : "INSERT INTO profiles (uuid, last_activity, metadata, cooldowns) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity), metadata = VALUES(metadata), cooldowns = VALUES(cooldowns)";
+        String homeSql = isSqlite
+                ? "INSERT INTO homes (uuid, name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(uuid, name) DO UPDATE SET world = excluded.world, x = excluded.x, y = excluded.y, z = excluded.z, yaw = excluded.yaw, pitch = excluded.pitch"
+                : "INSERT INTO homes (uuid, name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch)";
 
         int migrated = 0;
         int homesMigrated = 0;
@@ -765,7 +794,7 @@ public final class MigrationManager {
             LoggerUtil.log(java.util.logging.Level.SEVERE, "Error migrating profiles", e);
         }
 
-        LoggerUtil.info("Migrated " + migrated + " profiles and " + homesMigrated + " homes to MySQL.");
+        LoggerUtil.info("Migrated " + migrated + " profiles and " + homesMigrated + " homes to SQL.");
     }
 
     public void migrateProfilesSqlToYaml() {
@@ -813,10 +842,12 @@ public final class MigrationManager {
         FileConfiguration config = YamlConfiguration.loadConfiguration(tpaDataFile);
         if (config.getKeys(false).isEmpty()) return;
 
-        String insertToggle = "INSERT INTO tpa_data (uuid, enabled) VALUES (?, ?) " +
-                "ON DUPLICATE KEY UPDATE enabled = VALUES(enabled)";
-        String insertBlacklist = "INSERT INTO tpa_blacklist (owner_uuid, blacklisted_uuid) VALUES (?, ?) " +
-                "ON DUPLICATE KEY UPDATE blacklisted_uuid = VALUES(blacklisted_uuid)";
+        String insertToggle = isSqlite
+                ? "INSERT INTO tpa_data (uuid, enabled) VALUES (?, ?) ON CONFLICT(uuid) DO UPDATE SET enabled = excluded.enabled"
+                : "INSERT INTO tpa_data (uuid, enabled) VALUES (?, ?) ON DUPLICATE KEY UPDATE enabled = VALUES(enabled)";
+        String insertBlacklist = isSqlite
+                ? "INSERT INTO tpa_blacklist (owner_uuid, blacklisted_uuid) VALUES (?, ?) ON CONFLICT(owner_uuid, blacklisted_uuid) DO UPDATE SET blacklisted_uuid = excluded.blacklisted_uuid"
+                : "INSERT INTO tpa_blacklist (owner_uuid, blacklisted_uuid) VALUES (?, ?) ON DUPLICATE KEY UPDATE blacklisted_uuid = VALUES(blacklisted_uuid)";
 
         try (Connection conn = databaseManager.getConnection()) {
             try (PreparedStatement psToggle = conn.prepareStatement(insertToggle);
@@ -854,7 +885,7 @@ public final class MigrationManager {
                 psBlacklist.executeBatch();
             }
         }
-        LoggerUtil.info("Migrated TPA data to MySQL.");
+        LoggerUtil.info("Migrated TPA data to SQL.");
     }
 
     private void migrateTpaDataSqlToYaml() {
@@ -926,7 +957,7 @@ public final class MigrationManager {
             }
             ps.executeBatch();
         }
-        LoggerUtil.info("Migrated ban history to MySQL.");
+        LoggerUtil.info("Migrated ban history to SQL.");
     }
 
     private void migrateBanHistorySqlToYaml() {

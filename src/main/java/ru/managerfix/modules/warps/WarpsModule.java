@@ -48,7 +48,6 @@ public final class WarpsModule extends AbstractModule {
         this.warpsDataStorage.init();
         this.warpService = new WarpService(plugin, warpConfig, warpsDataStorage);
         this.warpEditGui = new WarpEditGui(warpsDataStorage);
-        this.warpGui = new WarpGui(warpConfig, warpService, warpEditGui, warpsDataStorage);
 
         if (plugin instanceof ManagerFix mf) {
             WarpCommand warpCommand = new WarpCommand(mf, warpConfig, warpsDataStorage, warpEditGui, warpService);
@@ -57,6 +56,7 @@ public final class WarpsModule extends AbstractModule {
             mf.getCommandManager().register("setwarp", warpCommand, warpCommand);
             mf.getCommandManager().register("delwarp", warpCommand, warpCommand);
             mf.getCommandManager().register("editwarp", warpCommand, warpCommand);
+            this.warpGui = new WarpGui(warpConfig, warpService, warpEditGui, warpsDataStorage, mf.getGuiTemplate());
         }
 
         LoggerUtil.debug("Warps module (modern) enabled.");

@@ -3,6 +3,7 @@ package ru.managerfix.modules.tpa;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Nullable;
+import ru.managerfix.utils.TeleportAnimation;
 
 /**
  * TPA module configuration. All values are null-safe with defaults.
@@ -51,6 +52,25 @@ public final class TpaConfig {
 
     public float getSoundPitch() {
         return config != null ? (float) config.getDouble("sound.pitch", 1.0) : 1.0f;
+    }
+
+    public TeleportAnimation.AnimationType getAnimationType() {
+        if (config == null) return TeleportAnimation.AnimationType.SWIRL;
+        String type = config.getString("animation.type", "swirl").toLowerCase();
+        return switch (type) {
+            case "ring" -> TeleportAnimation.AnimationType.RING;
+            case "pulse" -> TeleportAnimation.AnimationType.PULSE;
+            case "pillar" -> TeleportAnimation.AnimationType.PILLAR;
+            case "cyclone" -> TeleportAnimation.AnimationType.CYCLONE;
+            case "explosion" -> TeleportAnimation.AnimationType.EXPLOSION;
+            case "snow" -> TeleportAnimation.AnimationType.SNOW;
+            case "ring_in" -> TeleportAnimation.AnimationType.RING_IN;
+            case "ringin" -> TeleportAnimation.AnimationType.RING_IN;
+            case "double_helix" -> TeleportAnimation.AnimationType.DOUBLE_HELIX;
+            case "doublehelix" -> TeleportAnimation.AnimationType.DOUBLE_HELIX;
+            case "orbit" -> TeleportAnimation.AnimationType.ORBIT;
+            default -> TeleportAnimation.AnimationType.SWIRL;
+        };
     }
 
     public String getMessage(String key, String defaultValue) {

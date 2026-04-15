@@ -64,7 +64,7 @@ public final class ModuleStyledMenu {
                         .name(MessageUtil.parse(enabled
                                 ? UIThemeManager.GRADIENT_SUCCESS + "✔ Включить: ДА</gradient>"
                                 : UIThemeManager.GRADIENT_ERROR + "✖ Включить: НЕТ</gradient>"))
-                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить модуль</#e9d5ff>"))
+                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить модуль</#F0F4F8>"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> {
@@ -78,7 +78,7 @@ public final class ModuleStyledMenu {
         builder.button(SLOT_RELOAD, Button.builder(
                 new ItemBuilder(Material.REDSTONE)
                         .name(MessageUtil.parse(UIThemeManager.GRADIENT_WARNING + "Перезагрузить модуль</gradient>"))
-                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — hot reload</#e9d5ff>"))
+                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — hot reload</#F0F4F8>"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> {
@@ -90,11 +90,11 @@ public final class ModuleStyledMenu {
         // [ Статистика ]
         ItemBuilder statsIb = new ItemBuilder(Material.PAPER)
                 .name(MessageUtil.parse(UIThemeManager.GRADIENT_MAIN + "Статистика</gradient>"))
-                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + (stats != null && !stats.equals("-") ? stats : "—") + "</#e9d5ff>"));
+                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + (stats != null && !stats.equals("-") ? stats : "—") + "</#F0F4F8>"));
         for (String line : theme.blockStatus(enabled).split("\n")) {
             statsIb.addLore(MessageUtil.parse(line));
         }
-        reasonOpt.ifPresent(r -> statsIb.addLore(MessageUtil.parse(UIThemeManager.COLOR_ERROR + UIThemeManager.SYM_WARN + " " + r + "</#f87171>")));
+        reasonOpt.ifPresent(r -> statsIb.addLore(MessageUtil.parse(UIThemeManager.COLOR_ERROR + UIThemeManager.SYM_WARN + " " + r + "</#FF3366>")));
         statsIb.hideFlags(true);
         builder.button(SLOT_STATS, Button.builder(statsIb.build()).build());
 
@@ -102,8 +102,8 @@ public final class ModuleStyledMenu {
         builder.button(SLOT_CLEAR, Button.builder(
                 new ItemBuilder(Material.TNT)
                         .name(MessageUtil.parse(UIThemeManager.GRADIENT_ERROR + "Очистить данные</gradient>"))
-                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — очистить кэш/данные модуля</#e9d5ff>"))
-                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_WARNING + "Только для опытных!</#fbbf24>"))
+                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — очистить кэш/данные модуля</#F0F4F8>"))
+                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_WARNING + "Только для опытных!</#00C8FF>"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> {
@@ -118,7 +118,7 @@ public final class ModuleStyledMenu {
 
         builder.button(SLOT_BACK, Button.builder(
                 new ItemBuilder(Material.ARROW)
-                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Назад в панель</#e9d5ff>"))
+                        .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Назад в панель</#F0F4F8>"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> new ManagerFixMainMenu(plugin, guiManager, theme, template).open(player)).build());

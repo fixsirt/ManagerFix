@@ -12,17 +12,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * SQL-based warp storage. All operations run async via TaskScheduler.
+ * SQL-based warp storage. All operations run async via TaskScheduler. Supports both MySQL and SQLite.
  */
 public final class SqlWarpStorageAdapter implements WarpStorageAdapter {
 
     private static final String SELECT_ALL = "SELECT name, world, x, y, z, yaw, pitch FROM warps";
     private static final String DELETE_ALL = "DELETE FROM warps";
-    private static final String INSERT = "INSERT INTO warps (name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+    private static final String INSERT_MYSQL = "INSERT INTO warps (name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?) " +
             "ON DUPLICATE KEY UPDATE world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z), yaw = VALUES(yaw), pitch = VALUES(pitch)";
+    private static final String INSERT_SQLITE = "INSERT INTO warps (name, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+            "ON CONFLICT(name) DO UPDATE SET world = excluded.world, x = excluded.x, y = excluded.y, z = excluded.z, yaw = excluded.yaw, pitch = excluded.pitch";
 
     private final DatabaseManager databaseManager;
     private final TaskScheduler scheduler;
+    private String insertSql;
 
     public SqlWarpStorageAdapter(DatabaseManager databaseManager, TaskScheduler scheduler) {
         this.databaseManager = databaseManager;
@@ -31,7 +34,7 @@ public final class SqlWarpStorageAdapter implements WarpStorageAdapter {
 
     @Override
     public void init() {
-        // Tables created by DatabaseManager
+        this.insertSql = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType()) ? INSERT_SQLITE : INSERT_MYSQL;
     }
 
     @Override
@@ -85,7 +88,7 @@ public final class SqlWarpStorageAdapter implements WarpStorageAdapter {
                 st.executeUpdate(DELETE_ALL);
             }
             if (!warps.isEmpty()) {
-                try (PreparedStatement ps = conn.prepareStatement(INSERT)) {
+                try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
                     for (Map.Entry<String, Location> e : warps.entrySet()) {
                         Location loc = e.getValue();
                         ps.setString(1, e.getKey().toLowerCase());

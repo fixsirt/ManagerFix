@@ -16,6 +16,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import ru.managerfix.ManagerFix;
 import ru.managerfix.modules.ban.BanModule;
 import ru.managerfix.modules.ban.MuteManager;
+import ru.managerfix.modules.chat.filter.ProfanityFilter;
 import ru.managerfix.profile.PlayerProfile;
 import ru.managerfix.profile.ProfileManager;
 import ru.managerfix.service.ExternalApiService;
@@ -79,9 +80,33 @@ public final class ChatListener implements Listener {
                     until = String.valueOf(new java.util.Date(rec.getExpiresAt()));
                 }
             }
-            player.sendMessage(MessageUtil.parse("<#FF4D00>⛔ Вы замучены!</#FF4D00> <#E0E0E0>До:</#E0E0E0> <#FAA300>" + until + "</#FAA300>"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>⛔ Вы замучены!</#FF3366> <#F0F4F8>До:</#F0F4F8> <#00C8FF>" + until + "</#00C8FF>"));
             return;
         }
+
+        // Проверка фильтра мата (с возможностью обхода по разрешению)
+        if (module.isFilterEnabled() && module.getProfanityFilter() != null && 
+            !player.hasPermission("managerfix.chat.bypass.filter")) {
+            ProfanityFilter.FilterResult result = module.getProfanityFilter().check(
+                    player.getName(), messagePlain);
+
+            if (result.isBlocked()) {
+                if (result.getAction() == ProfanityFilter.Action.BLOCK) {
+                    event.setCancelled(true);
+                    player.sendMessage(module.getProfanityFilter().getMessageForAction(result.getAction()));
+                    return;
+                } else if (result.getAction() == ProfanityFilter.Action.CENSOR) {
+                    String censored = result.getCensoredMessage();
+                    if (censored != null) {
+                        event.message(net.kyori.adventure.text.Component.text(censored));
+                    }
+                    player.sendMessage(module.getProfanityFilter().getMessageForAction(result.getAction()));
+                } else if (result.getAction() == ProfanityFilter.Action.WARN) {
+                    player.sendMessage(module.getProfanityFilter().getMessageForAction(result.getAction()));
+                }
+            }
+        }
+
         if (!player.hasPermission("managerfix.chat.use")) {
             event.setCancelled(true);
             MessageUtil.send(module.getPlugin(), player, "chat.no-permission");
@@ -100,8 +125,26 @@ public final class ChatListener implements Listener {
         }
         
         // ! in front = global chat; otherwise = local (radius)
-        boolean isGlobal = messagePlain.startsWith("!");
+        boolean isGlobal = messagePlain != null && messagePlain.startsWith("!");
         String displayMessage = isGlobal ? messagePlain.substring(1).trim() : messagePlain;
+
+        // CAPS auto-lowercase: если 6+ букв капсом - переводим в lowercase
+        if (displayMessage != null && displayMessage.length() >= 6) {
+            String lettersOnly = displayMessage.replaceAll("[^A-Za-zA-Zа-яА-ЯёЁ]", "");
+            if (lettersOnly.length() >= 6) {
+                boolean allUpperCase = true;
+                for (char c : lettersOnly.toCharArray()) {
+                    if (Character.isLetter(c) && !Character.isUpperCase(c)) {
+                        allUpperCase = false;
+                        break;
+                    }
+                }
+                if (allUpperCase) {
+                    displayMessage = displayMessage.toLowerCase();
+                }
+            }
+        }
+
         // Only this plain text must be copied to clipboard (no nickname, no format, no path)
         final String messageTextToCopy = displayMessage != null ? displayMessage : "";
         String badge = isGlobal ? module.getBadgeGlobal() : module.getBadgeLocal();
@@ -167,48 +210,51 @@ public final class ChatListener implements Listener {
                     recipients.add(other);
                 }
             }
-            if (module.isLocalChatSoundsEnabled()) {
-                String sendSound = module.getLocalSoundSend();
-                String receiveSound = module.getLocalSoundReceive();
-                if (sendSound != null && !sendSound.isEmpty() && !"none".equalsIgnoreCase(sendSound.trim())) {
-                    playLocalSound(player, sendSound);
-                }
-                for (Player other : recipients) {
-                    if (!other.equals(player) && receiveSound != null && !receiveSound.isEmpty() && !"none".equalsIgnoreCase(receiveSound.trim())) {
-                        playLocalSound(other, receiveSound);
+
+            // Проверяем, есть ли другие получатели (кроме отправителя)
+            recipients.remove(player);
+            if (recipients.isEmpty()) {
+                player.sendMessage(MessageUtil.parse("<#FF3366>Вас никто не услышал.</#FF3366>"));
+            } else {
+                recipients.add(player); // возвращаем для звуков
+                if (module.isLocalChatSoundsEnabled()) {
+                    String sendSound = module.getLocalSoundSend();
+                    String receiveSound = module.getLocalSoundReceive();
+                    if (sendSound != null && !sendSound.isEmpty() && !"none".equalsIgnoreCase(sendSound.trim())) {
+                        playLocalSound(player, sendSound);
+                    }
+                    for (Player other : recipients) {
+                        if (!other.equals(player) && receiveSound != null && !receiveSound.isEmpty() && !"none".equalsIgnoreCase(receiveSound.trim())) {
+                            playLocalSound(other, receiveSound);
+                        }
                     }
                 }
-            }
-            String lang = module.getPlugin() instanceof ru.managerfix.ManagerFix mf
-                    ? mf.getConfigManager().getDefaultLanguage() : null;
-            String spyRaw = MessageUtil.getRaw(module.getPlugin(), lang, "chat.spy-prefix");
-            Component spyPrefix = (spyRaw != null && !spyRaw.isEmpty()) ? MessageUtil.parse(spyRaw) : MessageUtil.parse("<dark_gray>[Spy] </dark_gray>");
-            for (Player other : module.getPlugin().getServer().getOnlinePlayers()) {
-                if (other.equals(player) || recipients.contains(other)) continue;
-                if (Boolean.TRUE.equals(profileManager.getProfile(other).getMetadata("chatspy").orElse(false))
-                        && other.hasPermission("managerfix.chat.spy")) {
-                    other.sendMessage(net.kyori.adventure.text.Component.empty().append(spyPrefix).append(formatted));
+                recipients.remove(player); // убираем для spy
+                String lang = module.getPlugin() instanceof ru.managerfix.ManagerFix mf
+                        ? mf.getConfigManager().getDefaultLanguage() : null;
+                String spyRaw = MessageUtil.getRaw(module.getPlugin(), lang, "chat.spy-prefix");
+                Component spyPrefix = (spyRaw != null && !spyRaw.isEmpty()) ? MessageUtil.parse(spyRaw) : MessageUtil.parse("<dark_gray>[Spy] </dark_gray>");
+                for (Player other : module.getPlugin().getServer().getOnlinePlayers()) {
+                    if (other.equals(player) || recipients.contains(other)) continue;
+                    if (Boolean.TRUE.equals(profileManager.getProfile(other).getMetadata("chatspy").orElse(false))
+                            && other.hasPermission("managerfix.chat.spy")) {
+                        other.sendMessage(net.kyori.adventure.text.Component.empty().append(spyPrefix).append(formatted));
+                    }
                 }
             }
         } else {
             // Global: cancel and broadcast ourselves so delivery isn't blocked by other plugins (e.g. "ошибка проверки чата")
             event.setCancelled(true);
+            java.util.Set<Player> recipients = new java.util.HashSet<>();
             for (Player other : module.getPlugin().getServer().getOnlinePlayers()) {
                 other.sendMessage(formatted);
+                recipients.add(other);
             }
-            // If another plugin still shows "ошибка проверки чата", send a friendly note after a tick (optional)
-            if (module.isGlobalSentNoteEnabled()) {
-                Player sender = player;
-                org.bukkit.Bukkit.getScheduler().runTaskLater(module.getPlugin(), () -> {
-                    if (sender.isOnline()) {
-                        String lang = module.getPlugin() instanceof ru.managerfix.ManagerFix mf
-                                ? mf.getConfigManager().getDefaultLanguage() : null;
-                        String noteRaw = MessageUtil.getRaw(module.getPlugin(), lang, "chat.global-sent-note");
-                        if (noteRaw != null && !noteRaw.isEmpty()) {
-                            sender.sendMessage(MessageUtil.parse(MessageUtil.setPlaceholders(sender, noteRaw)));
-                        }
-                    }
-                }, 1L);
+
+            // Проверяем, есть ли другие получатели (кроме отправителя)
+            recipients.remove(player);
+            if (recipients.isEmpty()) {
+                player.sendMessage(MessageUtil.parse("<#FF3366>Вас никто не услышал.</#FF3366>"));
             }
         }
     }

@@ -72,4 +72,28 @@ public final class RtpModule extends AbstractModule {
     public int getCooldownSeconds() {
         return moduleConfig != null ? moduleConfig.getInt("cooldown", 300) : 300;
     }
+
+    public int getNearRtpMin() {
+        return moduleConfig != null ? moduleConfig.getInt("near-rtp.min", 600) : 600;
+    }
+
+    public int getNearRtpMax() {
+        return moduleConfig != null ? moduleConfig.getInt("near-rtp.max", 1000) : 1000;
+    }
+
+    public int getFarRtpMin() {
+        return moduleConfig != null ? moduleConfig.getInt("far-rtp.min", 4000) : 4000;
+    }
+
+    public int getFarRtpMax() {
+        return moduleConfig != null ? moduleConfig.getInt("far-rtp.max", 5000) : 5000;
+    }
+
+    public int getPlayerRadiusMin() {
+        return moduleConfig != null ? moduleConfig.getInt("player-radius.min", 30) : 30;
+    }
+
+    public int getPlayerRadiusMax() {
+        return moduleConfig != null ? moduleConfig.getInt("player-radius.max", 80) : 80;
+    }
 }

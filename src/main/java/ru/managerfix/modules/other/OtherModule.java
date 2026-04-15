@@ -172,8 +172,6 @@ public final class OtherModule extends AbstractModule {
         catch (Throwable t) { LoggerUtil.warning("Skip freeze: " + t); }
         try { cm.register("lockchat", new ChatLockCommand(this), new ChatLockCommand(this)); }
         catch (Throwable t) { LoggerUtil.warning("Skip lockchat: " + t); }
-        try { cm.register("broadcast", new BroadcastCommand(this), new BroadcastCommand(this)); }
-        catch (Throwable t) { LoggerUtil.warning("Skip broadcast: " + t); }
         try { cm.register("sudo", new SudoCommand(this), new SudoCommand(this)); }
         catch (Throwable t) { LoggerUtil.warning("Skip sudo: " + t); }
         try { cm.register("ping", new PingCommand(this), new PingCommand(this)); }

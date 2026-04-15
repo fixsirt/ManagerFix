@@ -33,9 +33,11 @@ public final class MigrateCommand implements org.bukkit.command.CommandExecutor,
         }
 
         if (args.length < 1) {
-            sender.sendMessage(MessageUtil.parse("<#FAA300>Использование: /migrate <yaml2sql|sql2yaml>"));
-            sender.sendMessage(MessageUtil.parse("<#E0E0E0>  yaml2sql - Перенос данных из YAML в MySQL (автоматически включит MySQL)"));
-            sender.sendMessage(MessageUtil.parse("<#E0E0E0>  sql2yaml - Перенос данных из MySQL в YAML"));
+            sender.sendMessage(MessageUtil.parse("<#00C8FF>Использование: /migrate <yaml2sql|sql2yaml|yaml2sqlite|sqlite2yaml>"));
+            sender.sendMessage(MessageUtil.parse("<#F0F4F8>  yaml2sql - Перенос данных из YAML в SQL (автоматически включит SQLITE)"));
+            sender.sendMessage(MessageUtil.parse("<#F0F4F8>  sql2yaml - Перенос данных из SQL в YAML"));
+            sender.sendMessage(MessageUtil.parse("<#F0F4F8>  yaml2sqlite - Перенос данных из YAML в SQLite"));
+            sender.sendMessage(MessageUtil.parse("<#F0F4F8>  sqlite2yaml - Перенос данных из SQLite в YAML"));
             return true;
         }
 
@@ -43,133 +45,87 @@ public final class MigrateCommand implements org.bukkit.command.CommandExecutor,
         MigrationManager migrationManager = plugin.getMigrationManager();
 
         if (migrationManager == null) {
-            sender.sendMessage(MessageUtil.parse("<#C0280F>MigrationManager не инициализирован!"));
+            sender.sendMessage(MessageUtil.parse("<#FF3366>MigrationManager не инициализирован!"));
             return true;
         }
 
-        if ("yaml2sql".equals(action)) {
-            // Миграция из YAML в SQL
-            sender.sendMessage(MessageUtil.parse("<#FAA300>Начинаю миграцию данных из YAML в MySQL..."));
+        if ("yaml2sql".equals(action) || "yaml2sqlite".equals(action)) {
+            // Миграция из YAML в SQL (SQLite по умолчанию)
+            sender.sendMessage(MessageUtil.parse("<#00C8FF>Начинаю миграцию данных из YAML в SQL..."));
 
             if (!migrationManager.hasDataInYaml()) {
-                sender.sendMessage(MessageUtil.parse("<#C0280F>Данные YAML не найдены или пусты!"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Данные YAML не найдены или пусты!"));
                 return true;
             }
 
-            // Проверяем, что MySQL настроен и подключён
-            if (!plugin.getConfigManager().isMySqlStorage() ||
-                plugin.getDatabaseManager() == null ||
-                !plugin.getDatabaseManager().isInitialized()) {
+            // Переключаем на SQLITE если ещё не SQL
+            String currentType = plugin.getConfigManager().getStorageType();
+            if ("YAML".equals(currentType)) {
+                plugin.getConfigManager().setStorageType("SQLITE");
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>✓ Хранилище переключено на SQLITE в config.yml"));
+            }
 
-                sender.sendMessage(MessageUtil.parse("<#FAA300>Хранилище YAML или БД не подключена"));
-
-                // Если ещё не переключили на MySQL — переключаем
-                if (!plugin.getConfigManager().isMySqlStorage()) {
-                    if (!switchToMySQL(sender)) {
-                        sender.sendMessage(MessageUtil.parse("<#C0280F>Не удалось переключиться на MySQL! Проверьте настройки БД в config.yml"));
-                        return true;
-                    }
-                    sender.sendMessage(MessageUtil.parse("<green>✓ Хранилище переключено на MYSQL в config.yml"));
-                }
-                
-                sender.sendMessage(MessageUtil.parse("<red>"));
-                sender.sendMessage(MessageUtil.parse("<red>⚠ ТРЕБУЕТСЯ ПЕРЕЗАГРУЗКА СЕРВЕРА! ⚠"));
-                sender.sendMessage(MessageUtil.parse("<red>"));
-                sender.sendMessage(MessageUtil.parse("<yellow>Выполните команду:"));
-                sender.sendMessage(MessageUtil.parse("<gold>  /reload</gold> или <gold>/restart"));
-                sender.sendMessage(MessageUtil.parse("<yellow>После перезагрузки снова введите:"));
-                sender.sendMessage(MessageUtil.parse("<gold>  /migrate yaml2sql"));
-                sender.sendMessage(MessageUtil.parse("<red>"));
+            // Проверяем что БД подключена
+            if (plugin.getDatabaseManager() == null || !plugin.getDatabaseManager().isInitialized()) {
+                sender.sendMessage(MessageUtil.parse("<#FF3366>"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>⚠ ТРЕБУЕТСЯ ПЕРЕЗАГРУЗКА СЕРВЕРА! ⚠"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>"));
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>Выполните команду:"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>  /reload</#FF3366> или <#FF3366>/restart"));
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>После перезагрузки снова введите:"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>  /migrate yaml2sqlite"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>"));
                 return true;
             }
 
             // БД подключена — выполняем миграцию
             try {
-                sender.sendMessage(MessageUtil.parse("<yellow>Очистка таблиц MySQL..."));
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>Очистка SQL таблиц..."));
                 migrationManager.clearSqlTables();
-                
-                sender.sendMessage(MessageUtil.parse("<yellow>Миграция данных..."));
+
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>Миграция данных..."));
                 migrationManager.migrateYamlToSql();
-                
-                sender.sendMessage(MessageUtil.parse("<green>✓ Миграция в MySQL завершена успешно!"));
-                sender.sendMessage(MessageUtil.parse("<green>✓ Все данные перенесены в базу данных"));
-                sender.sendMessage(MessageUtil.parse("<gray>Сервер готов к работе с MySQL"));
-                
+
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>✓ Миграция в SQL завершена успешно!"));
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>✓ Все данные перенесены в базу данных"));
+                sender.sendMessage(MessageUtil.parse("<#F0F4F8>Сервер готов к работе с SQL"));
+
             } catch (Exception e) {
-                sender.sendMessage(MessageUtil.parse("<red>Ошибка при миграции: " + e.getMessage()));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Ошибка при миграции: " + e.getMessage()));
                 LoggerUtil.log(java.util.logging.Level.SEVERE, "Migration error", e);
                 e.printStackTrace();
                 return true;
             }
 
-        } else if ("sql2yaml".equals(action)) {
+        } else if ("sql2yaml".equals(action) || "sqlite2yaml".equals(action)) {
             // Миграция из SQL в YAML
-            sender.sendMessage(MessageUtil.parse("<green>Начинаю миграцию данных из MySQL в YAML..."));
-            
+            sender.sendMessage(MessageUtil.parse("<#00C8FF>Начинаю миграцию данных из SQL в YAML..."));
+
             if (!migrationManager.hasDataInSql()) {
-                sender.sendMessage(MessageUtil.parse("<red>Данные MySQL не найдены или пусты!"));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Данные SQL не найдены или пусты!"));
                 return true;
             }
 
             try {
                 migrationManager.migrateSqlToYaml();
-                sender.sendMessage(MessageUtil.parse("<green>✓ Миграция в YAML завершена успешно!"));
-                sender.sendMessage(MessageUtil.parse("<gray>Перезагрузите сервер для применения изменений."));
-                
+                plugin.getConfigManager().setStorageType("YAML");
+                sender.sendMessage(MessageUtil.parse("<#00C8FF>✓ Миграция в YAML завершена успешно!"));
+                sender.sendMessage(MessageUtil.parse("<#F0F4F8>Перезагрузите сервер для применения изменений."));
+
             } catch (Exception e) {
-                sender.sendMessage(MessageUtil.parse("<red>Ошибка при миграции: " + e.getMessage()));
+                sender.sendMessage(MessageUtil.parse("<#FF3366>Ошибка при миграции: " + e.getMessage()));
                 LoggerUtil.log(java.util.logging.Level.SEVERE, "Migration error", e);
                 e.printStackTrace();
                 return true;
             }
 
         } else {
-            sender.sendMessage(MessageUtil.parse("<red>Неизвестная команда! Используйте: yaml2sql или sql2yaml"));
+            sender.sendMessage(MessageUtil.parse("<#FF3366>Неизвестная команда! Используйте: yaml2sqlite, sqlite2yaml, yaml2sql, sql2yaml"));
             return true;
         }
 
-        sender.sendMessage(MessageUtil.parse("<gray>Проверьте консоль для подробностей."));
+        sender.sendMessage(MessageUtil.parse("<#F0F4F8>Проверьте консоль для подробностей."));
         return true;
-    }
-
-    /**
-     * Переключает storage.type на MYSQL в config.yml
-     */
-    private boolean switchToMySQL(CommandSender sender) {
-        File configFile = new File(plugin.getDataFolder(), "config.yml");
-        if (!configFile.exists()) {
-            sender.sendMessage(MessageUtil.parse("<red>config.yml не найден!"));
-            return false;
-        }
-
-        try {
-            FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-            
-            // Проверяем, что настройки БД заполнены
-            String host = config.getString("database.host", "");
-            String database = config.getString("database.database", "");
-            String username = config.getString("database.username", "");
-            
-            if (host.isEmpty() || database.isEmpty() || username.isEmpty()) {
-                sender.sendMessage(MessageUtil.parse("<red>Настройки базы данных не заполнены в config.yml!"));
-                sender.sendMessage(MessageUtil.parse("<red>Заполните: database.host, database.database, database.username"));
-                return false;
-            }
-            
-            // Меняем storage.type на MYSQL
-            config.set("storage.type", "MYSQL");
-            config.save(configFile);
-            
-            // Обновляем ConfigManager
-            plugin.getConfigManager().setStorageType("MYSQL");
-            
-            return true;
-            
-        } catch (IOException e) {
-            sender.sendMessage(MessageUtil.parse("<red>Ошибка записи config.yml: " + e.getMessage()));
-            LoggerUtil.log(java.util.logging.Level.SEVERE, "Failed to update config.yml", e);
-            return false;
-        }
     }
 
     @Override
@@ -178,11 +134,11 @@ public final class MigrateCommand implements org.bukkit.command.CommandExecutor,
             List<String> suggestions = new ArrayList<>();
             String partial = args[0].toLowerCase();
             
-            if ("yaml2sql".startsWith(partial)) {
-                suggestions.add("yaml2sql");
+            if ("yaml2sql".startsWith(partial) || "yaml2sqlite".startsWith(partial)) {
+                suggestions.add("yaml2sqlite");
             }
-            if ("sql2yaml".startsWith(partial)) {
-                suggestions.add("sql2yaml");
+            if ("sql2yaml".startsWith(partial) || "sqlite2yaml".startsWith(partial)) {
+                suggestions.add("sqlite2yaml");
             }
             
             return suggestions;

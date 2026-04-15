@@ -8,27 +8,26 @@ import java.util.List;
 
 /**
  * Centralized UI theme: MiniMessage gradients and colors, Unicode symbols.
- * Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B), Rust & Blood (#C0280F)
- * Акценты: Flame Core (#FF6A22), Hot Ember (#F5D742), Dried Blood (#7A2E1A)
- * Премиум: Ancient Bronze (#E38B30), Pure Light (#FFFFFF/#E0E0E0)
+ * Цветовая палитра: Фон (#F0F4F8), Текст (#1E2A3A), Акцент 1 - Неоновый розовый (#FF3366)
+ * Акцент 2 - Яркий циан (#00C8FF), Акцент 3 - Глубокий фиолетовый (#7000FF)
  * One instance per plugin (no static singletons).
  */
 public final class UIThemeManager {
 
-    // ─── Градиенты (огненная палитра) ───
-    public static final String GRADIENT_MAIN = "<gradient:#FF4D00:#FAA300>";
-    public static final String GRADIENT_ACCENT = "<gradient:#FF6A22:#F5D742>";
-    public static final String GRADIENT_ERROR = "<gradient:#C0280F:#FF4D00>";
-    public static final String GRADIENT_WARNING = "<gradient:#FAA300:#F5D742>";
-    public static final String GRADIENT_SUCCESS = "<gradient:#F5D742:#E38B30>";
+    // ─── Градиенты (современная палитра) ───
+    public static final String GRADIENT_MAIN = "<gradient:#7000FF:#00C8FF>";
+    public static final String GRADIENT_ACCENT = "<gradient:#FF3366:#7000FF>";
+    public static final String GRADIENT_ERROR = "<gradient:#FF3366:#7000FF>";
+    public static final String GRADIENT_WARNING = "<gradient:#00C8FF:#7000FF>";
+    public static final String GRADIENT_SUCCESS = "<gradient:#00C8FF:#FF3366>";
 
-    // ─── Цвета (огненная палитра для меню) ───
-    public static final String COLOR_ACCENT = "<#FF6A22>";
-    public static final String COLOR_ERROR = "<#C0280F>";
-    public static final String COLOR_WARNING = "<#FAA300>";
-    public static final String COLOR_INFO = "<#E0E0E0>";
-    public static final String COLOR_MAIN = "<#FF4D00>";
-    public static final String COLOR_DARK = "<#1A120B>";
+    // ─── Цвета (современная палитра для меню) ───
+    public static final String COLOR_ACCENT = "<#00C8FF>";
+    public static final String COLOR_ERROR = "<#FF3366>";
+    public static final String COLOR_WARNING = "<#00C8FF>";
+    public static final String COLOR_INFO = "<#F0F4F8>";
+    public static final String COLOR_MAIN = "<#FF3366>";
+    public static final String COLOR_DARK = "<#F0F4F8>";
 
     // ─── Unicode символы ───
     public static final String SYM_BULLET = "●";
@@ -60,11 +59,11 @@ public final class UIThemeManager {
     }
 
     public String statusActive() {
-        return COLOR_ACCENT + SYM_ARROW_R + " " + SYM_OK + " Активен</#FF6A22>";
+        return COLOR_ACCENT + SYM_ARROW_R + " " + SYM_OK + " Активен</#00C8FF>";
     }
 
     public String statusDisabled() {
-        return COLOR_ERROR + SYM_ARROW_R + " " + SYM_CROSS + " Отключён</#C0280F>";
+        return COLOR_ERROR + SYM_ARROW_R + " " + SYM_CROSS + " Отключён</#FF3366>";
     }
 
     public String blockStatus(boolean active) {
@@ -73,18 +72,18 @@ public final class UIThemeManager {
 
     public String blockStats(String statsLine) {
         if (statsLine == null || statsLine.isEmpty() || "-".equals(statsLine)) {
-            return SYM_STAR + " Статистика\n" + COLOR_INFO + SYM_ARROW_R + " —</#E0E0E0>";
+            return SYM_STAR + " Статистика\n" + COLOR_INFO + SYM_ARROW_R + " —</#F0F4F8>";
         }
-        return SYM_STAR + " Статистика\n" + COLOR_INFO + SYM_ARROW_R + " " + statsLine + "</#E0E0E0>";
+        return SYM_STAR + " Статистика\n" + COLOR_INFO + SYM_ARROW_R + " " + statsLine + "</#F0F4F8>";
     }
 
     public String blockControl() {
         return SYM_STAR + " Управление\n"
-                + COLOR_INFO + "▸ ЛКМ — Вкл/Выкл\n▸ ПКМ — Настройки\n▸ Shift+ЛКМ — Reload</#E0E0E0>";
+                + COLOR_INFO + "▸ ЛКМ — Вкл/Выкл\n▸ ПКМ — Настройки\n▸ Shift+ЛКМ — Reload</#F0F4F8>";
     }
 
     public String dependencyMissing(String moduleNames) {
-        return COLOR_ERROR + SYM_WARN + " Отсутствуют зависимости:\n" + COLOR_WARNING + "- " + moduleNames + "</#FAA300>";
+        return COLOR_ERROR + SYM_WARN + " Отсутствуют зависимости:\n" + COLOR_WARNING + "- " + moduleNames + "</#00C8FF>";
     }
 
     public String loreSpacer() {

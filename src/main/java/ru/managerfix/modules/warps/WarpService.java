@@ -24,13 +24,13 @@ public class WarpService {
     public void teleportToWarp(Player player, String warpName) {
         Warp warp = dataStorage.getWarp(warpName);
         if (warp == null || !warp.isEnabled()) {
-            player.sendMessage(MessageUtil.parse("<#FF4D00>Варп <#FFFFFF>" + warpName + "</#FFFFFF> не существует или выключен!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Варп <#F0F4F8>" + warpName + "</#F0F4F8> не существует или выключен!"));
             return;
         }
 
         // Permission check
         if (!warp.getPermission().isEmpty() && !player.hasPermission(warp.getPermission())) {
-            player.sendMessage(MessageUtil.parse("<#FF4D00>У вас нет прав для доступа к этому варпу!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>У вас нет прав для доступа к этому варпу!"));
             return;
         }
 
@@ -57,9 +57,9 @@ public class WarpService {
     private void performTeleport(Player player, org.bukkit.Location loc) {
         try {
             player.teleport(loc);
-            player.sendMessage(MessageUtil.parse("<#FAA300>Телепортация на варп <#FFFFFF>" + loc.getWorld().getName() + "</#FFFFFF>."));
+            player.sendMessage(MessageUtil.parse("<#00C8FF>Телепортация на варп <#F0F4F8>" + loc.getWorld().getName() + "</#F0F4F8>."));
         } catch (Exception e) {
-            player.sendMessage(MessageUtil.parse("<#FF4D00>Не удалось телепортироваться: " + e.getMessage()));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Не удалось телепортироваться: " + e.getMessage()));
             plugin.getLogger().warning("Warp teleport failed: " + e.getMessage());
         }
     }

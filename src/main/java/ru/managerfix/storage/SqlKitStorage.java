@@ -19,13 +19,15 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * SQL-based kit storage.
+ * SQL-based kit storage. Supports both MySQL and SQLite.
  */
 public final class SqlKitStorage implements KitStorage {
 
     private static final String SELECT = "SELECT * FROM kits WHERE name = ?";
-    private static final String INSERT = "INSERT INTO kits (name, cooldown, permission, items, priority, one_time, icon_material) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+    private static final String INSERT_MYSQL = "INSERT INTO kits (name, cooldown, permission, items, priority, one_time, icon_material) VALUES (?, ?, ?, ?, ?, ?, ?) " +
             "ON DUPLICATE KEY UPDATE cooldown = VALUES(cooldown), permission = VALUES(permission), items = VALUES(items), priority = VALUES(priority), one_time = VALUES(one_time), icon_material = VALUES(icon_material)";
+    private static final String INSERT_SQLITE = "INSERT INTO kits (name, cooldown, permission, items, priority, one_time, icon_material) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+            "ON CONFLICT(name) DO UPDATE SET cooldown = excluded.cooldown, permission = excluded.permission, items = excluded.items, priority = excluded.priority, one_time = excluded.one_time, icon_material = excluded.icon_material";
     private static final String DELETE = "DELETE FROM kits WHERE name = ?";
     private static final String LIST = "SELECT name FROM kits ORDER BY priority ASC, name ASC";
 
@@ -35,6 +37,7 @@ public final class SqlKitStorage implements KitStorage {
     private final DatabaseManager databaseManager;
     private final TaskScheduler scheduler;
     private final Map<String, KitData> cache = new LinkedHashMap<>();
+    private String insertSql;
 
     public SqlKitStorage(DatabaseManager databaseManager, TaskScheduler scheduler) {
         this.databaseManager = databaseManager;
@@ -43,6 +46,7 @@ public final class SqlKitStorage implements KitStorage {
 
     @Override
     public void init() {
+        this.insertSql = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType()) ? INSERT_SQLITE : INSERT_MYSQL;
         loadAllKitsSync();
     }
 
@@ -121,7 +125,7 @@ public final class SqlKitStorage implements KitStorage {
     public void saveKit(KitData kit) {
         scheduler.runAsync(() -> {
             try (Connection conn = databaseManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(INSERT)) {
+                 PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 ps.setString(1, kit.getName());
                 ps.setInt(2, kit.getCooldownSeconds());
                 ps.setString(3, kit.getPermission());

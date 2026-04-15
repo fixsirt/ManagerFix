@@ -26,17 +26,17 @@ public final class AnimationUtil {
     }
 
     /**
-     * Common loading cycle: rotating through materials (огненная палитра).
+     * Common loading cycle: rotating through materials (современная палитра).
      */
     public static final Material[] LOADING_MATERIALS = {
-            Material.ORANGE_STAINED_GLASS_PANE,
-            Material.RED_STAINED_GLASS_PANE,
-            Material.MAGENTA_STAINED_GLASS_PANE,
-            Material.FIRE,
-            Material.LAVA_BUCKET,
-            Material.BLAZE_POWDER,
-            Material.MAGMA_BLOCK,
-            Material.ORANGE_TERRACOTTA
+            Material.PINK_STAINED_GLASS_PANE,
+            Material.CYAN_STAINED_GLASS_PANE,
+            Material.PURPLE_STAINED_GLASS_PANE,
+            Material.DIAMOND_BLOCK,
+            Material.PRISMARINE_CRYSTALS,
+            Material.AMETHYST_SHARD,
+            Material.PURPUR_BLOCK,
+            Material.PINK_TERRACOTTA
     };
 
     /**
@@ -48,7 +48,7 @@ public final class AnimationUtil {
         if (titleMiniMessage != null && !titleMiniMessage.isEmpty()) {
             ib.name(titleMiniMessage);
         } else {
-            ib.name(MessageUtil.parse("<#FAA300>Загрузка..."));
+            ib.name(MessageUtil.parse("<#FF3366>Загрузка..."));
         }
         return ib.build();
     }
@@ -69,12 +69,12 @@ public final class AnimationUtil {
     }
 
     /**
-     * Default gradient titles for main menu (огненная палитра).
+     * Default gradient titles for main menu (современная палитра).
      */
     public static final String[] DEFAULT_TITLE_GRADIENT = {
-            "<#1A120B>ManagerFix",
-            "<#C0280F>ManagerFix",
-            "<#FF4D00>ManagerFix",
-            "<#FAA300>ManagerFix"
+            "<#F0F4F8>ManagerFix",
+            "<#7000FF>ManagerFix",
+            "<#FF3366>ManagerFix",
+            "<#00C8FF>ManagerFix"
     };
 }

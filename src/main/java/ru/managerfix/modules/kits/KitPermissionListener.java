@@ -35,14 +35,14 @@ public final class KitPermissionListener implements Listener {
         String permission = event.getMessage().trim();
 
         if (permission.isEmpty() || permission.contains(" ")) {
-            player.sendMessage(MessageUtil.parse("<red>Разрешение не должно содержать пробелов!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Разрешение не должно содержать пробелов!"));
             return;
         }
 
         kit.setPermission(permission);
         kitsModule.getKitManager().saveKit(kit);
 
-        player.sendMessage(MessageUtil.parse("<green>✓ Разрешение установлено: <white>" + permission + "</white>"));
+        player.sendMessage(MessageUtil.parse("<#00C8FF>✓ Разрешение установлено: <#F0F4F8>" + permission + "</#F0F4F8>"));
         
         // Отключаем слушатель после обработки
         HandlerList.unregisterAll(this);

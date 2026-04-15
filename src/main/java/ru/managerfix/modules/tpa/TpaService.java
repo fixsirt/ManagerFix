@@ -1,7 +1,6 @@
 package ru.managerfix.modules.tpa;
 
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,6 +11,7 @@ import ru.managerfix.profile.ProfileManager;
 import ru.managerfix.scheduler.TaskScheduler;
 import ru.managerfix.storage.SqlTpaStorage;
 import ru.managerfix.utils.MessageUtil;
+import ru.managerfix.utils.TeleportAnimation;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +30,7 @@ public final class TpaService {
     private final TpaConfig config;
     private final TaskScheduler scheduler;
     private final SqlTpaStorage sqlTpaStorage;
-    private final Map<UUID, TpaRequest> requestsByTarget = new ConcurrentHashMap<>();
+    private final Map<UUID, List<TpaRequest>> requestsByTarget = new ConcurrentHashMap<>();
     /** Owner UUID -> set of blacklisted player UUIDs */
     private final Map<UUID, Set<UUID>> blacklist = new ConcurrentHashMap<>();
     /** Player UUID -> true = accept requests (default), false = disabled */
@@ -64,26 +64,52 @@ public final class TpaService {
     // --- Requests ---
 
     public void addRequest(UUID from, UUID to, long timeoutMillis, boolean tpaHere) {
-        requestsByTarget.put(to, new TpaRequest(from, to, System.currentTimeMillis() + timeoutMillis, tpaHere));
+        requestsByTarget.computeIfAbsent(to, k -> new java.util.concurrent.CopyOnWriteArrayList<>())
+                .add(new TpaRequest(from, to, System.currentTimeMillis() + timeoutMillis, tpaHere));
     }
 
-    public Optional<TpaRequest> getRequest(UUID target) {
-        TpaRequest req = requestsByTarget.get(target);
-        if (req == null || req.isExpired()) {
-            if (req != null) requestsByTarget.remove(target);
-            return Optional.empty();
+    public List<TpaRequest> getRequests(UUID target) {
+        List<TpaRequest> reqs = requestsByTarget.get(target);
+        if (reqs == null || reqs.isEmpty()) return List.of();
+        List<TpaRequest> valid = reqs.stream().filter(r -> !r.isExpired()).toList();
+        if (valid.isEmpty()) {
+            requestsByTarget.remove(target);
+            return List.of();
         }
-        return Optional.of(req);
+        return valid;
     }
 
-    public Optional<TpaRequest> removeRequest(UUID target) {
-        TpaRequest req = requestsByTarget.remove(target);
-        if (req == null || req.isExpired()) return Optional.empty();
-        return Optional.of(req);
+    public Optional<TpaRequest> getRequestBySender(UUID target, UUID sender) {
+        List<TpaRequest> reqs = requestsByTarget.get(target);
+        if (reqs == null) return Optional.empty();
+        return reqs.stream().filter(r -> r.getFrom().equals(sender) && !r.isExpired()).findFirst();
+    }
+
+    public Optional<TpaRequest> removeRequest(UUID target, UUID sender) {
+        List<TpaRequest> reqs = requestsByTarget.get(target);
+        if (reqs == null) return Optional.empty();
+        Optional<TpaRequest> req = reqs.stream().filter(r -> r.getFrom().equals(sender) && !r.isExpired()).findFirst();
+        if (req.isPresent()) {
+            reqs.remove(req.get());
+            if (reqs.isEmpty()) requestsByTarget.remove(target);
+        }
+        return req;
+    }
+
+    public Optional<TpaRequest> removeFirstRequest(UUID target) {
+        List<TpaRequest> reqs = requestsByTarget.get(target);
+        if (reqs == null || reqs.isEmpty()) return Optional.empty();
+        Optional<TpaRequest> req = reqs.stream().filter(r -> !r.isExpired()).findFirst();
+        if (req.isPresent()) {
+            reqs.remove(req.get());
+            if (reqs.isEmpty()) requestsByTarget.remove(target);
+        }
+        return req;
     }
 
     public void removeRequestsBySender(UUID from) {
-        requestsByTarget.entrySet().removeIf(e -> e.getValue().getFrom().equals(from));
+        requestsByTarget.values().forEach(list -> list.removeIf(r -> r.getFrom().equals(from)));
+        requestsByTarget.entrySet().removeIf(e -> e.getValue().isEmpty());
     }
 
     public void removeRequestsByTarget(UUID to) {
@@ -91,11 +117,16 @@ public final class TpaService {
     }
 
     public void cleanupExpired() {
-        requestsByTarget.entrySet().removeIf(e -> e.getValue().isExpired());
+        requestsByTarget.values().forEach(list -> list.removeIf(TpaRequest::isExpired));
+        requestsByTarget.entrySet().removeIf(e -> e.getValue().isEmpty());
     }
 
-    public boolean hasActiveRequestTo(UUID target) {
-        return getRequest(target).isPresent();
+    public boolean hasActiveRequestTo(UUID target, UUID sender) {
+        return getRequestBySender(target, sender).isPresent();
+    }
+
+    public int getRequestCount(UUID target) {
+        return getRequests(target).size();
     }
 
     // --- Toggle (accept requests) ---
@@ -164,7 +195,6 @@ public final class TpaService {
         if (!target.isOnline()) return Optional.of("player-not-found");
         if (!isAcceptEnabled(target.getUniqueId())) return Optional.of("target-disabled");
         if (isBlacklisted(target.getUniqueId(), sender.getUniqueId())) return Optional.of("in-blacklist");
-        if (hasActiveRequestTo(target.getUniqueId())) return Optional.of("already-request");
         return Optional.empty();
     }
 
@@ -229,6 +259,17 @@ public final class TpaService {
 
         int[] secondsLeft = { delaySec };
 
+        // Запускаем анимацию во время отсчёта
+        Location startLoc = teleportingPlayer.getLocation().clone();
+        World world = startLoc.getWorld();
+        int durationTicks = delaySec * TICKS_PER_SECOND - 60; // на 3 секунды быстрее
+        if (durationTicks < 20) durationTicks = 20;
+        BukkitTask animationTask = null;
+        if (world != null) {
+            TeleportAnimation.AnimationType animType = config.getAnimationType();
+            TeleportAnimation.playAnimation(startLoc, world, animType, durationTicks, plugin);
+        }
+
         BukkitTask task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             try {
                 Player p = teleportingPlayer; // прямая ссылка на объект Player
@@ -265,26 +306,18 @@ public final class TpaService {
                 try {
                     String sec = String.valueOf(secondsLeft[0]);
                     p.showTitle(net.kyori.adventure.title.Title.title(
-                            MessageUtil.parse("<gradient:#FF4D00:#FAA300>" + sec + "</gradient>"),
-                            MessageUtil.parse("<#E0E0E0>Не двигайтесь..."),
+                            MessageUtil.parse("<gradient:#7000FF:#00C8FF>" + sec + "</gradient>"),
+                            MessageUtil.parse("<#F0F4F8>Не двигайтесь...</#F0F4F8>"),
                             net.kyori.adventure.title.Title.Times.times(
                                     java.time.Duration.ofMillis(0),
                                     java.time.Duration.ofMillis(1100),
                                     java.time.Duration.ofMillis(0)
                             )
                     ));
-                    p.sendActionBar(MessageUtil.parse("<#FAA300>Телепортация через " + sec + " сек.</#FAA300>"));
+                    p.sendActionBar(MessageUtil.parse("<#00C8FF>Телепортация через " + sec + " сек.</#00C8FF>"));
                 } catch (Exception e) {
                     log("timer: title/actionbar error: " + e.getMessage());
                 }
-
-                // Частицы и звук (необязательно, ошибка не должна ломать телепорт)
-                try { spawnCountdownParticles(p); } catch (Exception ignored) {}
-                try {
-                    if (config.isAllowSound() && config.getSoundType() != null) {
-                        p.playSound(p.getLocation(), config.getSoundType(), config.getSoundVolume() * 0.3f, config.getSoundPitch());
-                    }
-                } catch (Exception ignored) {}
 
                 secondsLeft[0]--;
             } catch (Exception e) {
@@ -294,7 +327,7 @@ public final class TpaService {
             }
         }, 0L, TICKS_PER_SECOND);
 
-        pendingTeleports.put(uuid, new PendingTeleport(startX, startY, startZ, startWorldName, task));
+        pendingTeleports.put(uuid, new PendingTeleport(startX, startY, startZ, startWorldName, task, animationTask));
     }
 
     public void teleportInstant(Player teleportingPlayer, Location destination) {
@@ -308,8 +341,13 @@ public final class TpaService {
 
     public void cancelPendingTeleport(UUID playerUuid) {
         PendingTeleport pt = pendingTeleports.remove(playerUuid);
-        if (pt != null && pt.task != null) {
-            try { pt.task.cancel(); } catch (Exception ignored) {}
+        if (pt != null) {
+            if (pt.task != null) {
+                try { pt.task.cancel(); } catch (Exception ignored) {}
+            }
+            if (pt.animationTask != null) {
+                try { pt.animationTask.cancel(); } catch (Exception ignored) {}
+            }
         }
     }
 
@@ -326,18 +364,6 @@ public final class TpaService {
         return Optional.of(new Location(w, pt.x, pt.y, pt.z));
     }
 
-    private void spawnCountdownParticles(Player p) {
-        Location loc = p.getLocation().add(0, 1, 0);
-        World w = loc.getWorld();
-        if (w == null) return;
-        try {
-            w.spawnParticle(Particle.PORTAL, loc, 20, 0.5, 0.5, 0.5, 0.1);
-        } catch (Throwable ignored) {}
-        try {
-            w.spawnParticle(Particle.ENCHANT, loc, 15, 0.4, 0.6, 0.4, 0.5);
-        } catch (Throwable ignored) {}
-    }
-
     private void performTeleport(Player player, Location destination) {
         log("performTeleport: player=" + (player != null ? player.getName() : "null")
                 + " online=" + (player != null && player.isOnline())
@@ -351,6 +377,9 @@ public final class TpaService {
             return;
         }
 
+        Location from = player.getLocation();
+        World world = from.getWorld();
+
         try {
             try {
                 java.util.List<org.bukkit.entity.Entity> passengers = new java.util.ArrayList<>(player.getPassengers());
@@ -361,27 +390,27 @@ public final class TpaService {
                 }
             } catch (Throwable ignored) {}
 
-            // Анимация в точке отбытия
-            Location from = player.getLocation();
-            try {
-                World fw = from.getWorld();
-                if (fw != null) {
-                    Location at = from.clone().add(0, 1, 0);
-                    fw.spawnParticle(Particle.PORTAL, at, 60, 0.5, 1, 0.5, 0.3);
-                }
-            } catch (Throwable ignored) {}
+            // Departure animation BEFORE teleport (at old location)
+            if (world != null) {
+                TeleportAnimation.playInstantDeparture(from, world);
+            }
 
-            // Звук
-            try {
-                if (config.isAllowSound() && config.getSoundType() != null) {
-                    player.playSound(from, config.getSoundType(), config.getSoundVolume(), config.getSoundPitch());
-                }
-            } catch (Throwable ignored) {}
+            // Teleport immediately
+            boolean result = player.teleport(destination);
+            log("performTeleport: teleport() returned " + result);
 
-            // Title
+            // Arrival animation at new location
+            TeleportAnimation.playQuickArrival(player, destination);
+
+            if (config.isAllowSound() && config.getSoundType() != null) {
+                try {
+                    player.playSound(destination, config.getSoundType(), config.getSoundVolume(), config.getSoundPitch());
+                } catch (Throwable ignored) {}
+            }
+
             try {
                 player.showTitle(net.kyori.adventure.title.Title.title(
-                        MessageUtil.parse("<gradient:#FF4D00:#FAA300>Телепорт!</gradient>"),
+                        MessageUtil.parse("<gradient:#7000FF:#00C8FF>Телепорт!</gradient>"),
                         net.kyori.adventure.text.Component.empty(),
                         net.kyori.adventure.title.Title.Times.times(
                                 java.time.Duration.ofMillis(100),
@@ -389,25 +418,6 @@ public final class TpaService {
                                 java.time.Duration.ofMillis(300)
                         )
                 ));
-            } catch (Throwable ignored) {}
-
-            // === ТЕЛЕПОРТ ===
-            boolean result = player.teleport(destination);
-            log("performTeleport: teleport() returned " + result);
-
-            // Анимация в точке прибытия
-            try {
-                Location to = destination.clone().add(0, 1, 0);
-                World dw = destination.getWorld();
-                if (dw != null) {
-                    dw.spawnParticle(Particle.PORTAL, to, 60, 0.5, 1, 0.5, 0.3);
-                }
-            } catch (Throwable ignored) {}
-
-            try {
-                if (config.isAllowSound() && config.getSoundType() != null) {
-                    player.playSound(destination, config.getSoundType(), config.getSoundVolume(), config.getSoundPitch());
-                }
             } catch (Throwable ignored) {}
 
         } catch (Exception e) {
@@ -452,13 +462,15 @@ public final class TpaService {
         final double x, y, z;
         final String worldName;
         final BukkitTask task;
+        final BukkitTask animationTask;
 
-        PendingTeleport(double x, double y, double z, String worldName, BukkitTask task) {
+        PendingTeleport(double x, double y, double z, String worldName, BukkitTask task, BukkitTask animationTask) {
             this.x = x;
             this.y = y;
             this.z = z;
             this.worldName = worldName;
             this.task = task;
+            this.animationTask = animationTask;
         }
     }
 }

@@ -8,21 +8,27 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * SQL-based TPA data storage (toggle, blacklist).
+ * SQL-based TPA data storage (toggle, blacklist). Supports both MySQL and SQLite.
  */
 public final class SqlTpaStorage {
 
     private static final String SELECT_TOGGLE = "SELECT enabled FROM tpa_data WHERE uuid = ?";
     private static final String SELECT_BLACKLIST = "SELECT blacklisted_uuid FROM tpa_blacklist WHERE owner_uuid = ?";
-    private static final String INSERT_TOGGLE = "INSERT INTO tpa_data (uuid, enabled) VALUES (?, ?) " +
+    private static final String INSERT_TOGGLE_MYSQL = "INSERT INTO tpa_data (uuid, enabled) VALUES (?, ?) " +
             "ON DUPLICATE KEY UPDATE enabled = VALUES(enabled)";
-    private static final String INSERT_BLACKLIST = "INSERT INTO tpa_blacklist (owner_uuid, blacklisted_uuid) VALUES (?, ?) " +
+    private static final String INSERT_TOGGLE_SQLITE = "INSERT INTO tpa_data (uuid, enabled) VALUES (?, ?) " +
+            "ON CONFLICT(uuid) DO UPDATE SET enabled = excluded.enabled";
+    private static final String INSERT_BLACKLIST_MYSQL = "INSERT INTO tpa_blacklist (owner_uuid, blacklisted_uuid) VALUES (?, ?) " +
             "ON DUPLICATE KEY UPDATE blacklisted_uuid = VALUES(blacklisted_uuid)";
+    private static final String INSERT_BLACKLIST_SQLITE = "INSERT INTO tpa_blacklist (owner_uuid, blacklisted_uuid) VALUES (?, ?) " +
+            "ON CONFLICT(owner_uuid, blacklisted_uuid) DO UPDATE SET blacklisted_uuid = excluded.blacklisted_uuid";
     private static final String DELETE_BLACKLIST = "DELETE FROM tpa_blacklist WHERE owner_uuid = ? AND blacklisted_uuid = ?";
     private static final String DELETE_BLACKLIST_ALL = "DELETE FROM tpa_blacklist WHERE owner_uuid = ?";
 
     private final DatabaseManager databaseManager;
     private final TaskScheduler scheduler;
+    private String insertToggleSql;
+    private String insertBlacklistSql;
 
     /** Player UUID -> enabled (true = accept requests, false = disabled) */
     private final Map<UUID, Boolean> toggleAccept = new ConcurrentHashMap<>();
@@ -35,6 +41,9 @@ public final class SqlTpaStorage {
     }
 
     public void init() {
+        boolean isSqlite = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType());
+        this.insertToggleSql = isSqlite ? INSERT_TOGGLE_SQLITE : INSERT_TOGGLE_MYSQL;
+        this.insertBlacklistSql = isSqlite ? INSERT_BLACKLIST_SQLITE : INSERT_BLACKLIST_MYSQL;
         loadAllData();
     }
 
@@ -94,7 +103,7 @@ public final class SqlTpaStorage {
     private void saveToggleAsync(UUID player, boolean enabled) {
         scheduler.runAsync(() -> {
             try (Connection conn = databaseManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(INSERT_TOGGLE)) {
+                 PreparedStatement ps = conn.prepareStatement(insertToggleSql)) {
                 ps.setString(1, player.toString());
                 ps.setBoolean(2, enabled);
                 ps.executeUpdate();
@@ -133,7 +142,7 @@ public final class SqlTpaStorage {
     private void saveBlacklistAsync(UUID owner, UUID player) {
         scheduler.runAsync(() -> {
             try (Connection conn = databaseManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(INSERT_BLACKLIST)) {
+                 PreparedStatement ps = conn.prepareStatement(insertBlacklistSql)) {
                 ps.setString(1, owner.toString());
                 ps.setString(2, player.toString());
                 ps.executeUpdate();

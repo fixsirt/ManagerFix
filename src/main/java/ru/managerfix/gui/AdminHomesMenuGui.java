@@ -79,11 +79,11 @@ public final class AdminHomesMenuGui {
 
         if (totalPages > 1) {
             ItemStack prev = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
             ItemStack next = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
             builder.button(PREV_SLOT, Button.builder(prev).onClick(e -> {
@@ -102,9 +102,9 @@ public final class AdminHomesMenuGui {
                 .name(MessageUtil.parse(UIThemeManager.GRADIENT_ACCENT + name + "</gradient>"))
                 .hideFlags(true);
         if (loc != null && loc.getWorld() != null) {
-            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Мир: " + loc.getWorld().getName() + "</#e9d5ff>"));
-            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — телепорт (админ)</#e9d5ff>"));
-            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ПКМ — удалить дом</#e9d5ff>"));
+            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Мир: " + loc.getWorld().getName() + "</#F0F4F8>"));
+            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — телепорт (админ)</#F0F4F8>"));
+            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ПКМ — удалить дом</#F0F4F8>"));
         }
         return ib.build();
     }

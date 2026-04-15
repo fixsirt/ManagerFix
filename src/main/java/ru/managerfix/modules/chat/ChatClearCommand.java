@@ -22,7 +22,7 @@ public final class ChatClearCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         // Проверка прав
         if (!sender.hasPermission("managerfix.command.clearchat")) {
-            sender.sendMessage(MessageUtil.parse("<#C0280F>У вас нет прав для использования этой команды!"));
+            sender.sendMessage(MessageUtil.parse("<#FF3366>У вас нет прав для использования этой команды!"));
             return true;
         }
 
@@ -34,18 +34,18 @@ public final class ChatClearCommand implements CommandExecutor, TabCompleter {
                 player.sendMessage(" ");
             }
             // Разделитель
-            player.sendMessage(MessageUtil.parse("<#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#1A120B>"));
-            player.sendMessage(MessageUtil.parse("<#FF4D00>Чат был очищен администратором <#FFFFFF>" + sender.getName() + "</#FFFFFF></#FF4D00>"));
-            player.sendMessage(MessageUtil.parse("<#1A120B>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#1A120B>"));
+            player.sendMessage(MessageUtil.parse("<#F0F4F8>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#F0F4F8>"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Чат был очищен администратором <#F0F4F8>" + sender.getName() + "</#F0F4F8></#FF3366>"));
+            player.sendMessage(MessageUtil.parse("<#F0F4F8>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#F0F4F8>"));
             clearedCount++;
         }
 
         // Сообщение отправителю
-        sender.sendMessage(MessageUtil.parse("<#FAA300>Чат очищен! Очищено чатов: <#FFFFFF>" + clearedCount + "</#FFFFFF>"));
+        sender.sendMessage(MessageUtil.parse("<#00C8FF>Чат очищен! Очищено чатов: <#F0F4F8>" + clearedCount + "</#F0F4F8>"));
 
         // Логирование в консоль
         Bukkit.getConsoleSender().sendMessage(MessageUtil.parse(
-            "<#FF4D00>[ClearChat]</#FF4D00> Чат очищен игроком <#FFFFFF>" + sender.getName() + "</#FFFFFF>"
+            "<#FF3366>[ClearChat]</#FF3366> Чат очищен игроком <#F0F4F8>" + sender.getName() + "</#F0F4F8>"
         ));
 
         return true;

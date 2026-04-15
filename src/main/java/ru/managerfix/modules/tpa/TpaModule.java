@@ -22,6 +22,8 @@ public final class TpaModule extends AbstractModule {
     private TpaConfig tpaConfig;
     private TpaService tpaService;
     private TpaListener tpaListener;
+    private TpaGui tpaGui;
+    private TpaRequestsGui tpaRequestsGui;
 
     public TpaModule(JavaPlugin plugin, ConfigManager configManager, ServiceRegistry serviceRegistry) {
         super(plugin, configManager, serviceRegistry);
@@ -64,7 +66,9 @@ public final class TpaModule extends AbstractModule {
         plugin.getServer().getPluginManager().registerEvents(tpaListener, plugin);
 
         if (plugin instanceof ManagerFix mf) {
-            TpaCommand tpaCommand = new TpaCommand(mf, tpaService, mf.getGuiManager());
+            tpaGui = new TpaGui(mf, mf.getGuiManager(), tpaService);
+            tpaRequestsGui = new TpaRequestsGui(mf, mf.getGuiManager(), tpaService, tpaGui);
+            TpaCommand tpaCommand = new TpaCommand(mf, tpaService, mf.getGuiManager(), tpaGui, tpaRequestsGui);
             mf.getCommandManager().register("tpa", tpaCommand, tpaCommand);
             mf.getCommandManager().register("tpahere", tpaCommand, tpaCommand);
             mf.getCommandManager().register("tpaccept", tpaCommand, tpaCommand);
@@ -89,6 +93,8 @@ public final class TpaModule extends AbstractModule {
         }
         tpaConfig = null;
         moduleConfig = null;
+        tpaGui = null;
+        tpaRequestsGui = null;
         LoggerUtil.debug("TPA module disabled.");
     }
 

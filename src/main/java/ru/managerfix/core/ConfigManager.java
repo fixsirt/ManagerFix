@@ -82,14 +82,14 @@ public final class ConfigManager {
     }
 
     /**
-     * Returns storage type: YAML or MYSQL.
+     * Returns storage type: YAML, MYSQL или SQLITE.
      */
     public String getStorageType() {
-        return mainConfig.getString("storage.type", "YAML").toUpperCase();
+        return mainConfig.getString("storage.type", "SQLITE").toUpperCase();
     }
 
     /**
-     * Sets storage type (YAML or MYSQL) in memory.
+     * Sets storage type (YAML, MYSQL или SQLITE) in memory.
      */
     public void setStorageType(String type) {
         mainConfig.set("storage.type", type.toUpperCase());
@@ -101,6 +101,13 @@ public final class ConfigManager {
      */
     public boolean isMySqlStorage() {
         return "MYSQL".equals(getStorageType());
+    }
+
+    /**
+     * Returns whether SQLite storage is configured.
+     */
+    public boolean isSqliteStorage() {
+        return "SQLITE".equals(getStorageType());
     }
 
     /**

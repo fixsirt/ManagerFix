@@ -39,27 +39,31 @@ final class RtpGui {
     }
 
     void open(Player player) {
-        String title = "<gradient:#FF4D00:#FAA300>Рандомный телепорт</gradient>";
+        String title = "<gradient:#7000FF:#00C8FF>Рандомный телепорт</gradient>";
         GuiBuilder builder = GuiBuilder.of(SIZE)
                 .title(MessageUtil.parse(title))
                 .frame(true)
                 .frameApplicator(inv -> template.applyStyledFrame(inv, SIZE))
                 .holderId("rtp_menu");
 
+        String nearRange = service.getNearRtpMin() + "-" + service.getNearRtpMax();
+        String farRange = service.getFarRtpMin() + "-" + service.getFarRtpMax();
+        String playerRange = service.getPlayerRadiusMin() + "-" + service.getPlayerRadiusMax();
+
         var item1000 = new ItemBuilder(Material.ENDER_PEARL)
-                .name(MessageUtil.parse(UIThemeManager.GRADIENT_MAIN + "До 1000 блоков</gradient>"))
-                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Случайная точка вокруг вас</#E0E0E0>"))
+                .name(MessageUtil.parse(UIThemeManager.GRADIENT_MAIN + "Ближний RTP (" + nearRange + ")</gradient>"))
+                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Случайная точка вокруг спавна</#F0F4F8>"))
                 .hideFlags(true)
                 .build();
         var item5000 = new ItemBuilder(Material.ENDER_EYE)
-                .name(MessageUtil.parse(UIThemeManager.GRADIENT_MAIN + "До 5000 блоков</gradient>"))
-                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Дальняя случайная точка</#E0E0E0>"))
+                .name(MessageUtil.parse(UIThemeManager.GRADIENT_MAIN + "Дальний RTP (" + farRange + ")</gradient>"))
+                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Дальняя случайная точка</#F0F4F8>"))
                 .hideFlags(true)
                 .build();
-        String costLine = "<#E0E0E0>Стоимость: <#FAA300>" + (int) Math.round(service.getNearTeleportCost()) + CURRENCY + "</#FAA300>";
+        String costLine = "<#F0F4F8>Стоимость: <#00C8FF>" + (int) Math.round(service.getNearTeleportCost()) + CURRENCY + "</#00C8FF>";
         var itemNear = new ItemBuilder(Material.PLAYER_HEAD)
                 .name(MessageUtil.parse(UIThemeManager.GRADIENT_SUCCESS + "К случайному игроку</gradient>"))
-                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "В радиусе 100 блоков</#E0E0E0>"))
+                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "В радиусе " + playerRange + " блоков</#F0F4F8>"))
                 .addLore(MessageUtil.parse(costLine))
                 .hideFlags(true)
                 .build();
@@ -71,7 +75,7 @@ final class RtpGui {
                 return;
             }
             p.closeInventory();
-            service.randomTeleport(p, 1000);
+            service.randomTeleport(p, "near");
         }).build());
         builder.button(SLOT_5000, Button.builder(item5000).onClick(e -> {
             if (!(e.getWhoClicked() instanceof Player p)) return;
@@ -80,7 +84,7 @@ final class RtpGui {
                 return;
             }
             p.closeInventory();
-            service.randomTeleport(p, 5000);
+            service.randomTeleport(p, "far");
         }).build());
         builder.button(SLOT_NEAR, Button.builder(itemNear).onClick(e -> {
             if (!(e.getWhoClicked() instanceof Player p)) return;
@@ -89,7 +93,7 @@ final class RtpGui {
                 return;
             }
             p.closeInventory();
-            service.teleportToRandomNearbyPlayer(p, 100);
+            service.teleportToRandomNearbyPlayer(p);
         }).build());
 
         Inventory inv = builder.build();

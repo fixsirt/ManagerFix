@@ -116,7 +116,7 @@ public final class OtherListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        p.sendMessage(MessageUtil.parse("<red>Чат закрыт.</red>"));
+        p.sendMessage(MessageUtil.parse("<#FF3366>Чат закрыт.</#FF3366>"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -209,14 +209,14 @@ public final class OtherListener implements Listener {
                 && damager.getAllowFlight()) {
             damager.setAllowFlight(false);
             damager.setFlying(false);
-            damager.sendMessage(MessageUtil.parse("<red>Полёт выключен.</red>"));
+            damager.sendMessage(MessageUtil.parse("<#FF3366>Полёт выключен.</#FF3366>"));
         }
         if (victim.getGameMode() != org.bukkit.GameMode.CREATIVE
                 && victim.getGameMode() != org.bukkit.GameMode.SPECTATOR
                 && victim.getAllowFlight()) {
             victim.setAllowFlight(false);
             victim.setFlying(false);
-            victim.sendMessage(MessageUtil.parse("<red>Полёт выключен.</red>"));
+            victim.sendMessage(MessageUtil.parse("<#FF3366>Полёт выключен.</#FF3366>"));
         }
     }
 }

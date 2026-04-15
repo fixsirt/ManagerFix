@@ -61,7 +61,7 @@ public final class BanModule extends AbstractModule {
         EventBus eventBus = plugin instanceof ManagerFix mf ? mf.getEventBus() : null;
 
         // Используем SQL или оптимизированное YAML хранилище с кэшированием
-        if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+        if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
             storage = mf.getSqlBanStorage();
         } else {
             storage = new CachedYamlBanStorage(plugin, scheduler != null ? scheduler : new TaskScheduler(plugin));
@@ -69,7 +69,7 @@ public final class BanModule extends AbstractModule {
         storage.init();
 
         // История банов
-        if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+        if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
             historyStorage = new SqlBanHistoryStorageWrapper(mf.getSqlBanHistoryStorage());
         } else {
             historyStorage = new YamlBanHistoryStorage(plugin, scheduler != null ? scheduler : new TaskScheduler(plugin));
@@ -109,7 +109,7 @@ public final class BanModule extends AbstractModule {
                 muteScheduler = new ru.managerfix.scheduler.TaskScheduler(plugin);
             }
             MuteStorage muteStorage;
-            if (mf.isMySqlStorage()) {
+            if (mf.isMySqlStorage() || mf.isSqliteStorage()) {
                 muteStorage = mf.getSqlMuteStorage();
             } else {
                 muteStorage = new CachedYamlMuteStorage(plugin, muteScheduler);

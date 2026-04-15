@@ -9,22 +9,22 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class ChatFormat {
     
     public static final ChatFormat GLOBAL = new ChatFormat(
-        "<gray>[Глобальный] <white>{player}: {message}</white></gray>",
+        "<#F0F4F8>[Глобальный] <#F0F4F8>{player}: {message}</#F0F4F8></#F0F4F8>",
         NamedTextColor.WHITE
     );
-    
+
     public static final ChatFormat LOCAL = new ChatFormat(
-        "<gray>[Локальный] <white>{player}: {message}</white></gray> <gray>({radius}м)</gray>",
+        "<#F0F4F8>[Локальный] <#F0F4F8>{player}: {message}</#F0F4F8></#F0F4F8> <#F0F4F8>({radius}м)</#F0F4F8>",
         NamedTextColor.GRAY
     );
-    
+
     public static final ChatFormat PRIVATE = new ChatFormat(
-        "<gray>[ЛС] <white>{sender} → {target}: {message}</white></gray>",
+        "<#F0F4F8>[ЛС] <#F0F4F8>{sender} → {target}: {message}</#F0F4F8></#F0F4F8>",
         NamedTextColor.GRAY
     );
-    
+
     public static final ChatFormat CHANNEL = new ChatFormat(
-        "<gray>[{channel}] <white>{player}: {message}</white></gray>",
+        "<#F0F4F8>[{channel}] <#F0F4F8>{player}: {message}</#F0F4F8></#F0F4F8>",
         NamedTextColor.GRAY
     );
     

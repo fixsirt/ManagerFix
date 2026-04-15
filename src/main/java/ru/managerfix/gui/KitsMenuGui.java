@@ -87,11 +87,11 @@ public final class KitsMenuGui {
 
         if (totalPages > 1) {
             ItemStack prev = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
             ItemStack next = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
             builder.button(PREV_SLOT, Button.builder(prev).onClick(e -> {
@@ -107,18 +107,18 @@ public final class KitsMenuGui {
 
     private ItemStack buildKitIcon(KitData kit, boolean hasPermission) {
         ItemBuilder ib = new ItemBuilder(kit.getIcon())
-                .name((hasPermission ? "<#FAA300>" : "<#C0280F>") + kit.getName())
+                .name((hasPermission ? "<#00C8FF>" : "<#FF3366>") + kit.getName())
                 .hideFlags(true);
 
         // Добавляем lore
-        ib.addLore(MessageUtil.parse("<gray>▸ " + formatCooldown(kit.getCooldownSeconds(), kit.isOneTime())));
+        ib.addLore(MessageUtil.parse("<#F0F4F8>▸ " + formatCooldown(kit.getCooldownSeconds(), kit.isOneTime())));
 
         if (kit.isOneTime()) {
-            ib.addLore(MessageUtil.parse("<green>✓ Только один раз"));
+            ib.addLore(MessageUtil.parse("<#00C8FF>✓ Только один раз"));
         }
 
-        ib.addLore(MessageUtil.parse("<#E0E0E0>" + (hasPermission ? "▸ ЛКМ — получить" : "▸ ЛКМ — предосмотр")));
-        ib.addLore(MessageUtil.parse("<#E0E0E0>▸ ПКМ — предосмотр"));
+        ib.addLore(MessageUtil.parse("<#F0F4F8>" + (hasPermission ? "▸ ЛКМ — получить" : "▸ ЛКМ — предосмотр")));
+        ib.addLore(MessageUtil.parse("<#F0F4F8>▸ ПКМ — предосмотр"));
 
         return ib.build();
     }
@@ -128,10 +128,10 @@ public final class KitsMenuGui {
      */
     private String formatCooldown(int seconds, boolean oneTime) {
         if (oneTime) {
-            return "<green>Одноразовый кит</green>";
+            return "<#00C8FF>Одноразовый кит</#00C8FF>";
         }
         if (seconds <= 0) {
-            return "<green>Кулдаун: Нет</green>";
+            return "<#00C8FF>Кулдаун: Нет</#00C8FF>";
         }
         
         int hours = seconds / 3600;

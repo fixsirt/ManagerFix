@@ -17,7 +17,7 @@ public class SpawnEditGui {
 
     public void open(Player player) {
         GuiBuilder builder = GuiBuilder.of(27)
-                .title(MessageUtil.parse("<gradient:#FF4D00:#FAA300>Настройки Spawn</gradient>"))
+                .title(MessageUtil.parse("<gradient:#7000FF:#00C8FF>Настройки Spawn</gradient>"))
                 .frame(true)
                 .holderId("spawn_edit");
 
@@ -36,12 +36,12 @@ public class SpawnEditGui {
 
         // [Teleport Delay: + / -] - Slot 16
         builder.button(16, Button.builder(new ItemBuilder(Material.CLOCK)
-                        .name("<#FAA300>Задержка телепортации")
+                        .name("<#00C8FF>Задержка телепортации")
                         .loreStrings("",
-                                "<#E0E0E0>Текущее значение: <#FFFFFF>" + config.getTeleportDelaySeconds() + " сек.",
+                                "<#F0F4F8>Текущее значение: <#F0F4F8>" + config.getTeleportDelaySeconds() + " сек.",
                                 "",
-                                "<#FAA300>ЛКМ: +1 сек.",
-                                "<#FAA300>ПКМ: -1 сек.")
+                                "<#00C8FF>ЛКМ: +1 сек.",
+                                "<#00C8FF>ПКМ: -1 сек.")
                         .build())
                 .onClick(e -> {
                     int delay = config.getTeleportDelaySeconds();
@@ -58,11 +58,11 @@ public class SpawnEditGui {
 
     private Button createToggleButton(String name, boolean enabled, String configPath) {
         return Button.builder(new ItemBuilder(enabled ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE)
-                        .name((enabled ? "<#F5D742>" : "<#C0280F>") + name)
+                        .name((enabled ? "<#00C8FF>" : "<#FF3366>") + name)
                         .loreStrings("",
-                                "<#E0E0E0>Текущее состояние: " + (enabled ? "<#F5D742>ВКЛ" : "<#C0280F>ВЫКЛ"),
+                                "<#F0F4F8>Текущее состояние: " + (enabled ? "<#00C8FF>ВКЛ" : "<#FF3366>ВЫКЛ"),
                                 "",
-                                "<#FAA300>Нажмите, чтобы переключить")
+                                "<#00C8FF>Нажмите, чтобы переключить")
                         .build())
                 .onClick(e -> {
                     config.setSetting(configPath, !enabled);

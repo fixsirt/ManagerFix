@@ -49,7 +49,6 @@ public final class MessageUtil {
                 .replace("§l", "<bold>").replace("&l", "<bold>")
                 .replace("§m", "<strikethrough>").replace("&m", "<strikethrough>")
                 .replace("§n", "<underline>").replace("&n", "<underline>")
-                .replace("§o", "<italic>").replace("&o", "<italic>")
                 .replace("§r", "<reset>").replace("&r", "<reset>");
         return t;
     }
@@ -113,6 +112,7 @@ public final class MessageUtil {
     public static Component parse(String text) {
         if (text == null || text.isEmpty()) return Component.empty();
         text = convertLegacyColors(text);
+        text = "<!i>" + text;
         try {
             return MINI_MESSAGE.deserialize(text);
         } catch (Exception e) {

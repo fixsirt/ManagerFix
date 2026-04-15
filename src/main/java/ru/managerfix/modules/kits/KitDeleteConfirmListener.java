@@ -37,9 +37,9 @@ public final class KitDeleteConfirmListener implements Listener {
         if ("да".equals(response) || "yes".equals(response) || "confirm".equals(response)) {
             // Реально удаляем кит из БД
             kitsModule.getKitManager().deleteKit(kit.getName());
-            player.sendMessage(MessageUtil.parse("<green>✓ Кит <white>" + kit.getName() + "</white> удалён!"));
+            player.sendMessage(MessageUtil.parse("<#00C8FF>✓ Кит <#F0F4F8>" + kit.getName() + "</#F0F4F8> удалён!"));
         } else {
-            player.sendMessage(MessageUtil.parse("<red>Удаление отменено."));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Удаление отменено."));
         }
         
         // Отключаем слушатель после обработки

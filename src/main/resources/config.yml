@@ -18,9 +18,9 @@ modules:
   names: true
   items: true
 
-# Storage: YAML or MYSQL
+# Storage: YAML, MYSQL или SQLITE
 storage:
-  type: YAML
+  type: SQLITE  # YAML, MYSQL или SQLITE (SQLITE — локальная SQL база в файле, без сервера)
 
 # MySQL/MariaDB (used when storage.type = MYSQL)
 database:

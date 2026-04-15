@@ -51,8 +51,8 @@ public final class AfkTopGui {
 
         if (top.isEmpty()) {
             ItemStack empty = new ItemBuilder(Material.CLOCK)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Нет данных</#e9d5ff>"))
-                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ В кэше только игроки на сервере</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Нет данных</#F0F4F8>"))
+                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ В кэше только игроки на сервере</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
             builder.button(CONTENT_SLOTS[CONTENT_SLOTS.length / 2], Button.builder(empty).build());
@@ -76,13 +76,13 @@ public final class AfkTopGui {
         } else if (rank == 2) {
             nameLine = "<#c0c0c0>#2 " + entry.getPlayerName() + "</#c0c0c0>";
         } else if (rank == 3) {
-            nameLine = UIThemeManager.COLOR_WARNING + "#3 " + entry.getPlayerName() + "</#fbbf24>";
+            nameLine = UIThemeManager.COLOR_WARNING + "#3 " + entry.getPlayerName() + "</#00C8FF>";
         } else {
-            nameLine = UIThemeManager.COLOR_INFO + "#" + rank + " " + entry.getPlayerName() + "</#e9d5ff>";
+            nameLine = UIThemeManager.COLOR_INFO + "#" + rank + " " + entry.getPlayerName() + "</#F0F4F8>";
         }
 
         String timeStr = formatAfkTime(entry.totalSeconds());
-        String loreLine = UIThemeManager.COLOR_INFO + "▸ Время в AFK: " + timeStr + "</#e9d5ff>";
+        String loreLine = UIThemeManager.COLOR_INFO + "▸ Время в AFK: " + timeStr + "</#F0F4F8>";
 
         return new ItemBuilder(Material.PLAYER_HEAD)
                 .skullOwner(entry.getPlayerName())

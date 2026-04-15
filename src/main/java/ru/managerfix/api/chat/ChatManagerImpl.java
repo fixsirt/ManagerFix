@@ -289,7 +289,7 @@ public class ChatManagerImpl implements ChatManager {
     public void setChatLocked(boolean locked) {
         this.chatLocked = locked;
         sendGlobalMessage(MiniMessage.miniMessage().deserialize(
-            locked ? "<red>Чат заблокирован!</red>" : "<green>Чат разблокирован!</green>"
+            locked ? "<#FF3366>Чат заблокирован!</#FF3366>" : "<#00C8FF>Чат разблокирован!</#00C8FF>"
         ));
     }
     

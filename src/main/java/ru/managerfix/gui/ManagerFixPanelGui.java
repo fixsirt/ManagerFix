@@ -104,8 +104,8 @@ public final class ManagerFixPanelGui {
 
         builder.button(SLOT_RELOAD_ALL, Button.builder(
                 new ItemBuilder(Material.REDSTONE)
-                        .name(MessageUtil.parse("<gradient:#FF4D00:#C0280F>Reload All</gradient>"))
-                        .addLore(MessageUtil.parse("<#E0E0E0>Перезагрузить конфиг и все модули"))
+                        .name(MessageUtil.parse("<gradient:#FF3366:#FF3366>Reload All</gradient>"))
+                        .addLore(MessageUtil.parse("<#F0F4F8>Перезагрузить конфиг и все модули"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> throttleClick(player, () -> {
@@ -117,8 +117,8 @@ public final class ManagerFixPanelGui {
         boolean debugOn = plugin.getDebugManager() != null && plugin.getDebugManager().isDebug();
         builder.button(SLOT_DEBUG, Button.builder(
                 new ItemBuilder(debugOn ? Material.LIME_DYE : Material.GRAY_DYE)
-                        .name(MessageUtil.parse(debugOn ? "<#FAA300>Debug: ON</#FAA300>" : "<#E0E0E0>Debug: OFF</#E0E0E0>"))
-                        .addLore(MessageUtil.parse("<#E0E0E0>ЛКМ — переключить отладочный вывод"))
+                        .name(MessageUtil.parse(debugOn ? "<#00C8FF>Debug: ON</#00C8FF>" : "<#F0F4F8>Debug: OFF</#F0F4F8>"))
+                        .addLore(MessageUtil.parse("<#F0F4F8>ЛКМ — переключить отладочный вывод"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> throttleClick(player, () -> {
@@ -131,8 +131,8 @@ public final class ManagerFixPanelGui {
         String storageType = plugin.getConfigManager().getStorageType();
         builder.button(SLOT_STORAGE, Button.builder(
                 new ItemBuilder(Material.BOOK)
-                        .name(MessageUtil.parse("<#FAA300>Storage</#FAA300>"))
-                        .addLore(MessageUtil.parse("<#E0E0E0>" + storageType))
+                        .name(MessageUtil.parse("<#00C8FF>Storage</#00C8FF>"))
+                        .addLore(MessageUtil.parse("<#F0F4F8>" + storageType))
                         .hideFlags(true)
                         .build()
         ).build());
@@ -140,8 +140,8 @@ public final class ManagerFixPanelGui {
         boolean clusterOn = plugin.getConfigManager().isClusterEnabled();
         builder.button(SLOT_CLUSTER, Button.builder(
                 new ItemBuilder(clusterOn ? Material.EMERALD : Material.BARRIER)
-                        .name(MessageUtil.parse(clusterOn ? "<#FAA300>Cluster: ON</#FAA300>" : "<#FF4D00>Cluster: OFF</#FF4D00>"))
-                        .addLore(MessageUtil.parse("<#E0E0E0>ID: " + plugin.getConfigManager().getServerId()))
+                        .name(MessageUtil.parse(clusterOn ? "<#00C8FF>Cluster: ON</#00C8FF>" : "<#FF3366>Cluster: OFF</#FF3366>"))
+                        .addLore(MessageUtil.parse("<#F0F4F8>ID: " + plugin.getConfigManager().getServerId()))
                         .hideFlags(true)
                         .build()
         ).build());
@@ -165,14 +165,14 @@ public final class ManagerFixPanelGui {
         String nameRaw = MessageUtil.getRaw(plugin, plugin.getConfigManager().getDefaultLanguage(), nameKey);
         String name = nameRaw != null ? nameRaw : entry.id;
         ItemBuilder ib = new ItemBuilder(mat)
-                .name(MessageUtil.parse(enabled ? "<#FAA300>" + name + "</#FAA300>" : "<#FF4D00>" + name + "</#FF4D00>"))
+                .name(MessageUtil.parse(enabled ? "<#00C8FF>" + name + "</#00C8FF>" : "<#FF3366>" + name + "</#FF3366>"))
                 .hideFlags(true);
-        ib.addLore(MessageUtil.parse(enabled ? "<#E0E0E0>Статус: <#FAA300>Enabled</#FAA300>" : "<#E0E0E0>Статус: <#FF4D00>Disabled</#FF4D00>"));
-        if (stats != null && !stats.equals("-")) ib.addLore(MessageUtil.parse("<#E0E0E0>" + stats));
-        if (reason != null && !enabled) ib.addLore(MessageUtil.parse("<#FF4D00>" + reason));
-        ib.addLore(MessageUtil.parse("<#E0E0E0>ЛКМ — " + (enabled ? "меню" : "включить")));
-        ib.addLore(MessageUtil.parse("<#E0E0E0>ПКМ — настройки"));
-        ib.addLore(MessageUtil.parse("<#E0E0E0>Shift+ЛКМ — перезагрузка"));
+        ib.addLore(MessageUtil.parse(enabled ? "<#F0F4F8>Статус: <#00C8FF>Enabled</#00C8FF>" : "<#F0F4F8>Статус: <#FF3366>Disabled</#FF3366>"));
+        if (stats != null && !stats.equals("-")) ib.addLore(MessageUtil.parse("<#F0F4F8>" + stats));
+        if (reason != null && !enabled) ib.addLore(MessageUtil.parse("<#FF3366>" + reason));
+        ib.addLore(MessageUtil.parse("<#F0F4F8>ЛКМ — " + (enabled ? "меню" : "включить")));
+        ib.addLore(MessageUtil.parse("<#F0F4F8>ПКМ — настройки"));
+        ib.addLore(MessageUtil.parse("<#F0F4F8>Shift+ЛКМ — перезагрузка"));
         return ib.build();
     }
 

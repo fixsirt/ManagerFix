@@ -28,22 +28,50 @@ final class RtpService {
     private final int cooldownSeconds;
     private final FileConfiguration config;
     private final double nearTeleportCost;
+    private final int nearRtpMin, nearRtpMax, farRtpMin, farRtpMax, playerRadiusMin, playerRadiusMax;
 
     RtpService(ManagerFix plugin, int cooldownSeconds, FileConfiguration config) {
         this.plugin = plugin;
         this.cooldownSeconds = Math.max(0, cooldownSeconds);
         this.config = config;
         this.nearTeleportCost = config != null ? config.getDouble("costs.near-player", 1000.0) : 1000.0;
+        this.nearRtpMin = config != null ? config.getInt("near-rtp.min", 600) : 600;
+        this.nearRtpMax = config != null ? config.getInt("near-rtp.max", 1000) : 1000;
+        this.farRtpMin = config != null ? config.getInt("far-rtp.min", 4000) : 4000;
+        this.farRtpMax = config != null ? config.getInt("far-rtp.max", 5000) : 5000;
+        this.playerRadiusMin = config != null ? config.getInt("player-radius.min", 30) : 30;
+        this.playerRadiusMax = config != null ? config.getInt("player-radius.max", 80) : 80;
     }
 
-    void randomTeleport(Player player, int radius) {
+    int getNearRtpMin() { return nearRtpMin; }
+    int getNearRtpMax() { return nearRtpMax; }
+    int getFarRtpMin() { return farRtpMin; }
+    int getFarRtpMax() { return farRtpMax; }
+    int getPlayerRadiusMin() { return playerRadiusMin; }
+    int getPlayerRadiusMax() { return playerRadiusMax; }
+
+    void randomTeleport(Player player, String type) {
+        int min, max;
+        if ("near".equals(type)) {
+            min = nearRtpMin;
+            max = nearRtpMax;
+        } else {
+            min = farRtpMin;
+            max = farRtpMax;
+        }
         if (!checkAndSetCooldownStart(player)) return;
         World world = player.getWorld();
-        Location center = world.getSpawnLocation();
+        Location spawnLoc = world.getSpawnLocation();
+        int centerX = spawnLoc.getBlockX();
+        int centerZ = spawnLoc.getBlockZ();
+        if (centerX == 0 && centerZ == 0) {
+            centerX = 0;
+            centerZ = 0;
+        }
         double angle = RANDOM.nextDouble() * Math.PI * 2;
-        double dist = RANDOM.nextDouble() * radius;
-        int x = center.getBlockX() + (int) Math.round(Math.cos(angle) * dist);
-        int z = center.getBlockZ() + (int) Math.round(Math.sin(angle) * dist);
+        double dist = min + RANDOM.nextDouble() * (max - min);
+        int x = centerX + (int) Math.round(Math.cos(angle) * dist);
+        int z = centerZ + (int) Math.round(Math.sin(angle) * dist);
         int y = world.getHighestBlockYAt(x, z);
         Location dest = new Location(world, x + 0.5, y + 1, z + 0.5, player.getLocation().getYaw(), 0f);
         var tpaMod = plugin.getModuleManager().getEnabledModule("tpa")
@@ -59,11 +87,11 @@ final class RtpService {
                 plugin.getEventBus().callEvent(new ru.managerfix.event.RTPEvent(player, player.getLocation(), dest));
             }
             player.teleport(dest);
-            player.sendMessage(MessageUtil.parse(getMsg("success", "<#FAA300>Вы были телепортированы.</#FAA300>")));
+            player.sendMessage(MessageUtil.parse(getMsg("success", "<#00C8FF>Вы были телепортированы.</#00C8FF>")));
         }
     }
 
-    void teleportToRandomNearbyPlayer(Player player, int radius) {
+    void teleportToRandomNearbyPlayer(Player player) {
         if (!checkAndSetCooldownStart(player)) return;
         List<Player> candidates = new ArrayList<>();
         for (Player p : plugin.getServer().getOnlinePlayers()) {
@@ -71,7 +99,7 @@ final class RtpService {
         }
         if (candidates.isEmpty()) {
             cancelCooldownIfJustStarted(player);
-            player.sendMessage(MessageUtil.parse(getMsg("no-targets", "<#FF4D00>Нет других игроков для телепорта.</#FF4D00>")));
+            player.sendMessage(MessageUtil.parse(getMsg("no-targets", "<#FF3366>Нет других игроков для телепорта.</#FF3366>")));
             return;
         }
         Player target = candidates.get(RANDOM.nextInt(candidates.size()));
@@ -81,7 +109,7 @@ final class RtpService {
         }
         Location around = target.getLocation().clone();
         double angle = RANDOM.nextDouble() * Math.PI * 2;
-        double dist = RANDOM.nextDouble() * radius;
+        double dist = playerRadiusMin + RANDOM.nextDouble() * (playerRadiusMax - playerRadiusMin);
         int x = around.getBlockX() + (int) Math.round(Math.cos(angle) * dist);
         int z = around.getBlockZ() + (int) Math.round(Math.sin(angle) * dist);
         int y = around.getWorld().getHighestBlockYAt(x, z);
@@ -102,7 +130,7 @@ final class RtpService {
                 plugin.getEventBus().callEvent(new ru.managerfix.event.RTPEvent(player, player.getLocation(), dest));
             }
             player.teleport(dest);
-            player.sendMessage(MessageUtil.parse(getMsg("success", "<#FAA300>Вы были телепортированы.</#FAA300>")));
+            player.sendMessage(MessageUtil.parse(getMsg("success", "<#00C8FF>Вы были телепортированы.</#00C8FF>")));
         }
     }
 
@@ -114,7 +142,7 @@ final class RtpService {
         PlayerProfile profile = pm.getProfile(player);
         if (profile.hasCooldown("rtp")) {
             long rem = profile.getCooldownRemaining("rtp");
-            String msg = getMsg("cooldown", "<#FF4D00>Подождите {seconds} сек. перед следующим телепортом.</#FF4D00>").replace("{seconds}", String.valueOf((rem + 999) / 1000));
+            String msg = getMsg("cooldown", "<#FF3366>Подождите {seconds} сек. перед следующим телепортом.</#FF3366>").replace("{seconds}", String.valueOf((rem + 999) / 1000));
             player.sendMessage(MessageUtil.parse(msg));
             return false;
         }
@@ -185,13 +213,13 @@ final class RtpService {
         try {
             if (amount <= 0) return true;
             if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
-                player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF4D00>Экономика недоступна.</#FF4D00>")));
+                player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF3366>Экономика недоступна.</#FF3366>")));
                 return false;
             }
             var reg = plugin.getServer().getServicesManager()
                     .getRegistration((Class) Class.forName("net.milkbowl.vault.economy.Economy"));
             if (reg == null) {
-                player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF4D00>Экономика недоступна.</#FF4D00>")));
+                player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF3366>Экономика недоступна.</#FF3366>")));
                 return false;
             }
             Object econ = reg.getProvider();
@@ -206,7 +234,7 @@ final class RtpService {
             if (has != null && withdraw != null) {
                 boolean enough = (boolean) has.invoke(econ, player, amount);
                 if (!enough) {
-                    String msg = getMsg("insufficient-funds", "<#FF4D00>Недостаточно средств: требуется {amount}.</#FF4D00>")
+                    String msg = getMsg("insufficient-funds", "<#FF3366>Недостаточно средств: требуется {amount}.</#FF3366>")
                             .replace("{amount}", String.valueOf((int) amount));
                     player.sendMessage(MessageUtil.parse(msg));
                     return false;
@@ -215,7 +243,7 @@ final class RtpService {
                 java.lang.reflect.Method ok = resp.getClass().getMethod("transactionSuccess");
                 boolean success = (boolean) ok.invoke(resp);
                 if (!success) {
-                    player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF4D00>Экономика недоступна.</#FF4D00>")));
+                    player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF3366>Экономика недоступна.</#FF3366>")));
                 }
                 return success;
             }
@@ -223,7 +251,7 @@ final class RtpService {
             java.lang.reflect.Method getBalance = econ.getClass().getMethod("getBalance", org.bukkit.OfflinePlayer.class);
             double bal = ((Number) getBalance.invoke(econ, player)).doubleValue();
             if (bal + 1e-6 < amount) {
-                String msg = getMsg("insufficient-funds", "<#FF4D00>Недостаточно средств: требуется {amount}.</#FF4D00>")
+                String msg = getMsg("insufficient-funds", "<#FF3366>Недостаточно средств: требуется {amount}.</#FF3366>")
                         .replace("{amount}", String.valueOf((int) amount));
                 player.sendMessage(MessageUtil.parse(msg));
                 return false;
@@ -233,11 +261,11 @@ final class RtpService {
             java.lang.reflect.Method ok = resp.getClass().getMethod("transactionSuccess");
             boolean success = (boolean) ok.invoke(resp);
             if (!success) {
-                player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF4D00>Экономика недоступна.</#FF4D00>")));
+                player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF3366>Экономика недоступна.</#FF3366>")));
             }
             return success;
         } catch (Throwable t) {
-            player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF4D00>Экономика недоступна.</#FF4D00>")));
+            player.sendMessage(MessageUtil.parse(getMsg("eco-unavailable", "<#FF3366>Экономика недоступна.</#FF3366>")));
             return false;
         }
     }

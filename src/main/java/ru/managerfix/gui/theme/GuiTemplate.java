@@ -8,18 +8,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Decorative frame templates for GUI: alternating orange/red glass, corners, dividers.
- * Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B)
+ * Decorative frame templates for GUI: light blue theme.
+ * Цветовая палитра: Фон (#F0F4F8), Текст (#1E2A3A), Акцент 1 - Неоновый розовый (#FF3366)
+ * Акцент 2 - Яркий циан (#00C8FF), Акцент 3 - Глубокий фиолетовый (#7000FF)
  * Size 54 (6 rows): top row 0-8, bottom row 45-53, left column 9,18,27,36, right column 17,26,35,44.
  */
 public final class GuiTemplate {
 
-    // Огненная палитра: оранжевое, красное, янтарное стекло
-    private static final Material ORANGE = Material.ORANGE_STAINED_GLASS_PANE;
-    private static final Material RED = Material.RED_STAINED_GLASS_PANE;
-    private static final Material MAGENTA = Material.MAGENTA_STAINED_GLASS_PANE;
-    private static final Material CORNER = Material.BASALT; // Тёмный блок для углов (Scorched Earth стиль)
-    private static final Material DIVIDER = Material.GRAY_STAINED_GLASS_PANE;
+    // Светло-голубая палитра
+    private static final Material CORNER = Material.LIGHT_BLUE_DYE;           // 0,8,45,53 - углы
+    private static final Material SIDE = Material.BLUE_STAINED_GLASS_PANE;    // 9,18,27,36,17,26,35,44 - боковые
+    private static final Material TOP_BOTTOM = Material.LIGHT_BLUE_STAINED_GLASS_PANE; // 1-7,46-52 - верх/низ
+    private static final Material DIVIDER = Material.LIGHT_BLUE_STAINED_GLASS_PANE;
 
     private final UIThemeManager theme;
 
@@ -29,7 +29,7 @@ public final class GuiTemplate {
 
     /**
      * Returns a map of slot -> material for a styled frame.
-     * 54: full border, corners BASALT, alternating ORANGE/RED/MAGENTA.
+     * 54: full border, corners LIGHT_BLUE_DYE, sides BLUE_STAINED_GLASS_PANE, top/bottom LIGHT_BLUE_STAINED_GLASS_PANE.
      * 45: same border + row 2 (slots 18-26) as divider.
      */
     public Map<Integer, Material> getStyledFrameMaterials(int size) {
@@ -45,26 +45,25 @@ public final class GuiTemplate {
             return getSimpleFrame(size);
         }
         Map<Integer, Material> map = new HashMap<>();
-        int rows = size / 9;
-        // Top row (0-8): corners; rest alternating orange/red/magenta
+        // Top row (0-8): corners + top/bottom glass
         map.put(0, CORNER);
         map.put(8, CORNER);
         for (int i = 1; i <= 7; i++) {
-            map.put(i, cycle(i, ORANGE, RED, MAGENTA));
+            map.put(i, TOP_BOTTOM);
         }
-        // Bottom row (45-53)
+        // Bottom row (45-53): corners + top/bottom glass
         map.put(45, CORNER);
         map.put(53, CORNER);
         for (int i = 46; i <= 52; i++) {
-            map.put(i, cycle(i, ORANGE, RED, MAGENTA));
+            map.put(i, TOP_BOTTOM);
         }
-        // Left column (9, 18, 27, 36)
+        // Left column (9, 18, 27, 36) - side glass
         for (int r = 1; r <= 4; r++) {
-            map.put(r * 9, cycle(r, ORANGE, RED, MAGENTA));
+            map.put(r * 9, SIDE);
         }
-        // Right column (17, 26, 35, 44)
+        // Right column (17, 26, 35, 44) - side glass
         for (int r = 1; r <= 4; r++) {
-            map.put(r * 9 + 8, cycle(r, MAGENTA, RED, ORANGE));
+            map.put(r * 9 + 8, SIDE);
         }
         return map;
     }
@@ -111,30 +110,29 @@ public final class GuiTemplate {
     private static Map<Integer, Material> getSimpleFrame(int size) {
         Map<Integer, Material> map = new HashMap<>();
         int rows = size / 9;
-        Material mat = ORANGE;
-        for (int i = 0; i < 9; i++) map.put(i, mat);
-        for (int i = size - 9; i < size; i++) map.put(i, mat);
+        for (int i = 0; i < 9; i++) map.put(i, TOP_BOTTOM);
+        for (int i = size - 9; i < size; i++) map.put(i, TOP_BOTTOM);
         for (int r = 1; r < rows - 1; r++) {
-            map.put(r * 9, mat);
-            map.put(r * 9 + 8, mat);
+            map.put(r * 9, SIDE);
+            map.put(r * 9 + 8, SIDE);
         }
         return map;
     }
 
-    /** 45 or 54: border with corners BASALT, rest alternating ORANGE/RED/MAGENTA. */
+    /** 45 or 54: border with corners LIGHT_BLUE_DYE, rest TOP_BOTTOM/SIDE. */
     private static Map<Integer, Material> getSimpleFrameWithCorners(int size) {
         Map<Integer, Material> map = new HashMap<>();
         int rows = size / 9;
         map.put(0, CORNER);
         map.put(8, CORNER);
-        for (int i = 1; i <= 7; i++) map.put(i, cycle(i, ORANGE, RED, MAGENTA));
+        for (int i = 1; i <= 7; i++) map.put(i, TOP_BOTTOM);
         int lastRow = size - 9;
         map.put(lastRow, CORNER);
         map.put(lastRow + 8, CORNER);
-        for (int i = 1; i <= 7; i++) map.put(lastRow + i, cycle(i, ORANGE, RED, MAGENTA));
+        for (int i = 1; i <= 7; i++) map.put(lastRow + i, TOP_BOTTOM);
         for (int r = 1; r < rows - 1; r++) {
-            map.put(r * 9, cycle(r, ORANGE, RED, MAGENTA));
-            map.put(r * 9 + 8, cycle(r, MAGENTA, RED, ORANGE));
+            map.put(r * 9, SIDE);
+            map.put(r * 9 + 8, SIDE);
         }
         return map;
     }

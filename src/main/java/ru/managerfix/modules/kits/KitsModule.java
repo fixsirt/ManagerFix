@@ -47,7 +47,7 @@ public final class KitsModule extends AbstractModule {
         initCommandConfig(MODULE_NAME);
 
         // Использовать SQL или YAML хранилище в зависимости от конфигурации
-        if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+        if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
             storage = mf.getSqlKitStorage();
         } else {
             storage = new YamlKitStorage(plugin);

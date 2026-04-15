@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import ru.managerfix.ManagerFix;
+import java.util.List;
 import ru.managerfix.gui.Button;
 import ru.managerfix.gui.GuiBuilder;
 import ru.managerfix.gui.GuiManager;
@@ -38,9 +39,9 @@ public final class TpaGui {
 
     public void openIfHasRequest(Player target) {
         if (target == null || !target.isOnline()) return;
-        var reqOpt = service.getRequest(target.getUniqueId());
-        if (reqOpt.isEmpty()) return;
-        TpaRequest req = reqOpt.get();
+        List<TpaRequest> reqs = service.getRequests(target.getUniqueId());
+        if (reqs.isEmpty()) return;
+        TpaRequest req = reqs.get(0);
         String fromName = resolveName(req.getFrom());
         open(target, fromName, req);
     }
@@ -64,51 +65,55 @@ public final class TpaGui {
                 .holderId("tpa_confirm");
 
         org.bukkit.inventory.ItemStack acceptBtn = new ItemBuilder(Material.LIME_WOOL)
-                .name(MessageUtil.parse(UIThemeManager.GRADIENT_SUCCESS + "✔ Принять</gradient>"))
-                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + fromName + " ➜ к вам</#E0E0E0>"))
+                .name(MessageUtil.parse("<green>✔ Принять"))
+                .addLore(MessageUtil.parse("<gray>" + fromName + " ➜ к вам"))
                 .hideFlags(true)
                 .build();
         org.bukkit.inventory.ItemStack denyBtn = new ItemBuilder(Material.RED_WOOL)
-                .name(MessageUtil.parse(UIThemeManager.GRADIENT_ERROR + "✖ Отклонить</gradient>"))
-                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + fromName + "</#E0E0E0>"))
+                .name(MessageUtil.parse("<red>✖ Отклонить"))
+                .addLore(MessageUtil.parse("<gray>" + fromName))
                 .hideFlags(true)
                 .build();
 
         builder.button(ACCEPT_SLOT, Button.builder(acceptBtn).onClick(e -> {
             if (!(e.getWhoClicked() instanceof Player player)) return;
-            var removed = service.removeRequest(player.getUniqueId());
+            var removed = service.removeFirstRequest(player.getUniqueId());
             if (removed.isEmpty()) {
+                player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("no-request", "<#FF3366>У вас нет входящих запросов.</#FF3366>")));
                 player.closeInventory();
                 return;
             }
             TpaRequest r = removed.get();
             Player from = ru.managerfix.utils.NickResolver.getPlayerByUuid(r.getFrom());
             if (from == null || !from.isOnline()) {
-                player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("request-expired", "<red>Запрос истёк.")));
+                player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("request-expired", "<#FF3366>Запрос истёк.</#FF3366>")));
                 player.closeInventory();
                 return;
             }
-            player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("accepted", "<green>Запрос принят!")));
-            from.sendMessage(MessageUtil.parse(service.getConfig().getMessage("accepted", "<green>Запрос принят!")));
+            player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("accepted", "<#00C8FF>Запрос принят!</#00C8FF>")));
+            from.sendMessage(MessageUtil.parse(service.getConfig().getMessage("accepted", "<#00C8FF>Запрос принят!</#00C8FF>")));
             if (r.isTpaHere()) {
                 service.scheduleTeleport(player, from.getLocation().clone(), () ->
-                        player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("cancelled-move", "<red>Телепортация отменена: вы сдвинулись."))));
+                        player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("cancelled-move", "<#FF3366>Телепортация отменена: вы сдвинулись.</#FF3366>"))));
             } else {
                 service.scheduleTeleport(from, player.getLocation().clone(), () ->
-                        from.sendMessage(MessageUtil.parse(service.getConfig().getMessage("cancelled-move", "<red>Телепортация отменена: вы сдвинулись."))));
+                        from.sendMessage(MessageUtil.parse(service.getConfig().getMessage("cancelled-move", "<#FF3366>Телепортация отменена: вы сдвинулись.</#FF3366>"))));
             }
             player.closeInventory();
         }).build());
 
         builder.button(DENY_SLOT, Button.builder(denyBtn).onClick(e -> {
             if (!(e.getWhoClicked() instanceof Player player)) return;
-            var removed = service.removeRequest(player.getUniqueId());
-            player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("denied", "<red>Запрос отклонён.")));
-            if (removed.isPresent()) {
-                Player from = ru.managerfix.utils.NickResolver.getPlayerByUuid(removed.get().getFrom());
-                if (from != null && from.isOnline()) {
-                    from.sendMessage(MessageUtil.parse(service.getConfig().getMessage("denied", "<red>Запрос отклонён.")));
-                }
+            var removed = service.removeFirstRequest(player.getUniqueId());
+            if (removed.isEmpty()) {
+                player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("no-request", "<#FF3366>У вас нет входящих запросов.</#FF3366>")));
+                player.closeInventory();
+                return;
+            }
+            player.sendMessage(MessageUtil.parse(service.getConfig().getMessage("denied", "<#FF3366>Запрос отклонён.</#FF3366>")));
+            Player from = ru.managerfix.utils.NickResolver.getPlayerByUuid(removed.get().getFrom());
+            if (from != null && from.isOnline()) {
+                from.sendMessage(MessageUtil.parse(service.getConfig().getMessage("denied", "<#FF3366>Запрос отклонён.</#FF3366>")));
             }
             player.closeInventory();
         }).build());

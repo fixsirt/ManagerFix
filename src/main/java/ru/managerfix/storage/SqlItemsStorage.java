@@ -11,13 +11,15 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * SQL-based saved items storage.
+ * SQL-based saved items storage. Supports both MySQL and SQLite.
  */
 public final class SqlItemsStorage {
 
     private static final String SELECT = "SELECT * FROM saved_items WHERE name = ?";
-    private static final String INSERT = "INSERT INTO saved_items (name, data) VALUES (?, ?) " +
+    private static final String INSERT_MYSQL = "INSERT INTO saved_items (name, data) VALUES (?, ?) " +
             "ON DUPLICATE KEY UPDATE data = VALUES(data)";
+    private static final String INSERT_SQLITE = "INSERT INTO saved_items (name, data) VALUES (?, ?) " +
+            "ON CONFLICT(name) DO UPDATE SET data = excluded.data";
     private static final String DELETE = "DELETE FROM saved_items WHERE name = ?";
     private static final String LIST = "SELECT name, data FROM saved_items";
 
@@ -27,6 +29,7 @@ public final class SqlItemsStorage {
     private final DatabaseManager databaseManager;
     private final TaskScheduler scheduler;
     private final Map<String, Map<String, Object>> cache = new HashMap<>();
+    private String insertSql;
 
     public SqlItemsStorage(DatabaseManager databaseManager, TaskScheduler scheduler) {
         this.databaseManager = databaseManager;
@@ -34,6 +37,7 @@ public final class SqlItemsStorage {
     }
 
     public void init() {
+        this.insertSql = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType()) ? INSERT_SQLITE : INSERT_MYSQL;
         loadAllItems();
     }
 
@@ -100,7 +104,7 @@ public final class SqlItemsStorage {
     public void saveItemAsync(String name, Map<String, Object> data, Runnable onDone) {
         scheduler.runAsync(() -> {
             try (Connection conn = databaseManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(INSERT)) {
+                 PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 ps.setString(1, name);
                 String json = GSON.toJson(data);
                 ps.setString(2, json);

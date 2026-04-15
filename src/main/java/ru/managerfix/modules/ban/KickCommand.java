@@ -50,11 +50,11 @@ public final class KickCommand implements CommandExecutor, TabCompleter {
 
         // Сообщение в чат
         if (banModule.isBroadcastBans()) {
-            String broadcastMsg = "<#FAA300>⬤ КИК</#FAA300> <#FFFFFF>" + target.getName() + "</#FFFFFF> <#E0E0E0>был кикнут игроком</#E0E0E0> <#FFFFFF>" + sender.getName() + "</#FFFFFF> <#E0E0E0>—</#E0E0E0> <#FF4D00>" + reason + "</#FF4D00>";
+            String broadcastMsg = "<#00C8FF>⬤ КИК</#00C8FF> <#F0F4F8>" + target.getName() + "</#F0F4F8> <#F0F4F8>был кикнут игроком</#F0F4F8> <#F0F4F8>" + sender.getName() + "</#F0F4F8> <#F0F4F8>—</#F0F4F8> <#FF3366>" + reason + "</#FF3366>";
             Bukkit.getServer().sendMessage(MessageUtil.parse(broadcastMsg));
         }
 
-        sender.sendMessage(MessageUtil.parse("<#FAA300>Игрок <#FFFFFF>" + target.getName() + "</#FFFFFF> был кикнут!"));
+        sender.sendMessage(MessageUtil.parse("<#00C8FF>Игрок <#F0F4F8>" + target.getName() + "</#F0F4F8> был кикнут!"));
         return true;
     }
 

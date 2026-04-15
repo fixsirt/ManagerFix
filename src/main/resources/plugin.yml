@@ -151,15 +151,14 @@ commands:
   editspawn:
     description: Edit spawn settings GUI
     usage: /<command>
-  chattoggle:
-    description: Toggle local/global chat
-    usage: /<command>
   chatspy:
     description: Toggle seeing local chat (when not in radius)
     usage: /<command>
+    aliases: [cs]
   commandspy:
     description: Toggle seeing other players' commands
     usage: /<command>
+    aliases: [cmds]
   pm:
     description: Send a private message to a player
     usage: /<command> <player> <message>
@@ -187,10 +186,14 @@ commands:
   clearchat:
     description: Clear chat
     usage: /<command>
-    aliases: [chatchlear]
-  socialspy:
-    description: Toggle social spy
-    usage: /<command>
+    aliases: [chatchlear, cc]
+  filter:
+    description: Profanity filter management
+    usage: /<command> [reload|toggle|status]
+  broadcast:
+    description: Broadcast message to all players
+    usage: /<command> <message>
+    aliases: [bc]
   world:
     description: Worlds - GUI, tp, create, delete
     usage: /<command> [tp|create|delete] [name] [generator]
@@ -297,9 +300,6 @@ commands:
   lockchat:
     description: Toggle chat lock
     usage: /<command>
-  broadcast:
-    description: Broadcast message
-    usage: /<command> <message>
   ping:
     description: Show ping
     usage: /<command> [player]
@@ -424,6 +424,9 @@ permissions:
     default: op
   managerfix.chat.commandspy:
     description: Use /commandspy to see other players' commands
+    default: op
+  managerfix.chat.filter:
+    description: Use /filter command
     default: op
   managerfix.chat.pmblock:
     description: Block/unblock players from sending PMs (/pmblock)
@@ -836,8 +839,8 @@ permissions:
   managerfix.command.clearchat:
     description: Use /clearchat or /chatchlear
     default: op
-  managerfix.command.socialspy:
-    description: Use /socialspy
+  managerfix.command.broadcast:
+    description: Use /broadcast or /bc
     default: op
   managerfix.command.world:
     description: Use /world

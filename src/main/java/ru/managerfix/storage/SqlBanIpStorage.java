@@ -10,14 +10,16 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * SQL-based IP ban storage.
+ * SQL-based IP ban storage. Supports both MySQL and SQLite.
  */
 public final class SqlBanIpStorage implements BanIpStorage {
 
     private static final String SELECT = "SELECT * FROM ip_bans WHERE ip_address = ?";
     private static final String SELECT_BY_UUID = "SELECT * FROM ip_bans WHERE uuid = ?";
-    private static final String INSERT = "INSERT INTO ip_bans (uuid, ip_address, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
+    private static final String INSERT_MYSQL = "INSERT INTO ip_bans (uuid, ip_address, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
             "ON DUPLICATE KEY UPDATE uuid = VALUES(uuid), reason = VALUES(reason), source = VALUES(source), created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
+    private static final String INSERT_SQLITE = "INSERT INTO ip_bans (uuid, ip_address, reason, source, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?) " +
+            "ON CONFLICT(ip_address) DO UPDATE SET uuid = excluded.uuid, reason = excluded.reason, source = excluded.source, created_at = excluded.created_at, expires_at = excluded.expires_at";
     private static final String DELETE = "DELETE FROM ip_bans WHERE ip_address = ?";
     private static final String DELETE_BY_UUID = "DELETE FROM ip_bans WHERE uuid = ?";
     private static final String LIST = "SELECT * FROM ip_bans";
@@ -25,6 +27,7 @@ public final class SqlBanIpStorage implements BanIpStorage {
     private final DatabaseManager databaseManager;
     private final TaskScheduler scheduler;
     private final Map<String, BanIpRecord> cache = new ConcurrentHashMap<>();
+    private String insertSql;
 
     public SqlBanIpStorage(DatabaseManager databaseManager, TaskScheduler scheduler) {
         this.databaseManager = databaseManager;
@@ -33,6 +36,7 @@ public final class SqlBanIpStorage implements BanIpStorage {
 
     @Override
     public void init() {
+        this.insertSql = "SQLITE".equalsIgnoreCase(databaseManager.getStorageType()) ? INSERT_SQLITE : INSERT_MYSQL;
         loadAllBans();
     }
 
@@ -140,7 +144,7 @@ public final class SqlBanIpStorage implements BanIpStorage {
     public void addBanAsync(BanIpRecord record, Runnable onDone) {
         scheduler.runAsync(() -> {
             try (Connection conn = databaseManager.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(INSERT)) {
+                 PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 ps.setString(1, record.getTargetUuid().toString());
                 ps.setString(2, record.getIpAddress());
                 ps.setString(3, record.getReason());

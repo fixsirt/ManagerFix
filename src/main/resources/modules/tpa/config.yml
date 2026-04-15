@@ -1,5 +1,5 @@
 # TPA module configuration
-# Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B)
+# Цветовая палитра: Neon Pink (#FF3366), Bright Cyan (#00C8FF), Light Background (#F0F4F8)
 cooldown-seconds: 30
 request-timeout-seconds: 60
 teleport-delay-seconds: 5
@@ -8,25 +8,30 @@ sound:
   name: ENTITY_ENDERMAN_TELEPORT
   volume: 1.0
   pitch: 1.0
+animation:
+  type: swirl
+  # Доступные типы: ring, swirl, pulse, pillar, cyclone, explosion, snow, ring_in, double_helix, orbit
 
 messages:
-  request-sent: "<#FAA300>Запрос отправлен игроку {target}</#FAA300>"
-  request-received: "<gradient:#FF4D00:#FAA300>Игрок {sender} хочет телепортироваться к вам</gradient>"
-  accepted: "<#FAA300>Запрос принят!</#FAA300>"
-  denied: "<#FF4D00>Запрос отклонён.</#FF4D00>"
-  toggle-disabled: "<#FF4D00>Вы отключили запросы.</#FF4D00>"
-  toggle-enabled: "<#FAA300>Вы включили запросы.</#FAA300>"
-  click-to-reply: "<#E0E0E0>Нажмите, чтобы ответить.</#E0E0E0>"
-  blacklist-add: "<#FAA300>Игрок {player} добавлен в чёрный список.</#FAA300>"
-  blacklist-remove: "<#E0E0E0>Игрок {player} удалён из чёрного списка.</#E0E0E0>"
-  blacklist-list: "<#E0E0E0>Чёрный список: {list}</#E0E0E0>"
-  blacklist-empty: "<#E0E0E0>Чёрный список пуст.</#E0E0E0>"
-  target-disabled: "<#FF4D00>Игрок отключил приём запросов.</#FF4D00>"
-  in-blacklist: "<#FF4D00>Вы в чёрном списке этого игрока.</#FF4D00>"
-  already-request: "<#FF4D00>У игрока уже есть активный запрос.</#FF4D00>"
-  no-request: "<#FF4D00>У вас нет входящих запросов.</#FF4D00>"
-  request-expired: "<#FF4D00>Запрос истёк.</#FF4D00>"
-  cooldown: "<#FF4D00>Подождите {seconds} сек. перед следующим запросом.</#FF4D00>"
-  cancelled-move: "<#FF4D00>Телепортация отменена: вы сдвинулись.</#FF4D00>"
+  request-sent: "<#00C8FF>Запрос отправлен игроку {target}</#00C8FF>"
+  request-received: "<gradient:#7000FF:#00C8FF>Игрок {sender} хочет телепортироваться к вам</gradient>"
+  accepted: "<#00C8FF>Запрос принят!</#00C8FF>"
+  denied: "<#FF3366>Запрос отклонён.</#FF3366>"
+  toggle-disabled: "<#FF3366>Вы отключили запросы.</#FF3366>"
+  toggle-enabled: "<#00C8FF>Вы включили запросы.</#00C8FF>"
+  click-to-reply: "<#F0F4F8>Нажмите, чтобы ответить.</#F0F4F8>"
+  blacklist-add: "<#00C8FF>Игрок {player} добавлен в чёрный список.</#00C8FF>"
+  blacklist-remove: "<#F0F4F8>Игрок {player} удалён из чёрного списка.</#F0F4F8>"
+  blacklist-list: "<#F0F4F8>Чёрный список: {list}</#F0F4F8>"
+  blacklist-empty: "<#F0F4F8>Чёрный список пуст.</#F0F4F8>"
+  target-disabled: "<#FF3366>Игрок отключил приём запросов.</#FF3366>"
+  in-blacklist: "<#FF3366>Вы в чёрном списке этого игрока.</#FF3366>"
+  already-request: "<#FF3366>У игрока уже есть активный запрос.</#FF3366>"
+  no-request: "<#FF3366>У вас нет входящих запросов.</#FF3366>"
+  no-request-from: "<#FF3366>Запрос от игрока {player} не найден.</#FF3366>"
+  request-expired: "<#FF3366>Запрос истёк.</#FF3366>"
+  request-already-processed: "<#FF3366>Запрос от {player} уже обработан.</#FF3366>"
+  cooldown: "<#FF3366>Подождите {seconds} сек. перед следующим запросом.</#FF3366>"
+  cancelled-move: "<#FF3366>Телепортация отменена: вы сдвинулись.</#FF3366>"
   menu:
-    tpa-confirm-title: "<#1A120B>Запрос на телепортацию</#1A120B>"
+    tpa-confirm-title: "<#F0F4F8>Запрос на телепортацию</#F0F4F8>"

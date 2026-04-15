@@ -26,9 +26,9 @@ public class Warp {
         this.location = location;
         this.permission = "";
         this.category = "default";
-        this.icon = Material.ENDER_PEARL;
+        this.icon = Material.RECOVERY_COMPASS;
         this.slot = -1;
-        this.description = List.of("<#E0E0E0>Точка варпа: " + name);
+        this.description = List.of("<#F0F4F8>Точка варпа: " + name);
         this.teleportDelay = 5;
         this.enabled = true;
         this.hidden = false;

@@ -114,7 +114,7 @@ public final class BanIpCommand implements CommandExecutor, TabCompleter {
         // Добавляем IP-бан
         BanIpRecord ipBan = new BanIpRecord(targetUuid, ipAddress, reason, source, System.currentTimeMillis(), expiresAt);
 
-        if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+        if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
             SqlBanIpStorage storage = mf.getSqlBanIpStorage();
             if (storage != null) {
                 // Выполняем все операции параллельно в асинхронном потоке
@@ -139,12 +139,19 @@ public final class BanIpCommand implements CommandExecutor, TabCompleter {
     private void saveIpForTargetPlayerAsync(UUID targetUuid, String playerName, String ipAddress, String reason, String source, long expiresAt) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+                if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
                     java.sql.Connection conn = mf.getDatabaseManager().getConnection();
-                    try (java.sql.PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?) " +
-                        "ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), " +
-                        "created_at = VALUES(created_at), expires_at = VALUES(expires_at), ip_address = VALUES(ip_address)")) {
+                    String sql;
+                    if (mf.isSqliteStorage()) {
+                        sql = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                              "ON CONFLICT(uuid) DO UPDATE SET name = excluded.name, reason = excluded.reason, source = excluded.source, " +
+                              "created_at = excluded.created_at, expires_at = excluded.expires_at, ip_address = excluded.ip_address)";
+                    } else {
+                        sql = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                              "ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), " +
+                              "created_at = VALUES(created_at), expires_at = VALUES(expires_at), ip_address = VALUES(ip_address)";
+                    }
+                    try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
                         ps.setString(1, targetUuid.toString());
                         ps.setString(2, playerName);
                         ps.setString(3, reason);
@@ -173,16 +180,23 @@ public final class BanIpCommand implements CommandExecutor, TabCompleter {
         // Выполняем бан всех UUID пакетом в асинхронном потоке
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+                if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
                     java.sql.Connection conn = mf.getDatabaseManager().getConnection();
 
                     // Сначала получаем все ники одним запросом
                     Map<UUID, String> uuidToName = getPlayerNamesBatch(uuids);
 
                     // Пакетная вставка всех банов
-                    String sql = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?) " +
-                                 "ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), " +
-                                 "created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
+                    String sql;
+                    if (mf.isSqliteStorage()) {
+                        sql = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                              "ON CONFLICT(uuid) DO UPDATE SET name = excluded.name, reason = excluded.reason, source = excluded.source, " +
+                              "created_at = excluded.created_at, expires_at = excluded.expires_at";
+                    } else {
+                        sql = "INSERT INTO bans (uuid, name, reason, source, created_at, expires_at, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                              "ON DUPLICATE KEY UPDATE name = VALUES(name), reason = VALUES(reason), source = VALUES(source), " +
+                              "created_at = VALUES(created_at), expires_at = VALUES(expires_at)";
+                    }
 
                     try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
                         long now = System.currentTimeMillis();
@@ -228,7 +242,7 @@ public final class BanIpCommand implements CommandExecutor, TabCompleter {
         if (uuids == null || uuids.isEmpty()) return result;
 
         try {
-            if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+            if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
                 java.sql.Connection conn = mf.getDatabaseManager().getConnection();
                 
                 // Строим запрос с нужным количеством placeholder'ов
@@ -270,7 +284,7 @@ public final class BanIpCommand implements CommandExecutor, TabCompleter {
     private void kickOnlinePlayersByIp(String ipAddress, String reason) {
         // Кикаем асинхронно чтобы не блокировать главный поток
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            net.kyori.adventure.text.Component kickMessage = MessageUtil.parse("<#FF4D00>Вы забанены по IP. Причина: <#FFFFFF>" + reason + "</#FFFFFF>");
+            net.kyori.adventure.text.Component kickMessage = MessageUtil.parse("<#FF3366>Вы забанены по IP. Причина: <#F0F4F8>" + reason + "</#F0F4F8>");
             
             for (Player player : Bukkit.getOnlinePlayers()) {
                 try {
@@ -296,7 +310,7 @@ public final class BanIpCommand implements CommandExecutor, TabCompleter {
         
         // Получаем из базы данных profiles по last_ip
         try {
-            if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+            if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
                 java.sql.Connection conn = mf.getDatabaseManager().getConnection();
                 try (java.sql.PreparedStatement ps = conn.prepareStatement(
                     "SELECT uuid FROM profiles WHERE last_ip = ?")) {
@@ -339,7 +353,7 @@ public final class BanIpCommand implements CommandExecutor, TabCompleter {
         }
         
         try {
-            if (plugin instanceof ManagerFix mf && mf.isMySqlStorage()) {
+            if (plugin instanceof ManagerFix mf && (mf.isMySqlStorage() || mf.isSqliteStorage())) {
                 java.sql.Connection conn = mf.getDatabaseManager().getConnection();
                 try (java.sql.PreparedStatement ps = conn.prepareStatement(
                     "SELECT last_ip FROM profiles WHERE uuid = ?")) {

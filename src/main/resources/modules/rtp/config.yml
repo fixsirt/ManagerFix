@@ -1,13 +1,23 @@
 # RTP module configuration
-# Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B)
+# Цветовая палитра: Grief Orange (#FF3366), Solar Flare (#00C8FF), Light Background (#F0F4F8)
 cooldown: 300
 messages:
-  searching: "<#FAA300>Поиск безопасного места...</#FAA300>"
-  failed: "<#FF4D00>Не удалось найти безопасное место.</#FF4D00>"
-  success: "<#FAA300>Вы были телепортированы.</#FAA300>"
-  cooldown: "<#FF4D00>Подождите {seconds} сек. перед следующим телепортом.</#FF4D00>"
-  no-nearby: "<#FF4D00>Рядом нет игроков для телепорта.</#FF4D00>"
-  insufficient-funds: "<#FF4D00>Недостаточно средств: требуется {amount}.</#FF4D00>"
-  eco-unavailable: "<#FF4D00>Экономика недоступна.</#FF4D00>"
+  searching: "<#00C8FF>Поиск безопасного места...</#00C8FF>"
+  failed: "<#FF3366>Не удалось найти безопасное место.</#FF3366>"
+  success: "<#00C8FF>Вы были телепортированы.</#00C8FF>"
+  cooldown: "<#FF3366>Подождите {seconds} сек. перед следующим телепортом.</#FF3366>"
+  no-nearby: "<#FF3366>Рядом нет игроков для телепорта.</#FF3366>"
+  insufficient-funds: "<#FF3366>Недостаточно средств: требуется {amount}.</#FF3366>"
+  eco-unavailable: "<#FF3366>Экономика недоступна.</#FF3366>"
 costs:
   near-player: 1000
+# Диапазоны телепортации (блоки по X и Z)
+near-rtp:
+  min: 600
+  max: 1000
+far-rtp:
+  min: 4000
+  max: 5000
+player-radius:
+  min: 30
+  max: 80

@@ -27,8 +27,8 @@ cooldowns:
   broadcast: 0
 
 broadcast:
-  title: "<gradient:#FF4D00:#FAA300>Объявление</gradient>"
-  subtitle: "<#E0E0E0>{message}"
+  title: "<gradient:#7000FF:#00C8FF>Объявление</gradient>"
+  subtitle: "<#F0F4F8>{message}"
   sound: "UI_TOAST_CHALLENGE_COMPLETE"
   sound-volume: 1.0
   sound-pitch: 1.0

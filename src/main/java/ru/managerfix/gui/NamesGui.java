@@ -65,9 +65,9 @@ public final class NamesGui {
             ItemStack head = new ItemBuilder(Material.PLAYER_HEAD)
                     .skullOwner(target.getName())
                     .name(MessageUtil.parse(UIThemeManager.GRADIENT_ACCENT + target.getName() + "</gradient>"))
-                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Ник: " + displayNick + "</#e9d5ff>"))
-                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — ввести новый ник в чат</#e9d5ff>"))
-                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ Shift+ЛКМ — сбросить ник</#e9d5ff>"))
+                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Ник: " + displayNick + "</#F0F4F8>"))
+                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — ввести новый ник в чат</#F0F4F8>"))
+                    .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ Shift+ЛКМ — сбросить ник</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
 
@@ -90,10 +90,10 @@ public final class NamesGui {
 
         if (totalPages > 1) {
             ItemStack prev = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#F0F4F8>"))
                     .hideFlags(true).build();
             ItemStack next = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#F0F4F8>"))
                     .hideFlags(true).build();
             builder.button(PREV_SLOT, Button.builder(prev).onClick(e -> { if (safePage > 0) open(admin, safePage - 1); }).build());
             builder.button(NEXT_SLOT, Button.builder(next).onClick(e -> { if (safePage < totalPages - 1) open(admin, safePage + 1); }).build());

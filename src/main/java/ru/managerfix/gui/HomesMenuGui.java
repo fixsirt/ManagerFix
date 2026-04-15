@@ -84,11 +84,11 @@ public final class HomesMenuGui {
 
         if (totalPages > 1) {
             ItemStack prev = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Предыдущая страница</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
             ItemStack next = new ItemBuilder(Material.ARROW)
-                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#e9d5ff>"))
+                    .name(MessageUtil.parse(UIThemeManager.COLOR_INFO + "➜ Следующая страница</#F0F4F8>"))
                     .hideFlags(true)
                     .build();
             builder.button(PREV_SLOT, Button.builder(prev).onClick(e -> {
@@ -103,14 +103,14 @@ public final class HomesMenuGui {
     }
 
     private ItemStack buildHomeIcon(String name, Location loc) {
-        ItemBuilder ib = new ItemBuilder(Material.RED_BED)
-                .name("<#FAA300>" + name)
+        ItemBuilder ib = new ItemBuilder(Material.LIGHT_BLUE_BED)
+                .name("<#00C8FF>" + name)
                 .hideFlags(true);
         if (loc != null && loc.getWorld() != null) {
-            ib.addLore(MessageUtil.parse("<#E0E0E0>Мир: <#FFFFFF>" + loc.getWorld().getName()));
-            ib.addLore(MessageUtil.parse("<#E0E0E0>▸ ЛКМ — телепорт"));
-            ib.addLore(MessageUtil.parse("<#E0E0E0>▸ ПКМ — удалить"));
-            ib.addLore(MessageUtil.parse("<#E0E0E0>▸ Shift+ПКМ — переименовать"));
+            ib.addLore(MessageUtil.parse("<#F0F4F8>Мир: <#F0F4F8>" + loc.getWorld().getName()));
+            ib.addLore(MessageUtil.parse("<#F0F4F8>▸ ЛКМ — телепорт"));
+            ib.addLore(MessageUtil.parse("<#F0F4F8>▸ ПКМ — удалить"));
+            ib.addLore(MessageUtil.parse("<#F0F4F8>▸ Shift+ПКМ — переименовать"));
         }
         return ib.build();
     }

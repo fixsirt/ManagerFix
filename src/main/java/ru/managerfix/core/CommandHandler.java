@@ -42,7 +42,7 @@ public abstract class CommandHandler<T> {
         // Проверяем кулдаун
         if (!cooldownManager.isReady(player.getUniqueId(), commandName, cooldown)) {
             int remaining = cooldownManager.getRemainingCooldown(player.getUniqueId(), commandName, cooldown);
-            player.sendMessage(MessageUtil.parse("<#FF4D00>Подождите ещё <#FFFFFF>" + remaining + "</#FFFFFF> сек. перед использованием этой команды!"));
+            player.sendMessage(MessageUtil.parse("<#FF3366>Подождите ещё <#F0F4F8>" + remaining + "</#F0F4F8> сек. перед использованием этой команды!"));
             return true;
         }
 

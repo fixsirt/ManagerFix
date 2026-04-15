@@ -1,21 +1,24 @@
 # Chat module configuration
 # Placeholders: {badge}, {player}, {message}, {prefix}, {suffix} (Vault if present)
-# Цветовая палитра: Grief Orange (#FF4D00), Solar Flare (#FAA300), Scorched Earth (#1A120B), Rust & Blood (#C0280F)
-# Акценты: Flame Core (#FF6A22), Hot Ember (#F5D742), Dried Blood (#7A2E1A)
+# Цветовая палитра: Neon Pink (#FF3366), Bright Cyan (#00C8FF), Light Background (#F0F4F8), Deep Purple (#7000FF)
+# Акценты: Neon Pink (#FF3366), Bright Cyan (#00C8FF), Light Background (#F0F4F8)
+
+# Включить фильтр мата (требуется filter.yml)
+filter-enabled: true
 
 # Шаблон отображения текста сообщения во всех форматах. Плейсхолдер {text} — сам текст сообщения.
 message-format: "{text}"
 
 # Палитра: Grief Orange и Solar Flare. В форматах {message} подставляется из message-format.
-format-local: "<#FF4D00>{badge} <#FFFFFF>%luckperms_prefix% <#FF4D00>｢<#E0E0E0>{player}</#E0E0E0>｣ <#FF4D00>{message}</#FF4D00>"
-format-global: "<#FAA300>{badge} <#FFFFFF>%luckperms_prefix% <#FAA300>｢<#E0E0E0>{player}</#E0E0E0>｣ <#FAA300>{message}</#FAA300>"
+format-local: "<#FF3366>{badge} <#F0F4F8>%luckperms_prefix% <#FF3366>｢<#F0F4F8>{player}</#F0F4F8>｣ <#FF3366>{message}</#FF3366>"
+format-global: "<#00C8FF>{badge} <#F0F4F8>%luckperms_prefix% <#00C8FF>｢<#F0F4F8>{player}</#F0F4F8>｣ <#00C8FF>{message}</#00C8FF>"
 
 # Badges in chat: local (radius) and global (! prefix)
 badge-local: "｢𝐋｣"
 badge-global: "｢𝐆｣"
 # PM: градиент Grief Orange – Solar Flare. Плейсхолдеры: {badge}, {sender}, {receiver}, {message} (из message-format)
 badge-pm: "｢𝐏𝐌｣"
-format-pm: "<gradient:#FF4D00:#FAA300>{badge}</gradient> <#FF4D00>{sender}</#FF4D00> → <#FF4D00>{receiver}</#FF4D00>: {message} <click:suggest_command:'/r '><hover:show_text:'<#E0E0E0>Кликните чтобы ответить!<#E0E0E0>'><#FF4D00>[⬅]</#FF4D00></hover></click> "
+format-pm: "<gradient:#7000FF:#00C8FF>{badge}</gradient> <#FF3366>{sender}</#FF3366> → <#FF3366>{receiver}</#FF3366>: {message} <click:suggest_command:'/r '><hover:show_text:'<#F0F4F8>Кликните чтобы ответить!<#F0F4F8>'><#FF3366>[⬅]</#FF3366></hover></click> "
 # Звуки при отправке и получении ЛС (имя из org.bukkit.Sound; пусто или "none" — без звука)
 pm-sounds-enabled: true
 pm-sound-send: "ENTITY_EXPERIENCE_ORB_PICKUP"
@@ -41,15 +44,24 @@ colors-enabled: true
 # При наведении на ник в чате: тултип с балансом (Vault) и «Нажмите ЛКМ — личное сообщение». Placeholders: {player}, {balance}
 hover-enabled: true
 hover-format: |
-  <#1A120B>Баланс: <#FAA300>{balance}</#FAA300>
-  <#E0E0E0>Нажмите ЛКМ — личное сообщение <#FFFFFF>{player}</#FFFFFF></#E0E0E0>
+  <#F0F4F8>Баланс: <#00C8FF>{balance}</#00C8FF>
+  <#F0F4F8>Нажмите ЛКМ — личное сообщение <#F0F4F8>{player}</#F0F4F8></#F0F4F8>
 
 # При наведении на текст сообщения: время отправки. ПКМ — скопировать текст. Placeholder: {time}
 message-hover-enabled: true
-message-hover-format: "<#E0E0E0>Отправлено: <#FFFFFF>{time}</#FFFFFF>\nЛКМ — скопировать сообщение</#E0E0E0>"
+message-hover-format: "<#F0F4F8>Отправлено: <#F0F4F8>{time}</#F0F4F8>\nЛКМ — скопировать сообщение</#F0F4F8>"
 message-hover-time-format: "HH:mm"
 
 # Join / quit / death. Placeholder: {player}. Ванильное сообщение о смерти не показывается.
-format-join: "<#E0E0E0>[<#FAA300>+<#E0E0E0>] <#E0E0E0>{player}<#FAA300> <#FAA300>зᴀшел ʜᴀ ᴄᴇᴘʙᴇᴘ<#FAA300>"
-format-quit: "<#E0E0E0>[<#C0280F>-<#E0E0E0>] <#E0E0E0>{player}<#FAA300> <#FAA300>ʙышᴇл ᴄ ᴄᴇᴘʙᴇᴘᴀ<#FAA300>"
-format-death: "<#E0E0E0>[<#C0280F>💀<#E0E0E0>] <#E0E0E0>{player}<#FAA300> <#FAA300>пᴏгиб.<#FAA300>" 
+format-join: "<#F0F4F8>[<#00C8FF>+<#F0F4F8>] <#F0F4F8>{player}<#00C8FF> <#00C8FF>зᴀшел ʜᴀ ᴄᴇᴘʙᴇᴘ<#00C8FF>"
+format-quit: "<#F0F4F8>[<#FF3366>-<#F0F4F8>] <#F0F4F8>{player}<#00C8FF> <#00C8FF>ʙышᴇл ᴄ ᴄᴇᴘʙᴇᴘᴀ<#00C8FF>"
+format-death: "<#F0F4F8>[<#FF3366>💀<#F0F4F8>] <#F0F4F8>{player}<#00C8FF> <#00C8FF>пᴏгиб.<#00C8FF>"
+
+# Broadcast (объявление)
+broadcast:
+  enabled: true
+  sound: "UI_TOAST_CHALLENGE_COMPLETE"
+  sound-volume: 1.0
+  sound-pitch: 1.0
+  title: "<gradient:#7000FF:#00C8FF>Объявление</gradient>"
+  chat-format: "<gradient:#7000FF:#00C8FF>⬤</gradient> <#F0F4F8>Объявление от</#F0F4F8> <#00C8FF>{player}</#00C8FF>:"

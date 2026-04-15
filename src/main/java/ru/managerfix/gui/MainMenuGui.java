@@ -123,14 +123,14 @@ public final class MainMenuGui {
         String name = getModuleName(entry.nameKey, player);
         String nameFormat = enabled
                 ? UIThemeManager.GRADIENT_ACCENT + name + "</gradient>"
-                : UIThemeManager.COLOR_ERROR + name + "</#C0280F>";
+                : UIThemeManager.COLOR_ERROR + name + "</#FF3366>";
         ItemBuilder ib = new ItemBuilder(entry.material)
                 .name(MessageUtil.parse(nameFormat))
                 .hideFlags(true);
         if (enabled) {
-            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — открыть</#E0E0E0>"));
+            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — открыть</#F0F4F8>"));
         } else {
-            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_ERROR + "✖ Модуль отключён</#C0280F>"));
+            ib.addLore(MessageUtil.parse(UIThemeManager.COLOR_ERROR + "✖ Модуль отключён</#FF3366>"));
         }
         return ib.build();
     }

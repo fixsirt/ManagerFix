@@ -96,7 +96,7 @@ public final class ManagerFixMainMenu {
         builder.button(SLOT_RELOAD_ALL, Button.builder(
                 new ItemBuilder(Material.REDSTONE)
                         .name(MessageUtil.parse(UIThemeManager.GRADIENT_ERROR + "Reload All</gradient>"))
-                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Перезагрузить конфиг и все модули</#e9d5ff>"))
+                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "Перезагрузить конфиг и все модули</#F0F4F8>"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> {
@@ -108,8 +108,8 @@ public final class ManagerFixMainMenu {
         boolean debugOn = plugin.getDebugManager() != null && plugin.getDebugManager().isDebug();
         builder.button(SLOT_DEBUG, Button.builder(
                 new ItemBuilder(debugOn ? Material.LIME_DYE : Material.GRAY_DYE)
-                        .name(MessageUtil.parse(debugOn ? UIThemeManager.GRADIENT_SUCCESS + "Debug: ON</gradient>" : UIThemeManager.COLOR_INFO + "Debug: OFF</#e9d5ff>"))
-                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить отладочный вывод</#e9d5ff>"))
+                        .name(MessageUtil.parse(debugOn ? UIThemeManager.GRADIENT_SUCCESS + "Debug: ON</gradient>" : UIThemeManager.COLOR_INFO + "Debug: OFF</#F0F4F8>"))
+                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить отладочный вывод</#F0F4F8>"))
                         .hideFlags(true)
                         .build()
         ).onClick(e -> {
@@ -123,8 +123,8 @@ public final class ManagerFixMainMenu {
         String storageType = plugin.getConfigManager().getStorageType();
         builder.button(SLOT_STORAGE, Button.builder(
                 new ItemBuilder(Material.BOOK)
-                        .name(MessageUtil.parse(UIThemeManager.COLOR_WARNING + "Storage</#fbbf24>"))
-                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + storageType + "</#e9d5ff>"))
+                        .name(MessageUtil.parse(UIThemeManager.COLOR_WARNING + "Storage</#00C8FF>"))
+                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + storageType + "</#F0F4F8>"))
                         .hideFlags(true)
                         .build()
         ).build());
@@ -133,7 +133,7 @@ public final class ManagerFixMainMenu {
         builder.button(SLOT_CLUSTER, Button.builder(
                 new ItemBuilder(clusterOn ? Material.EMERALD : Material.BARRIER)
                         .name(MessageUtil.parse(clusterOn ? UIThemeManager.GRADIENT_SUCCESS + "Cluster: ON</gradient>" : UIThemeManager.GRADIENT_ERROR + "Cluster: OFF</gradient>"))
-                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "ID: " + plugin.getConfigManager().getServerId() + "</#e9d5ff>"))
+                        .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "ID: " + plugin.getConfigManager().getServerId() + "</#F0F4F8>"))
                         .hideFlags(true)
                         .build()
         ).build());
@@ -158,8 +158,8 @@ public final class ManagerFixMainMenu {
         }
         boolean debugOn = plugin.getDebugManager() != null && plugin.getDebugManager().isDebug();
         inv.setItem(SLOT_DEBUG, new ItemBuilder(debugOn ? Material.LIME_DYE : Material.GRAY_DYE)
-                .name(MessageUtil.parse(debugOn ? UIThemeManager.GRADIENT_SUCCESS + "Debug: ON</gradient>" : UIThemeManager.COLOR_INFO + "Debug: OFF</#e9d5ff>"))
-                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить отладочный вывод</#e9d5ff>"))
+                .name(MessageUtil.parse(debugOn ? UIThemeManager.GRADIENT_SUCCESS + "Debug: ON</gradient>" : UIThemeManager.COLOR_INFO + "Debug: OFF</#F0F4F8>"))
+                .addLore(MessageUtil.parse(UIThemeManager.COLOR_INFO + "▸ ЛКМ — переключить отладочный вывод</#F0F4F8>"))
                 .hideFlags(true)
                 .build());
     }
@@ -176,7 +176,7 @@ public final class ManagerFixMainMenu {
         } else if (enabled) {
             nameFormat = UIThemeManager.GRADIENT_ACCENT + displayName + "</gradient>";
         } else {
-            nameFormat = UIThemeManager.COLOR_ERROR + displayName + "</#f87171>";
+            nameFormat = UIThemeManager.COLOR_ERROR + displayName + "</#FF3366>";
         }
 
         List<Component> lore = theme.loreFromBlocks(

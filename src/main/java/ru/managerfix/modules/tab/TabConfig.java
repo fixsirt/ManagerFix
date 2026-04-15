@@ -33,12 +33,12 @@ public final class TabConfig {
 
     /** Player list name format. Placeholders: {name}, {displayName}, %luckperms_prefix%, %player_ping%, PAPI, AFK prefix when AFK. */
     public String getPlayerFormat() {
-        return config != null ? config.getString("player-format", "<#E0E0E0>%luckperms_prefix%</#E0E0E0> {displayName}") : "<#E0E0E0>%luckperms_prefix%</#E0E0E0> {displayName}";
+        return config != null ? config.getString("player-format", "<#F0F4F8>%luckperms_prefix%</#F0F4F8> {displayName}") : "<#F0F4F8>%luckperms_prefix%</#F0F4F8> {displayName}";
     }
 
     /** Format when player is AFK (replaces player-format). Supports same placeholders + AFK prefix. */
     public String getAfkFormat() {
-        return config != null ? config.getString("afk-format", "<#FF4D00>｢𝐀𝐅𝐊｣</#FF4D00> <#E0E0E0>%luckperms_prefix%</#E0E0E0> {displayName}") : "<#FF4D00>｢𝐀𝐅𝐊｣</#FF4D00> <#E0E0E0>%luckperms_prefix%</#E0E0E0> {displayName}";
+        return config != null ? config.getString("afk-format", "<#FF3366>｢𝐀𝐅𝐊｣</#FF3366> <#F0F4F8>%luckperms_prefix%</#F0F4F8> {displayName}") : "<#FF3366>｢𝐀𝐅𝐊｣</#FF3366> <#F0F4F8>%luckperms_prefix%</#F0F4F8> {displayName}";
     }
 
     /** Update interval in ticks (e.g. 40 = 2 sec). Only changed header/footer/names are resent. */
