@@ -19,13 +19,14 @@
 10. [Модуль AFK (AFK система)](#модуль-afk-afk-система)
 11. [Модуль Names (Никнеймы)](#модуль-names-никнеймы)
 12. [Модуль Tab (Таб)](#модуль-tab-таб)
-13. [Модуль Announcer (Объявления)](#модуль-announcer-объявления)
-14. [Модуль Items (Предметы)](#модуль-items-предметы)
-15. [Модуль Other (Прочее)](#модуль-other-прочее)
-16. [Модуль Worlds (Миры)](#модуль-worlds-миры)
-17. [Фильтр мата](#фильтр-мата)
-18. [Общие разрешения](#общие-разрешения)
-19. [API и интеграция](#api-и-интеграция)
+13. [Модуль LiveBoard (Скорборд)](#модуль-liveboard-скорборд)
+14. [Модуль Announcer (Объявления)](#модуль-announcer-объявления)
+15. [Модуль Items (Предметы)](#модуль-items-предметы)
+16. [Модуль Other (Прочее)](#модуль-other-прочее)
+17. [Модуль Worlds (Миры)](#модуль-worlds-миры)
+18. [Фильтр мата](#фильтр-мата)
+19. [Общие разрешения](#общие-разрешения)
+20. [API и интеграция](#api-и-интеграция)
 
 ---
 
@@ -163,14 +164,23 @@ broadcast:
 
 | Команда | Описание | Разрешение |
 |---------|---------|-----------|
-| `/ban <игрок> [причина] [время]` | Забанить игрока | `managerfix.ban.ban` |
-| `/unban <игрок>` | Разбанить игрока | `managerfix.ban.ban` |
+| `/ban <игрок> [время] [причина]` | Забанить игрока | `managerfix.ban.use` |
+| `/unban <игрок>` | Разбанить игрока | `managerfix.ban.unban` |
 | `/banlist` | Список банов (GUI) | `managerfix.ban.list` |
-| `/mute <игрок> [причина] [время]` | Замутить игрока | `managerfix.ban.mute` |
+| `/mute <игрок> [время] [причина]` | Замутить игрока | `managerfix.ban.mute` |
 | `/unmute <игрок>` | Размутить игрока | `managerfix.ban.mute` |
 | `/kick <игрок> [причина]` | Кикнуть игрока | `managerfix.ban.kick` |
-| `/banip <IP/игрок> [причина]` | Забанить IP адрес | `managerfix.ban.ban` |
-| `/unbanip <IP>` | Разбанить IP | `managerfix.ban.ban` |
+| `/banip <игрок> <время> <причина>` | Забанить IP адрес игрока | `managerfix.ban.ip` |
+| `/unbanip <IP/игрок>` | Разбанить IP | `managerfix.ban.ip.unban` |
+
+### Aliases
+
+| Alias | Основная команда |
+|-------|----------------|
+| `/pardon` | `/unban` |
+| `/bans` | `/banlist` |
+| `/ipban`, `/ban-ip` | `/banip` |
+| `/ipunban`, `/unban-ip`, `/pardon-ip` | `/unbanip` | |
 
 ### Формат времени
 
@@ -186,20 +196,29 @@ broadcast:
 # Срок по умолчанию
 default-duration: permanent
 
-# Оповещения о банах/мутах
+# Оповещения (broadcasts)
 broadcast-bans: true
 broadcast-mutes: true
+broadcast-ip-bans: true
+broadcast-unbans: true
+broadcast-unmutes: true
 
-# Сообщение при кике
-kick-message: "<color:#FF3366>Вы забанены. Причина: <color:#00C8FF>{reason}</color></color>"
+# Сообщения игрокам (MiniMessage/HEX)
+# Плейсхолдеры: {reason}, {duration}, {source}, {ip}
+ban-message: "<gradient:#FF3366:#FF6B6B>Вы забанены</gradient>\n\n..."
+ip-ban-message: "<gradient:#FF3366:#FF6B6B>Вы забанены по IP</gradient>\n\n..."
+kick-message: "<gradient:#00C8FF:#00E5FF>Вы кикнуты</gradient>\n\n..."
 
-# Форматы оповещений
+# Форматы оповещений (broadcasts)
+# Плейсхолдеры: {targetReal}, {targetNick}, {sourceReal}, {sourceNick}, {reason}, {duration}, {ip}
 format:
-  ban-broadcast: "..."
-  kick-broadcast: "..."
-  mute-broadcast: "..."
-  ip-ban-broadcast: "..."
-  ip-unban-broadcast: "..."
+  ban-broadcast: "<gradient:#FF3366:#FF6B6B>⛔ БАН</gradient>..."
+  unban-broadcast: "<gradient:#00C8FF:#00E5FF>⬤ РАЗБАН</gradient>..."
+  kick-broadcast: "<gradient:#00C8FF:#00E5FF>⬤ КИК</gradient>..."
+  mute-broadcast: "<gradient:#FFB347:#FF6B6B>🔇 МУТ</gradient>..."
+  unmute-broadcast: "<gradient:#00C8FF:#00E5FF>⬤ РАЗМУТ</gradient>..."
+  ip-ban-broadcast: "<gradient:#FF3366:#FF6B6B>⛔ IP БАН</gradient>..."
+  ip-unban-broadcast: "<gradient:#00C8FF:#00E5FF>⬤ IP РАЗБАН</gradient>..."
 ```
 
 ### Плейсхолдеры в форматах
@@ -218,8 +237,12 @@ format:
 
 | Разрешение | Описание |
 |-----------|---------|
-| `managerfix.ban.ban` | Баны/разбаны |
-| `managerfix.ban.mute` | Муты/размуты |
+| `managerfix.ban.use` | Баны игроков |
+| `managerfix.ban.unban` | Разбаны игроков |
+| `managerfix.ban.list` | Просмотр списка банов (GUI) |
+| `managerfix.ban.mute` | Муты/размуты игроков |
+| `managerfix.ban.ip` | Баны по IP адресу |
+| `managerfix.ban.ip.unban` | Разбаны по IP адресу |
 | `managerfix.ban.kick` | Кик игроков |
 | `managerfix.ban.bypass.cooldown` | Обход кулдауна команд |
 
@@ -342,6 +365,9 @@ group-limits:
 | `managerfix.warp.list` | Список варпов |
 | `managerfix.warp.set` | Создание варпов |
 | `managerfix.warp.delete` | Удаление варпов |
+| `managerfix.warp.edit` | Редактирование варпов (/editwarp) |
+| `managerfix.warps.bypass.limit` | Обход лимита варпов |
+| `managerfix.warps.bypass.cooldown` | Обход кулдауна |
 | `managerfix.warp.<имя>` | Телепорт к конкретному варпу |
 
 ---
@@ -396,6 +422,8 @@ animation:
 |-----------|---------|
 | `managerfix.spawn.use` | Телепорт на спавн |
 | `managerfix.spawn.set` | Установка точки спавна |
+| `managerfix.spawn.edit` | Редактирование спавна (/editspawn) |
+| `managerfix.spawn.admin` | Администрирование спавна |
 
 ---
 
@@ -534,9 +562,26 @@ broadcast-afk: true
 # Блокировка команд в AFK
 block-commands-while-afk: false
 
-# Кик AFK игроков (0 = выключено)
+# Кик AFK игроков (0 = выключено, для групп отдельно в group-kick-timeout)
 kick-timeout-seconds: 0
+
+# Групповые таймауты кика (секунды)
+# -1 = не кикать игроков этой группы
+# Таймер начинается когда игрок входит в AFK, сбрасывается при выходе
+group-kick-timeout:
+  default: 0
+  # vip: -1
+  # premium: 3600
 ```
+
+### Как работает кик за AFK
+
+1. Когда игрок уходит в режим AFK (автоматически или вручную `/afk`), запускается таймер
+2. Таймер зависит от группы LuckPerms игрока
+3. Если игрок выходит из AFK (пошевелился или ввёл `/afk`), таймер отменяется
+4. При следующем входе в AFK таймер запускается заново
+5. Когда таймер истекает, игрок кикается с сообщением "Вы были кикнуты за бездействие (AFK)"
+6. Кик не отображается в чате другим игрокам
 
 ### Разрешения модуля AFK
 
@@ -797,7 +842,6 @@ messages:
 | `/vanish` | Режим невидимости | `managerfix.other.vanish` |
 | `/v` | Синоним /vanish | `managerfix.other.vanish` |
 | `/sudo <игрок> <команда>` | Выполнить команду от имени | `managerfix.other.sudo` |
-| `/kick <игрок> [причина]` | Кикнуть | `managerfix.other.kick` |
 | `/give <игрок> <предмет> [кол-во]` | Выдать предмет | `managerfix.other.give` |
 | `/lockchat` | Заблокировать чат | `managerfix.other.lockchat` |
 
@@ -879,7 +923,6 @@ broadcast:
 | `managerfix.other.killmob` | Убийство мобов |
 | `managerfix.other.vanish` | Невидимость |
 | `managerfix.other.sudo` | Выполнение команд |
-| `managerfix.other.kick` | Кик |
 | `managerfix.other.give` | Выдача предметов |
 | `managerfix.other.lockchat` | Блокировка чата |
 
@@ -918,6 +961,230 @@ allow-delete: true
 | `managerfix.worlds.tp` | Телепортация |
 | `managerfix.worlds.create` | Создание мира |
 | `managerfix.worlds.delete` | Удаление мира |
+
+---
+
+## Модуль LiveBoard (Скорборд)
+
+Современный скорборд (табло) с поддержкой MiniMessage, HEX цветов, градиентов, PlaceholderAPI и 9 типов анимаций.
+
+### Особенности
+
+| 🎯 | Особенность | Описание |
+|----|-------------|----------|
+| 🎨 | **MiniMessage** | Полная поддержка HEX цветов, градиентов, форматирования |
+| 📊 | **9 анимаций** | blink, pulse, gradient, rainbow, wave, typewriter, marquee, glow, fade |
+| ⏱️ | **Пер-строчный интервал** | Каждая строка обновляется со своей частотой (в тиках) |
+| 🔌 | **PlaceholderAPI** | Только PAPI плейсхолдеры (встроенные удалены для чистоты) |
+| 📏 | **Ширина борда** | Настраиваемая ширина (по умолчанию 27, макс 48 символов) |
+| 🎭 | **Множественные борды** | Несколько конфигураций с переключением через права |
+| 🚫 | **Скрытие чисел** | Использует Paper API `NumberFormat.blank()` (1.21+) |
+| 👻 | **Невидимые строки** | Цветовые коды `§0`–`§e` как невидимые записи слева |
+
+### Команды
+
+| Команда | Описание | Разрешение |
+|---------|----------|------------|
+| `/liveboard toggle [игрок]` | Вкл/выкл скорборд | `managerfix.liveboard.toggle` |
+| `/liveboard setboard <борд> [игрок]` | Сменить борд | `managerfix.liveboard.setboard` |
+
+### Конфигурация (`modules/liveboard/config.yml`)
+
+```yaml
+# Global update interval in ticks (20 = 1 second)
+# Individual rows can override this with their own "update" value
+default-update-interval: 20
+
+# Whether to show the board by default for new players
+show-by-default: true
+
+# Enable or disable all animations (blink, pulse, gradient, etc.)
+# Set to false to improve performance if animations are not needed
+animations-enabled: true
+
+# Sidebar width in characters (default: 27, max: 48)
+width: 27
+
+# Which board to use (board ID from "boards" section below)
+# Players can be assigned a different board via permission: liveboard.board.<id>
+default-board: default
+
+# Boards configuration
+boards:
+  default:
+    # Title: supports MiniMessage and PlaceholderAPI placeholders
+    title: "<gradient:#FFD700:#FFA500>★ %player_name% ★</gradient>"
+    # Title update interval in ticks (0 = use default-update-interval)
+    title-update: 40
+
+    rows:
+      # "text" supports MiniMessage, HEX, PlaceholderAPI, conditions
+      # "update" = update interval in ticks for this row (0 = use default)
+      # "conditions" = list of conditional rules (evaluated top to bottom, first match wins)
+
+      - text: "<#FFD700>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#FFD700>"
+        update: 0
+
+      - text: "<#F0F4F8>Онлайн: <#FFFFFF>%server_online%</#FFFFFF></#F0F4F8>"
+        update: 20
+
+      - text: "<#F0F4F8>Мир: <#00C8FF>%player_world%</#00C8FF></#F0F4F8>"
+        update: 40
+
+      - text: "<#FFD700>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#FFD700>"
+        update: 0
+
+      - text: "<#F0F4F8>Время: <#FFFFFF>%localtime_time_HH:mm%</#FFFFFF></#F0F4F8>"
+        update: 20
+
+      - text: "<#F0F4F8>Дата: <#FFFFFF>%localtime_time_dd.MM.yyyy%</#FFFFFF></#F0F4F8>"
+        update: 200
+
+      - text: "<#FFD700>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#FFD700>"
+        update: 0
+
+    # Animations: applied to specific rows by index (0-based)
+    # Types: blink, pulse, gradient, rainbow, wave, typewriter, marquee, glow, fade
+    # interval = ticks between frames (1 tick = 0.05 sec)
+    animations:
+      - row: 0
+        type: "pulse"
+        colors: ["#FFD700", "#FFA500"]
+        interval: 10
+
+  # PVP board example
+  pvp:
+    title: "<gradient:#FF5555:#FFD700>⚔ PVP ⚔</gradient>"
+    title-update: 40
+    rows:
+      - text: "<#FF5555>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#FF5555>"
+        update: 0
+
+      - text: "<#F0F4F8>Онлайн: <#FFFFFF>%server_online%</#FFFFFF></#F0F4F8>"
+        update: 20
+
+      - text: "<#F0F4F8>Убийства: <#FF5555>%statistic_player_kills%</#FF5555></#F0F4F8>"
+        update: 40
+
+      - text: "<#F0F4F8>Смерти: <#FFFFFF>%statistic_deaths%</#FFFFFF></#F0F4F8>"
+        update: 40
+
+      - text: "<#F0F4F8>К/Д: <#FFD700>%statistic_player_kills%/%statistic_deaths%</#FFD700></#F0F4F8>"
+        update: 40
+
+      - text: "<#FFD700>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#FFD700>"
+        update: 0
+
+    animations:
+      - row: 0
+        type: "blink"
+        colors: ["#FF5555", "#FFD700"]
+        interval: 15
+
+  # Mini-game board example
+  minigame:
+    title: "<gradient:#00C8FF:#7000FF>🎮 Мини-игры 🎮</gradient>"
+    title-update: 40
+    rows:
+      - text: "<#00C8FF>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#00C8FF>"
+        update: 0
+
+      - text: "<#F0F4F8>Онлайн: <#00C8FF>%server_online%</#00C8FF></#F0F4F8>"
+        update: 20
+
+      - text: "<#F0F4F8>Игрок: <#FFFFFF>%player_name%</#FFFFFF></#F0F4F8>"
+        update: 40
+
+      - text: "<#F0F4F8>Пинг: <#00C8FF>%player_ping% ms</#00C8FF></#F0F4F8>"
+        update: 20
+
+      - text: "<#00C8FF>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#00C8FF>"
+        update: 0
+
+    animations:
+      - row: 0
+        type: "marquee"
+        text: "<#00C8FF>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#00C8FF>"
+        width: 27
+        interval: 3
+```
+
+### Типы анимаций
+
+| Тип | Описание | Параметры |
+|-----|----------|-----------|
+| **blink** | Мигание между двумя цветами | `colors: ["#цвет1", "#цвет2"]` |
+| **pulse** | Пульсация цвета | `colors: ["#цвет1", "#цвет2"]` |
+| **gradient** | Плавный градиент | `colors: ["#цвет1", "#цвет2"]` |
+| **rainbow** | Радужный эффект | `colors: ["#цвет1", "#цвет2"]` |
+| **wave** | Волна цвета по тексту | `colors: ["#цвет1", "#цвет2"]` |
+| **typewriter** | Эффект печатной машинки | `text: "текст"` |
+| **marquee** | Бегущая строка | `text: "текст"`, `width: число` |
+| **glow** | Свечение текста | `colors: ["#цвет1", "#цвет2"]` |
+| **fade** | Затухание текста | `colors: ["#цвет1", "#цвет2"]` |
+
+### Условное форматирование (Conditions)
+
+Каждая строка может иметь условия отображения:
+
+```yaml
+- text: "<#FF5555>❤ HP: %player_health%"
+  update: 20
+  conditions:
+    - if: "%player_health% < 10"
+      text: "<#FF0000>❤ HP: %player_health% (КРИТИЧЕСКО!)</#FF0000>"
+    - if: "%player_health% < 20"
+      text: "<#FFA500>❤ HP: %player_health%</#FFA500>"
+    - default:
+        text: "<#00FF00>❤ HP: %player_health%</#00FF00>"
+```
+
+### PlaceholderAPI плейсхолдеры
+
+Поддерживаются все плейсхолдеры PlaceholderAPI:
+
+| Плейсхолдер | Описание |
+|-------------|----------|
+| `%server_online%` | Онлайн сервера |
+| `%server_tps_1%` | TPS сервера |
+| `%player_ping%` | Пинг игрока |
+| `%player_world%` | Мир игрока |
+| `%player_health%` | Здоровье игрока |
+| `%player_hunger%` | Голод игрока |
+| `%player_level%` | Уровень игрока |
+| `%player_xp%` | Опыт игрока |
+| `%player_gamemode%` | Режим игры |
+| `%luckperms_prefix%` | Префикс LuckPerms |
+| `%luckperms_suffix%` | Суффикс LuckPerms |
+| `%statistic_player_kills%` | Убийства |
+| `%statistic_deaths%` | Смерти |
+| `%localtime_time_HH:mm%` | Время (локальное) |
+| `%localtime_time_dd.MM.yyyy%` | Дата (локальная) |
+
+### Переключение бордов через права
+
+Игроки могут видеть разные борды в зависимости от их прав:
+
+```
+liveboard.board.default    — борд по умолчанию
+liveboard.board.pvp        — PVP борд
+liveboard.board.minigame   — борд мини-игр
+```
+
+### Технические детали
+
+- **Скрытие чисел**: Используется Paper API `NumberFormat.blank()` (требуется Paper 1.21+)
+- **Невидимые строки**: Для скрытия левой части используются цветовые коды `§0`–`§e` (15 уникальных записей)
+- **Обновление**: Каждая строка обновляется независимо согласно своему `update` интервалу
+- **Рендеринг**: Текст отображается только в team prefix, score устанавливается на цветовой код
+
+### Разрешения модуля LiveBoard
+
+| Разрешение | Описание |
+|-----------|----------|
+| `managerfix.liveboard.toggle` | Вкл/выкл скорборда |
+| `managerfix.liveboard.setboard` | Смена борда игрокам |
+| `liveboard.board.<id>` | Видеть конкретный борд |
 
 ---
 
@@ -1009,9 +1276,12 @@ managerfix.tpa.use
 managerfix.kit.premium
 
 # Группа Moderator
-managerfix.ban.ban
+managerfix.ban.use
+managerfix.ban.unban
 managerfix.ban.mute
 managerfix.ban.kick
+managerfix.ban.ip
+managerfix.ban.ip.unban
 managerfix.chat.clear
 managerfix.other.freeze
 managerfix.other.invsee
@@ -1068,6 +1338,7 @@ plugins/ManagerFix/
 │   ├── homes/config.yml
 │   ├── items/config.yml
 │   ├── kits/config.yml
+│   ├── liveboard/config.yml
 │   ├── names/config.yml
 │   ├── other/
 │   │   ├── config.yml
